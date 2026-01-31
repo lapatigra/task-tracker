@@ -139,7 +139,7 @@
     }
 
     .task-category {
-        margin-bottom: 20px;
+        margin-bottom: 10px;
     }
 
     .category-header {
@@ -689,8 +689,13 @@
 
         /* Кнопка добавления категории компактнее */
         .add-category-btn {
-            max-width: 400px;
-            margin: 10px auto;
+            margin: 10px 0;
+            grid-column: 1 / -1;
+        }
+
+        /* На десктопе делаем категорию развёрнутой по умолчанию */
+        .task-category {
+            margin-bottom: 0;
         }
     }
 
@@ -1033,14 +1038,23 @@
         const firstDay = new Date(year, month, 1).getDay();
         const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1;
         
+        // Проверяем ширину экрана
+        const isDesktop = window.innerWidth >= 768;
+        
         categories.forEach(category => {
             const categoryDiv = document.createElement('div');
             categoryDiv.className = 'task-category';
             
             const completed = getCompletedCount(year, month, category);
             const collapseKey = `${year}-${month}-${category}`;
-            // Теперь по умолчанию категории СВЁРНУТЫ (true), если не было действий пользователя
-            const isCollapsed = collapsedCategories[collapseKey] !== false;
+            
+            // На десктопе по умолчанию развёрнуто, на мобильном - свёрнуто
+            let isCollapsed;
+            if (collapsedCategories.hasOwnProperty(collapseKey)) {
+                isCollapsed = collapsedCategories[collapseKey];
+            } else {
+                isCollapsed = !isDesktop; // false для десктопа, true для мобильного
+            }
             
             // Показываем разный счётчик в зависимости от состояния
             const counterDisplay = isCollapsed 
@@ -1115,6 +1129,18 @@
         renderMuscleTracker();
     }
 
+    function decrementMuscle(year, month, muscle) {
+        const key = getMuscleKey(year, month, muscle);
+        if (muscles[key] && muscles[key] > 0) {
+            muscles[key] = muscles[key] - 1;
+            if (muscles[key] === 0) {
+                delete muscles[key];
+            }
+            saveMuscles();
+            renderMuscleTracker();
+        }
+    }
+
     function resetMuscle(year, month, muscle) {
         const key = getMuscleKey(year, month, muscle);
         delete muscles[key];
@@ -1136,9 +1162,10 @@
                 <div class="muscle-item ${hasValue ? 'completed' : ''}">
                     <span class="muscle-name">${muscle}</span>
                     <div class="muscle-counter">
+                        ${hasValue ? `<div class="muscle-btn active" onclick="decrementMuscle(${year}, ${month}, '${muscle}')">−</div>` : '<div style="width: 32px;"></div>'}
+                        <div class="muscle-count">${count > 0 ? count : ''}</div>
                         <div class="muscle-btn ${hasValue ? 'active' : ''}" 
                              onclick="incrementMuscle(${year}, ${month}, '${muscle}')">+</div>
-                        <div class="muscle-count">${count > 0 ? count : ''}</div>
                         ${count > 0 ? `<div class="muscle-reset" onclick="resetMuscle(${year}, ${month}, '${muscle}')">×</div>` : '<div style="width: 28px;"></div>'}
                     </div>
                 </div>
@@ -1307,6 +1334,11 @@
         await loadData();
         updateDisplay();
     }
+
+    // Перерисовка при изменении размера окна (для переключения десктоп/мобильный)
+    window.addEventListener('resize', function() {
+        updateDisplay();
+    });
 
     initApp();
 </script>
