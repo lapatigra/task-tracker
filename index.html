@@ -601,6 +601,119 @@
             height: 18px;
         }
     }
+
+    /* Десктопная версия - горизонтальное расположение */
+    @media (min-width: 768px) {
+        .container {
+            max-width: 1400px;
+            padding: 20px;
+        }
+
+        .header {
+            margin-bottom: 20px;
+        }
+
+        .tasks-grid {
+            padding: 20px;
+        }
+
+        #tasksGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .task-category {
+            margin-bottom: 0;
+        }
+
+        .category-header {
+            font-size: 14px;
+            padding: 10px 12px;
+        }
+
+        .category-name {
+            font-size: 14px;
+        }
+
+        .category-count {
+            font-size: 12px;
+            padding: 3px 10px;
+        }
+
+        .week-header {
+            font-size: 11px;
+        }
+
+        .week-container {
+            margin-bottom: 10px;
+        }
+
+        .days-grid {
+            gap: 4px;
+        }
+
+        .day-cell {
+            padding: 2px;
+        }
+
+        .day-label {
+            font-size: 9px;
+        }
+
+        .day-checkbox {
+            width: 16px;
+            height: 16px;
+        }
+
+        .day-checkbox:checked::after {
+            font-size: 12px;
+        }
+
+        /* Компактные вкладки на десктопе */
+        .tabs {
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+
+        /* Статистика на весь экран */
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto 20px;
+        }
+
+        .muscle-tracker {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Кнопка добавления категории компактнее */
+        .add-category-btn {
+            max-width: 400px;
+            margin: 10px auto;
+        }
+    }
+
+    /* Для очень широких экранов - еще компактнее */
+    @media (min-width: 1200px) {
+        #tasksGrid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .category-header {
+            font-size: 13px;
+            padding: 8px 10px;
+        }
+
+        .day-label {
+            font-size: 8px;
+        }
+
+        .day-checkbox {
+            width: 14px;
+            height: 14px;
+        }
+    }
 </style>
 ```
 
@@ -926,7 +1039,8 @@
             
             const completed = getCompletedCount(year, month, category);
             const collapseKey = `${year}-${month}-${category}`;
-            const isCollapsed = collapsedCategories[collapseKey] || false;
+            // Теперь по умолчанию категории СВЁРНУТЫ (true), если не было действий пользователя
+            const isCollapsed = collapsedCategories[collapseKey] !== false;
             
             // Показываем разный счётчик в зависимости от состояния
             const counterDisplay = isCollapsed 
