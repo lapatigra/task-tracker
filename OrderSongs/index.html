@@ -19,71 +19,80 @@
 ```
         body {
             font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d1810 100%);
-            color: #fff;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d1810 100%) !important;
+            background-attachment: fixed;
+            color: #fff !important;
             min-height: 100vh;
         }
 
-        /* Hero секция с фото */
-        .hero {
-            position: relative;
+        header img.header {
             width: 100%;
-            height: 600px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .hero img {
-            width: 100%;
-            height: 100%;
+            max-height: 400px;
             object-fit: cover;
-            object-position: center;
-        }
-
-        .hero-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%);
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            padding-bottom: 50px;
-        }
-
-        .order-button-hero {
-            background: linear-gradient(135deg, #ff5722 0%, #ff6f00 100%);
-            border: none;
-            padding: 16px 50px;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 10px 40px rgba(255, 87, 34, 0.6);
-            font-size: 16px;
-            font-weight: 700;
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-        }
-
-        .order-button-hero:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 50px rgba(255, 87, 34, 0.8);
+            box-shadow: 0 10px 40px rgba(255, 87, 34, 0.3);
         }
 
         main {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 25px 20px;
+            padding: 20px;
+        }
+
+        .social-buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .social-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #ff5722 0%, #ff6f00 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(255, 87, 34, 0.4);
+        }
+
+        .social-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(255, 87, 34, 0.6);
+        }
+
+        .order-button {
+            display: block;
+            margin: 30px auto;
+            background: linear-gradient(135deg, #ff5722 0%, #ff6f00 100%);
+            border: none;
+            padding: 0;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 6px 25px rgba(255, 87, 34, 0.5);
+        }
+
+        .order-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 35px rgba(255, 87, 34, 0.7);
+        }
+
+        .order-button a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 18px 60px;
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .repertoire {
             background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(45, 24, 16, 0.5) 100%);
-            padding: 25px;
+            padding: 30px;
             border-radius: 20px;
             backdrop-filter: blur(10px);
             margin-top: 20px;
@@ -98,83 +107,28 @@
         .line {
             border: none;
             border-top: 2px solid #ff5722;
-            margin: 15px 0;
+            margin: 20px 0;
             box-shadow: 0 1px 10px rgba(255, 87, 34, 0.3);
         }
 
         h2 {
             color: #ff5722;
             text-align: center;
-            margin: 12px 0;
-            font-size: 1.5em;
+            margin: 20px 0;
+            font-size: 2em;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 2px;
             text-shadow: 0 0 20px rgba(255, 87, 34, 0.5);
         }
 
         .condition {
-            font-size: 0.95em;
-            line-height: 1.5;
-            text-align: center;
-            margin-bottom: 8px;
+            font-size: 1.1em;
+            line-height: 1.8;
         }
 
         .repertoire p {
-            line-height: 1.5;
-            margin: 6px 0;
-            text-align: center;
-            font-size: 0.95em;
-        }
-
-        /* Контакты */
-        .contacts {
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(45, 24, 16, 0.5) 100%);
-            padding: 30px 25px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            margin-top: 25px;
-            border: 1px solid rgba(255, 87, 34, 0.2);
-            text-align: center;
-        }
-
-        .contacts h2 {
-            margin-bottom: 25px;
-        }
-
-        .contact-links {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: rgba(255, 87, 34, 0.1);
-            padding: 12px 20px;
-            border-radius: 50px;
-            text-decoration: none;
-            color: white;
-            font-weight: 600;
-            font-size: 0.9em;
-            transition: all 0.3s;
-            border: 2px solid rgba(255, 87, 34, 0.3);
-        }
-
-        .contact-item:hover {
-            background: rgba(255, 87, 34, 0.25);
-            border-color: #ff5722;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 20px rgba(255, 87, 34, 0.4);
-        }
-
-        .contact-item i {
-            font-size: 20px;
-            color: #ff5722;
+            line-height: 1.8;
+            margin: 10px 0;
         }
 
         /* Модальное окно */
@@ -287,6 +241,41 @@
             border-left-color: #ff5722;
             transform: translateX(8px);
             box-shadow: 0 5px 15px rgba(255, 87, 34, 0.3);
+        }
+
+        .song-item.selected {
+            background: rgba(255, 87, 34, 0.25);
+            border-left-color: #ff6f00;
+            border-right-color: #ff5722;
+            box-shadow: 0 5px 20px rgba(255, 87, 34, 0.4);
+        }
+
+        .order-selected {
+            display: block;
+            margin: 25px auto;
+            background: linear-gradient(135deg, #ff5722 0%, #ff6f00 100%);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 25px rgba(255, 87, 34, 0.5);
+        }
+
+        .order-selected:disabled {
+            background: linear-gradient(135deg, #444 0%, #333 100%);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .order-selected:not(:disabled):hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 35px rgba(255, 87, 34, 0.7);
         }
 
         /* Окно поздравления */
@@ -433,83 +422,46 @@
             letter-spacing: 1px;
             text-shadow: 0 0 10px rgba(255, 87, 34, 0.3);
         }
-
-        @media (max-width: 768px) {
-            .hero {
-                height: 400px;
-            }
-            
-            .order-button-hero {
-                padding: 15px 40px;
-                font-size: 18px;
-            }
-
-            .contact-links {
-                grid-template-columns: 1fr;
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- Hero секция с фото и кнопкой -->
-    <div class="hero">
-        <img src="IMG_4643.jpeg" alt="LAPA TIGRA">
-        <div class="hero-overlay">
-            <button class="order-button-hero" id="openModalBtn">
-                Заказать песню
-            </button>
-        </div>
-    </div>
-
+    <header>
+        <img class="header" src="/img/Tigr_Head2.jpg" alt="Логотип" class="logo">
+    </header>
     <main>
+        <div class="social-buttons">
+            <a href="https://instagram.com/lapa_tigra_music?igshid=MDM4ZDc5MmU=" 
+               target="_blank"
+               class="social-button">
+                <i class="fab fa-instagram"></i><span>LAPA TIGRA</span>
+            </a>
+        </div>
+        
+        <button class="order-button" id="openModalBtn">
+            <a href="javascript:void(0)">Заказать песню</a>
+        </button>
+
         <div class="repertoire">
-            <h2>Заказ песни с поздравлением за донат 1000₽</h2>
-            
-            <p class="condition">
-                Выберете песню из репертуара, нажмите на кнопку "заказать песню". Выберете сумму доната 1000₽ и в комментариях укажите название трека и текст поздравления.
-            </p>
+            <p class="condition"><span class="orange-text">Заказ песни с поздравлением за донат 1000₽</span><br>
+                Выберете песню из репертуара, нажмите на кнопку "заказать песню". Выберете сумму доната 1000₽ и в комментариях укажите название трека и текст поздравления.</p>
             <p>Не забудьте написать имя, кого будем поздравлять</p>
             
             <hr class="line">
 
-            <p><span class="orange-text">Заказанная песня исполняется в порядке очереди в промежутке:</span></p>
-            <p>
+            <p><span class="orange-text">Заказанная песня исполняется в порядке очереди в промежутке:</span><br>
                 С 20:30 до 21:00<br>
                 C 21:30 до 22:00<br>
                 C 22:30 до 23:00<br>
-                (пт, сб) C 23:30 до 00:00
+                (пт, сб) C 23:30 до 00:00 (пт, сб)<br>
             </p>
-            
             <hr class="line">
 
             <p class="orange-text">ПЕСНИ ИСПОЛНЯЮТСЯ ТОЛЬКО ИЗ РЕПЕРТУАРА</p>
-        </div>
-
-        <!-- Контакты -->
-        <div class="contacts">
-            <h2>Контакты</h2>
-            <div class="contact-links">
-                <a href="https://music.yandex.ru/artist/19420584" target="_blank" class="contact-item">
-                    <i class="fas fa-music"></i>
-                    <span>Яндекс Музыка</span>
-                </a>
-                <a href="https://instagram.com/lapa_tigra_music?igshid=MDM4ZDc5MmU=" target="_blank" class="contact-item">
-                    <i class="fab fa-instagram"></i>
-                    <span>Instagram</span>
-                </a>
-                <a href="https://vk.com/lapa.tigra" target="_blank" class="contact-item">
-                    <i class="fab fa-vk"></i>
-                    <span>ВКонтакте</span>
-                </a>
-                <a href="https://t.me/lapa_tigra_music" target="_blank" class="contact-item">
-                    <i class="fab fa-telegram"></i>
-                    <span>Telegram</span>
-                </a>
-            </div>
+            <h2>Репертуар</h2>
         </div>
     </main>
 
-    <!-- Модальное окно с репертуаром -->
+    <!-- Модальное окно -->
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -659,8 +611,8 @@
             ]},
             { category: 'ЗАРУБЕЖНЫЕ', items: [
                 'Blur - Song 2',
-                'Bon Jovi - Its My Life',
-                'Bomfunk MCs - Freestyler',
+                'Bon Jovi - It\'s My Life',
+                'Bomfunk MC\'s - Freestyler',
                 'Bruno Mars – Uptown Funk',
                 'DNCE - Cake by the ocean',
                 'Elvis Presley - Blues way shoes',
@@ -708,6 +660,12 @@
         // Закрыть модальное окно
         span.onclick = function() {
             modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
         }
 
         // Отрисовка списка песен
@@ -808,6 +766,34 @@
                 greetingModal.style.display = 'none';
                 
                 // Очищаем поля
+                greetingText.value = '';
+                selectedSong = null;
+            });
+        }
+
+        // Закрытие по клику вне окна
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+            if (event.target == greetingModal) {
+                greetingModal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+```
+
+</html>
+
+```
+            // Копируем в буфер обмена и сразу переходим к оплате
+            navigator.clipboard.writeText(orderText).then(() => {
+                alert('Информация скопирована в буфер обмена! Вставьте её в комментарий при оплате.');
+                window.open('https://tips.yandex.ru/guest/payment/8888490', '_blank');
+                greetingModal.style.display = 'none';
+                // Очищаем поля
+                nameInput.value = '';
                 greetingText.value = '';
                 selectedSong = null;
             });
