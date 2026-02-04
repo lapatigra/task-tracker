@@ -19,7 +19,7 @@
 ```
         body {
             font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2a2a2a 100%);
+            background: #000000;
             color: #fff;
             min-height: 100vh;
         }
@@ -453,7 +453,7 @@
 <body>
     <!-- Hero секция с фото и кнопкой -->
     <div class="hero">
-        <img src="Tigr_Lila_Head.jpg" alt="LAPA TIGRA">
+        <img src="Tigr_Lila_Head.jpeg" alt="Lila Manila">
         <div class="hero-overlay">
             <button class="order-button-hero" id="openModalBtn">
                 Заказать песню
@@ -571,7 +571,8 @@
                 'Баста - Медлячок',
                 'Баста - Сансара',
                 'Браво - Вася',
-                'Браво - Любите девушки'
+                'Браво - Любите девушки',
+                'Бумбокс - Вахтерам'
             ]},
             { category: 'В', items: [
                 'Ваня Дмитриенко - Венера юпитер',
@@ -682,8 +683,7 @@
             ]},
             { category: 'Ш', items: [
                 'Шатунов - Белые розы',
-                'Шатунов - Седая ночь',
-                'Шатунов - День рождения'
+                'Шатунов - Седая ночь'
             ]},
             { category: 'Э', items: [
                 'Элджей х Федук- Розовое вино'
@@ -848,7 +848,13 @@
             };
             
             copyToClipboard().then(success => {
-                // Открываем ссылку на оплату сразу без alert
+                if (success) {
+                    alert('✅ Текст скопирован!\n\nВыберите донат 1000₽ и вставьте скопированный текст в комментарий при оплате.');
+                } else {
+                    // Если не удалось скопировать, показываем текст
+                    alert('Скопируйте этот текст:\n\n' + orderText + '\n\nВыберите донат 1000₽ и вставьте текст в комментарий при оплате.');
+                }
+                
                 window.open('https://tips.yandex.ru/guest/payment/3044586', '_blank');
                 greetingModal.style.display = 'none';
                 
