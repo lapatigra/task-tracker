@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Alumni+Sans+Pinstripe:ital@0;1&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Play:wght@400;700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
         <style>
             * {
                 margin: 0;
@@ -22,7 +22,6 @@
                 min-height: 100vh;
             }
 
-            /* Hero секция с фото */
             .hero {
                 position: relative;
                 width: 100%;
@@ -124,7 +123,6 @@
                 font-size: 0.95em;
             }
 
-            /* Контакты */
             .contacts {
                 background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(45, 24, 16, 0.5) 100%);
                 padding: 30px 25px;
@@ -175,7 +173,6 @@
                 color: #ff5722;
             }
 
-            /* Модальное окно */
             .modal {
                 display: none;
                 position: fixed;
@@ -287,7 +284,6 @@
                 box-shadow: 0 5px 15px rgba(255, 87, 34, 0.3);
             }
 
-            /* Окно поздравления */
             .greeting-modal {
                 display: none;
                 position: fixed;
@@ -405,24 +401,6 @@
                 color: rgba(255, 255, 255, 0.7);
             }
 
-            .modal-content::-webkit-scrollbar {
-                width: 12px;
-            }
-
-            .modal-content::-webkit-scrollbar-track {
-                background: rgba(0, 0, 0, 0.3);
-                border-radius: 10px;
-            }
-
-            .modal-content::-webkit-scrollbar-thumb {
-                background: linear-gradient(135deg, #ff5722 0%, #ff6f00 100%);
-                border-radius: 10px;
-            }
-
-            .modal-content::-webkit-scrollbar-thumb:hover {
-                background: linear-gradient(135deg, #ff6f00 0%, #ff5722 100%);
-            }
-
             h3 {
                 color: #ff5722;
                 margin-top: 15px;
@@ -449,9 +427,8 @@
         </style>
     </head>
     <body>
-        <!-- Hero секция с фото и кнопкой -->
         <div class="hero">
-            <img src="IMG_4643.JPG" alt="LAPA TIGRA">
+            <img src="IMG_4643.jpeg" alt="LAPA TIGRA">
             <div class="hero-overlay">
                 <button class="order-button-hero" id="openModalBtn">
                     Заказать песню
@@ -462,14 +439,11 @@
         <main>
             <div class="repertoire">
                 <h2>Заказ песни с поздравлением за донат 1000₽</h2>
-                
                 <p class="condition">
                     Выберете песню из репертуара, нажмите на кнопку "заказать песню". Выберете сумму доната 1000₽ и в комментариях укажите название трека и текст поздравления.
                 </p>
                 <p>Не забудьте написать имя, кого будем поздравлять</p>
-                
                 <hr class="line">
-
                 <p><span class="orange-text">Заказанная песня исполняется в порядке очереди в промежутке:</span></p>
                 <p>
                     С 20:30 до 21:00<br>
@@ -477,13 +451,10 @@
                     C 22:30 до 23:00<br>
                     (пт, сб) C 23:30 до 00:00
                 </p>
-                
                 <hr class="line">
-
                 <p class="orange-text">ПЕСНИ ИСПОЛНЯЮТСЯ ТОЛЬКО ИЗ РЕПЕРТУАРА</p>
             </div>
 
-            <!-- Контакты -->
             <div class="contacts">
                 <h2>Контакты</h2>
                 <div class="contact-links">
@@ -507,32 +478,24 @@
             </div>
         </main>
 
-        <!-- Модальное окно с репертуаром -->
         <div id="myModal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <h2>Выберите песню</h2>
-                
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="🔍 Поиск по репертуару...">
                 </div>
-
                 <div class="song-list" id="songList"></div>
             </div>
         </div>
 
-        <!-- Окно поздравления -->
         <div id="greetingModal" class="greeting-modal">
             <div class="greeting-content">
                 <span class="close" id="closeGreeting">&times;</span>
                 <h2>Оформление заказа</h2>
-                
                 <p>Напишите ваше поздравление</p>
-                
                 <div class="selected-song-display" id="selectedSongDisplay"></div>
-                
                 <textarea class="greeting-input greeting-textarea" id="greetingText" placeholder="Текст поздравления"></textarea>
-                
                 <div class="button-group">
                     <button class="btn-back" id="backBtn">Назад</button>
                     <button class="btn-confirm" id="confirmBtn">Ок</button>
@@ -541,153 +504,39 @@
         </div>
 
         <footer>
-            <div class="footer">
-                <p>© 2025 LAPA TIGRA</p>
-            </div>
+            <p>© 2025 LAPA TIGRA</p>
         </footer>
 
         <script>
-            // Репертуар
             const songs = [
-                { category: 'А', items: [
-                    'Агутин - Как не думать о тебе',
-                    'Агутин - Половина сердца',
-                    'Амега - Лететь',
-                    'Андрей Губин - Девушки, как звезды',
-                    'Андрей Губин - Ночь',
-                    'Антон Токарев - Седьмой Лепесток',
-                    'Антонов Юрий - Летящей походкой',
-                    'Антонов Юрий - Мечта сбывается',
-                    'Артур Пирожков – Зацепила'
-                ]},
-                { category: 'Б', items: [
-                    'Баста - Медлячок',
-                    'Баста - Сансара',
-                    'Браво - Вас',
-                    'Браво - Любите девушки',
-                    'Браво - Я то что надо',
-                    'Браво - Как жаль',
-                    'Бумбокс - Вахтерам'
-                ]},
-                { category: 'В', items: [
-                    'Ваня Дмитриенко - Венера юпитер',
-                    'Видели ночь'
-                ]},
-                { category: 'Г', items: [
-                    'Градусы - Голая',
-                    'Galibri x Mavik - Федерико Феллини',
-                    'Gayazov Brothers - Малиновая Лада'
-                ]},
-                { category: 'Д', items: [
-                    'Дима Билан - Держи',
-                    'Дима Билан - Молния',
-                    'Дима Билан - Острой бритвой',
-                    'DаЬro - На часах 00',
-                    'DаЬro - Юность'
-                ]},
-                { category: 'Ж', items: [
-                    'Жуки - Батарейка'
-                ]},
-                { category: 'З', items: [
-                    'Звери - Все что тебя касается',
-                    'Звери - Районы-кварталы',
-                    'Звери - Танцуй',
-                    'Земляне - Трава у дома'
-                ]},
-                { category: 'И', items: [
-                    'Иванушки - тополиный пух'
-                ]},
-                { category: 'К', items: [
-                    'Корни - Ты узнаешь ее',
-                    'Корни - с днём рождения, Вика',
-                    'Король и Шут - Кукла колдуна',
-                    'Крид - Самая самая',
-                    'Крид - Моя невеста'
-                ]},
-                { category: 'Л', items: [
-                    'Лазарев - В самое сердце',
-                    'Ленинград - Рыба моей мечты',
-                    'Ленинград - WWW',
-                    'Лепрконсы - Хали Гали'
-                ]},
-                { category: 'М', items: [
-                    'Мумий Тролль - Владивосток 2000',
-                    'Мумий Тролль - Невеста',
-                    'Мурат Насыров - Я это ты',
-                    'MACAN - Asphalt 8'
-                ]},
-                { category: 'Н', items: [
-                    'Нилетто - Любимка',
-                    'Нилетто х Джиган х Artik & Asti - Худи',
-                    'Нилетто х Свик х Олег Майами - Не вспоминай'
-                ]},
-                { category: 'О', items: [
-                    'Отпетые Мош. - Люби меня люби'
-                ]},
-                { category: 'Р', items: [
-                    'Руки вверх - Крошка моя',
-                    'Руки вверх - Он тебя целует',
-                    'Руки вверх - 18 мне',
-                    'Руки вверх - Алешка'
-                ]},
-                { category: 'С', items: [
-                    'Сплин - Выхода нет',
-                    'Сплин - Мое сердце',
-                    'Султан Лагучев - Горький вкус'
-                ]},
-                { category: 'Т', items: [
-                    'Тима Белорусских - Незабудка',
-                    'Тося Чайкина х Markul - Стрелы'
-                ]},
-                { category: 'Х', items: [
-                    'Хабиб - Ягода - Малинка',
-                    'ХОЛИДЕЙБОЙ - Хулиганка',
-                    'ХОЛИДЕЙБОЙ - Пожары'
-                ]},
-                { category: 'Ч', items: [
-                    'Чебанов - Солдат любви'
-                ]},
-                { category: 'Ш', items: [
-                    'Шатунов - Белые розы',
-                    'Шатунов - Седая ночь',
-                    'Шатунов - День рождения'
-                ]},
-                { category: 'Э', items: [
-                    'Элджей х Федук- Розовое вино'
-                ]},
-                { category: 'ЗАРУБЕЖНЫЕ', items: [
-                    'Blur - Song 2',
-                    'Bon Jovi - Its My Life',
-                    'Bomfunk MCs - Freestyler',
-                    'Bruno Mars – Uptown Funk',
-                    'DNCE - Cake by the ocean',
-                    'Elvis Presley - Blues way shoes',
-                    'Fly Project - La musica',
-                    'JONY - Комета',
-                    'Justin Timberlake - Cant stop the Feeling',
-                    'John Newman - Love me again',
-                    'Limp Bizkit - Behind Blue Eyes',
-                    'Linkin Park - In the end',
-                    'Maneskin - Beggin',
-                    'Maroon 5 - This Love',
-                    'Michael Teo - Nosa',
-                    'Pharrell - Happy',
-                    'Questpistols - Белая стрекоза',
-                    'Questpistols - Революция',
-                    'Red Hot Chili Peppers - Cant stop',
-                    'Robbie Williams - Feel',
-                    'Ricky Martin - Livin la Vida Loca',
-                    'Stone Sour - Througth the glass',
-                    'The Black Eyed Peas – Lets Get It Started'
-                ]}
+                { category: 'А', items: ['Агутин - Как не думать о тебе', 'Агутин - Половина сердца', 'Амега - Лететь', 'Андрей Губин - Девушки, как звезды', 'Андрей Губин - Ночь', 'Антон Токарев - Седьмой Лепесток', 'Антонов Юрий - Летящей походкой', 'Антонов Юрий - Мечта сбывается', 'Артур Пирожков – Зацепила']},
+                { category: 'Б', items: ['Баста - Медлячок', 'Баста - Сансара', 'Браво - Вас', 'Браво - Любите девушки', 'Браво - Я то что надо', 'Браво - Как жаль', 'Бумбокс - Вахтерам']},
+                { category: 'В', items: ['Ваня Дмитриенко - Венера юпитер', 'Видели ночь']},
+                { category: 'Г', items: ['Градусы - Голая', 'Galibri x Mavik - Федерико Феллини', 'Gayazov Brothers - Малиновая Лада']},
+                { category: 'Д', items: ['Дима Билан - Держи', 'Дима Билан - Молния', 'Дима Билан - Острой бритвой', 'DаЬro - На часах 00', 'DаЬro - Юность']},
+                { category: 'Ж', items: ['Жуки - Батарейка']},
+                { category: 'З', items: ['Звери - Все что тебя касается', 'Звери - Районы-кварталы', 'Звери - Танцуй', 'Земляне - Трава у дома']},
+                { category: 'И', items: ['Иванушки - тополиный пух']},
+                { category: 'К', items: ['Корни - Ты узнаешь ее', 'Корни - с днём рождения, Вика', 'Король и Шут - Кукла колдуна', 'Крид - Самая самая', 'Крид - Моя невеста']},
+                { category: 'Л', items: ['Лазарев - В самое сердце', 'Ленинград - Рыба моей мечты', 'Ленинград - WWW', 'Лепрконсы - Хали Гали']},
+                { category: 'М', items: ['Мумий Тролль - Владивосток 2000', 'Мумий Тролль - Невеста', 'Мурат Насыров - Я это ты', 'MACAN - Asphalt 8']},
+                { category: 'Н', items: ['Нилетто - Любимка', 'Нилетто х Джиган х Artik & Asti - Худи', 'Нилетто х Свик х Олег Майами - Не вспоминай']},
+                { category: 'О', items: ['Отпетые Мош. - Люби меня люби']},
+                { category: 'Р', items: ['Руки вверх - Крошка моя', 'Руки вверх - Он тебя целует', 'Руки вверх - 18 мне', 'Руки вверх - Алешка']},
+                { category: 'С', items: ['Сплин - Выхода нет', 'Сплин - Мое сердце', 'Султан Лагучев - Горький вкус']},
+                { category: 'Т', items: ['Тима Белорусских - Незабудка', 'Тося Чайкина х Markul - Стрелы']},
+                { category: 'Х', items: ['Хабиб - Ягода - Малинка', 'ХОЛИДЕЙБОЙ - Хулиганка', 'ХОЛИДЕЙБОЙ - Пожары']},
+                { category: 'Ч', items: ['Чебанов - Солдат любви']},
+                { category: 'Ш', items: ['Шатунов - Белые розы', 'Шатунов - Седая ночь', 'Шатунов - День рождения']},
+                { category: 'Э', items: ['Элджей х Федук- Розовое вино']},
+                { category: 'ЗАРУБЕЖНЫЕ', items: ['Blur - Song 2', 'Bon Jovi - Its My Life', 'Bomfunk MCs - Freestyler', 'Bruno Mars – Uptown Funk', 'DNCE - Cake by the ocean', 'Elvis Presley - Blues way shoes', 'Fly Project - La musica', 'JONY - Комета', 'Justin Timberlake - Cant stop the Feeling', 'John Newman - Love me again', 'Limp Bizkit - Behind Blue Eyes', 'Linkin Park - In the end', 'Maneskin - Beggin', 'Maroon 5 - This Love', 'Michael Teo - Nosa', 'Pharrell - Happy', 'Questpistols - Белая стрекоза', 'Questpistols - Революция', 'Red Hot Chili Peppers - Cant stop', 'Robbie Williams - Feel', 'Ricky Martin - Livin la Vida Loca', 'Stone Sour - Througth the glass', 'The Black Eyed Peas – Lets Get It Started']}
             ];
 
             const modal = document.getElementById('myModal');
             const btn = document.getElementById('openModalBtn');
-            const span = document.getElementsByClassName('close')[0];
+            const closeModal = document.getElementsByClassName('close')[0];
             const searchInput = document.getElementById('searchInput');
             const songList = document.getElementById('songList');
-            
             const greetingModal = document.getElementById('greetingModal');
             const closeGreeting = document.getElementById('closeGreeting');
             const selectedSongDisplay = document.getElementById('selectedSongDisplay');
@@ -697,115 +546,75 @@
             
             let selectedSong = null;
 
-            // Открыть модальное окно
             btn.onclick = function() {
                 modal.style.display = 'block';
                 renderSongs();
             }
 
-            // Закрыть модальное окно
-            span.onclick = function() {
+            closeModal.onclick = function() {
                 modal.style.display = 'none';
             }
 
-            // Отрисовка списка песен
             function renderSongs(filter = '') {
                 songList.innerHTML = '';
-                
                 songs.forEach(category => {
-                    const filteredItems = category.items.filter(song => 
-                        song.toLowerCase().includes(filter.toLowerCase())
-                    );
-
-                    if (filteredItems.length > 0) {
-                        const categoryTitle = document.createElement('h3');
-                        categoryTitle.textContent = category.category;
-                        songList.appendChild(categoryTitle);
-
-                        filteredItems.forEach(song => {
-                            const songItem = document.createElement('div');
-                            songItem.className = 'song-item';
-                            songItem.textContent = song;
-                            
-                            songItem.onclick = function() {
+                    const items = category.items.filter(s => s.toLowerCase().includes(filter.toLowerCase()));
+                    if (items.length > 0) {
+                        const h3 = document.createElement('h3');
+                        h3.textContent = category.category;
+                        songList.appendChild(h3);
+                        items.forEach(song => {
+                            const div = document.createElement('div');
+                            div.className = 'song-item';
+                            div.textContent = song;
+                            div.onclick = function() {
                                 selectedSong = song;
-                                // Сразу открываем окно поздравления
                                 selectedSongDisplay.textContent = `Выбрана песня: "${selectedSong}"`;
                                 modal.style.display = 'none';
                                 greetingModal.style.display = 'block';
                             };
-
-                            songList.appendChild(songItem);
+                            songList.appendChild(div);
                         });
                     }
                 });
             }
 
-            // Поиск
             searchInput.addEventListener('input', function(e) {
                 renderSongs(e.target.value);
             });
 
-            // Закрыть окно поздравления
             closeGreeting.onclick = function() {
                 greetingModal.style.display = 'none';
             }
 
-            // Кнопка "Назад"
             backBtn.onclick = function() {
                 greetingModal.style.display = 'none';
                 modal.style.display = 'block';
             }
 
-            // Кнопка "Ок" - отправка заказа
             confirmBtn.onclick = async function() {
                 const greeting = greetingText.value.trim();
-                
                 if (!greeting) {
                     alert('Пожалуйста, напишите текст поздравления');
                     return;
                 }
-                
-                // Отправляем данные на сервер
+
                 try {
-                    const response = await fetch('http://v97798j6.beget.tech/telegram-bot.php', {
+                    await fetch('http://v97798j6.beget.tech/telegram-bot.php', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            song: selectedSong,
-                            greeting: greeting
-                        })
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({song: selectedSong, greeting: greeting})
                     });
-                    
-                    if (response.ok) {
-                        alert('Заказ отправлен! Переходим к оплате.');
-                    } else {
-                        alert('Переходим к оплате.');
-                    }
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('Переходим к оплате.');
                 }
-                
-                // Открываем страницу оплаты
-                window.open('https://tips.yandex.ru/guest/payment/8888490', '_blank');
-                greetingModal.style.display = 'none';
-                
-                // Очищаем поля
-                greetingText.value = '';
-                selectedSong = null;
+
+                window.location.href = 'https://tips.yandex.ru/guest/payment/8888490';
             }
 
-            // Закрытие по клику вне окна
             window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
-                if (event.target == greetingModal) {
-                    greetingModal.style.display = 'none';
-                }
+                if (event.target == modal) modal.style.display = 'none';
+                if (event.target == greetingModal) greetingModal.style.display = 'none';
             }
         </script>
     </body>
