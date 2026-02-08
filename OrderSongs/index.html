@@ -451,7 +451,7 @@
     <body>
         <!-- Hero секция с фото и кнопкой -->
         <div class="hero">
-            <img src="IMG_4643.jpeg" alt="LAPA TIGRA">
+            <img src="IMG_4643.JPG" alt="LAPA TIGRA">
             <div class="hero-overlay">
                 <button class="order-button-hero" id="openModalBtn">
                     Заказать песню
@@ -571,7 +571,6 @@
                 ]},
                 { category: 'В', items: [
                     'Ваня Дмитриенко - Венера юпитер',
-                    'Ваня Дмитриенко - Шёлк',
                     'Видели ночь'
                 ]},
                 { category: 'Г', items: [
@@ -759,7 +758,7 @@
             }
 
             // Кнопка "Перейти к оплате"
-            confirmBtn.onclick = function() {
+            confirmBtn.onclick = async function() {
                 const greeting = greetingText.value.trim();
                 
                 if (!greeting) {
@@ -767,60 +766,37 @@
                     return;
                 }
                 
-                const orderText = `Песня: ${selectedSong}\nПоздравление: ${greeting}`;
-                
-                // Пытаемся скопировать в буфер обмена
-                const copyToClipboard = async () => {
-                    try {
-                        // Пробуем современный API
-                        if (navigator.clipboard && navigator.clipboard.writeText) {
-                            await navigator.clipboard.writeText(orderText);
-                            return true;
-                        }
-                        
-                        // Резервный метод для старых браузеров
-                        const textArea = document.createElement('textarea');
-                        textArea.value = orderText;
-                        textArea.style.position = 'fixed';
-                        textArea.style.left = '-999999px';
-                        document.body.appendChild(textArea);
-                        textArea.select();
-                        textArea.setSelectionRange(0, 99999);
-                        const success = document.execCommand('copy');
-                        document.body.removeChild(textArea);
-                        return success;
-                    } catch (err) {
-                        console.error('Ошибка копирования:', err);
-                        return false;
-                    }
-                };
-                
-                copyToClipboard().then(success => {
-                    if (success) {
-                        alert('✅ Текст скопирован!\n\nВыберите донат 1000₽ и вставьте скопированный текст в комментарий при оплате.');
+                // Отправляем данные на сервер
+                try {
+                    const response = await fetch('http://v97798j6.beget.tech/telegram-bot.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            song: selectedSong,
+                            greeting: greeting
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        // Успешно отправлено
+                        alert('Заказ отправлен! Переходим к оплате.');
                     } else {
-                        // Если не удалось скопировать, показываем текст
-                        alert('Скопируйте этот текст:\n\n' + orderText + '\n\nВставьте его в комментарий при оплате в 1000₽.');
+                        // Ошибка, но всё равно даём пользователю оплатить
+                        alert('Переходим к оплате. Если возникнут проблемы, свяжитесь с нами.');
                     }
-                    
-                    window.open('https://tips.yandex.ru/guest/payment/8888490', '_blank');
-                    greetingModal.style.display = 'none';
-                    
-                    // Очищаем поля
-                    greetingText.value = '';
-                    selectedSong = null;
-                });
-            }
-
-            // Закрытие по клику вне окна
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
+                } catch (error) {
+                    console.error('Error:', error);
+                    // Даже если произошла ошибка, даём пользователю оплатить
+                    alert('Переходим к оплате.');
                 }
-                if (event.target == greetingModal) {
-                    greetingModal.style.display = 'none';
-                }
+                
+                // Открываем страницу оплаты
+                window.open('https://tips.yandex.ru/guest/payment/8888490', '_blank');
+                greetingModal.style.display = 'none';
+                
+                // Очищаем поля
+                greetingText.value = '';
+                selectedSong = null;
             }
-        </script>
-    </body>
-</html>
