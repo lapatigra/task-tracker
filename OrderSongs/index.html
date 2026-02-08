@@ -757,7 +757,7 @@
                 modal.style.display = 'block';
             }
 
-            // Кнопка "Перейти к оплате"
+            // Кнопка "Ок" - отправка заказа
             confirmBtn.onclick = async function() {
                 const greeting = greetingText.value.trim();
                 
@@ -780,15 +780,12 @@
                     });
                     
                     if (response.ok) {
-                        // Успешно отправлено
                         alert('Заказ отправлен! Переходим к оплате.');
                     } else {
-                        // Ошибка, но всё равно даём пользователю оплатить
-                        alert('Переходим к оплате. Если возникнут проблемы, свяжитесь с нами.');
+                        alert('Переходим к оплате.');
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    // Даже если произошла ошибка, даём пользователю оплатить
                     alert('Переходим к оплате.');
                 }
                 
@@ -800,3 +797,16 @@
                 greetingText.value = '';
                 selectedSong = null;
             }
+
+            // Закрытие по клику вне окна
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+                if (event.target == greetingModal) {
+                    greetingModal.style.display = 'none';
+                }
+            }
+        </script>
+    </body>
+</html>
