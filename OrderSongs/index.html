@@ -17,15 +17,24 @@
 
             body {
                 font-family: 'Montserrat', sans-serif;
-                background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d1810 100%);
+                background: #0a0a0a;
                 color: #fff;
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+            }
+
+            #app {
+                width: 100%;
+                max-width: 430px;
+                background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d1810 100%);
                 min-height: 100vh;
             }
 
             .hero {
                 position: relative;
                 width: 100%;
-                height: 600px;
+                aspect-ratio: 1 / 1;
                 overflow: hidden;
                 display: flex;
                 align-items: center;
@@ -411,10 +420,6 @@
             }
 
             @media (max-width: 768px) {
-                .hero {
-                    height: 400px;
-                }
-                
                 .order-button-hero {
                     padding: 15px 40px;
                     font-size: 18px;
@@ -427,6 +432,7 @@
         </style>
     </head>
     <body>
+        <div id="app">
         <div class="hero">
             <img src="IMG_4643.jpeg" alt="LAPA TIGRA">
             <div class="hero-overlay">
@@ -506,6 +512,7 @@
         <footer>
             <p>© 2025 LAPA TIGRA</p>
         </footer>
+        </div><!-- конец #app -->
 
         <script>
             const songs = [
@@ -600,7 +607,7 @@
                     return;
                 }
             
-                fetch('http://v97798j6.beget.tech/telegram-bot.php', {
+                fetch('https://ordersongs.vercel.app/api/notify', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
