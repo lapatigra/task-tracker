@@ -1,647 +1,626 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Закажи песню с поздравлением за донат 1000₽ от LAPA TIGRA и Твоя Лила">
-    <title>Репертуар | LAPA TIGRA</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            background: #000000;
-        }
-
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: #000000;
-            color: #fff;
-            min-height: 100vh;
-        }
-
-        /* Hero секция с фото */
-        .hero {
-            position: relative;
-            width: 100%;
-            height: 600px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .hero img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-        }
-
-        .hero-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: transparent;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            padding-bottom: 5px;
-        }
-
-        .order-button-hero {
-            background: linear-gradient(135deg, #ff1493 0%, #ff69b4 100%);
-            border: none;
-            padding: 16px 50px;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 10px 40px rgba(255, 20, 147, 0.6);
-            font-size: 16px;
-            font-weight: 700;
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-        }
-
-        .order-button-hero:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 50px rgba(255, 20, 147, 0.8);
-        }
-
-        main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 25px 20px;
-        }
-
-        .repertoire {
-            background: rgba(20, 20, 20, 0.95);
-            padding: 25px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            margin-top: 5px;
-            border: 1px solid rgba(255, 20, 147, 0.3);
-        }
-
-        .pink-text {
-            color: #ff1493;
-            font-weight: 700;
-        }
-
-        .line {
-            border: none;
-            border-top: 2px solid #ff1493;
-            margin: 15px 0;
-            box-shadow: 0 1px 10px rgba(255, 20, 147, 0.3);
-        }
-
-        h2 {
-            color: #ff1493;
-            text-align: center;
-            margin: 12px 0;
-            font-size: 1.5em;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            text-shadow: 0 0 20px rgba(255, 20, 147, 0.5);
-        }
-
-        .condition {
-            font-size: 0.95em;
-            line-height: 1.5;
-            text-align: center;
-            margin-bottom: 8px;
-        }
-
-        .repertoire p {
-            line-height: 1.5;
-            margin: 6px 0;
-            text-align: center;
-            font-size: 0.95em;
-        }
-
-        /* Контакты */
-        .contacts {
-            background: rgba(20, 20, 20, 0.95);
-            padding: 30px 25px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            margin-top: 25px;
-            border: 1px solid rgba(255, 20, 147, 0.3);
-            text-align: center;
-        }
-
-        .contacts h2 {
-            margin-bottom: 25px;
-        }
-
-        .contact-links {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: rgba(255, 20, 147, 0.1);
-            padding: 12px 20px;
-            border-radius: 50px;
-            text-decoration: none;
-            color: white;
-            font-weight: 600;
-            font-size: 0.9em;
-            transition: all 0.3s;
-            border: 2px solid rgba(255, 20, 147, 0.3);
-        }
-
-        .contact-item:hover {
-            background: rgba(255, 20, 147, 0.25);
-            border-color: #ff1493;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 20px rgba(255, 20, 147, 0.4);
-        }
-
-        .contact-item i {
-            font-size: 20px;
-            color: #ff1493;
-        }
-
-        /* Модальное окно */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.92);
-            animation: fadeIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .modal-content {
-            background: #000000;
-            margin: 2% auto;
-            padding: 25px;
-            border: 3px solid #ff1493;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 85vh;
-            overflow-y: auto;
-            position: relative;
-            animation: slideDown 0.3s;
-            box-shadow: 0 0 50px rgba(255, 20, 147, 0.5);
-        }
-
-        @keyframes slideDown {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Репертуар Lila Manila</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
             }
-            to {
-                transform: translateY(0);
-                opacity: 1;
+
+            body {
+                font-family: 'Montserrat', sans-serif;
+                background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #3a1a2a 100%);
+                color: #fff;
+                min-height: 100vh;
             }
-        }
 
-        .close {
-            color: #ff1493;
-            position: absolute;
-            right: 20px;
-            top: 20px;
-            font-size: 35px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
-        }
-
-        .close:hover {
-            color: #ff69b4;
-            transform: rotate(90deg);
-            text-shadow: 0 0 20px rgba(255, 105, 180, 0.8);
-        }
-
-        .search-box {
-            margin: 20px 0;
-            text-align: center;
-        }
-
-        .search-box input {
-            width: 100%;
-            max-width: 500px;
-            padding: 12px 20px;
-            font-size: 14px;
-            border: 2px solid #ff1493;
-            border-radius: 30px;
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            outline: none;
-            transition: all 0.3s;
-        }
-
-        .search-box input:focus {
-            border-color: #ff69b4;
-            box-shadow: 0 0 20px rgba(255, 20, 147, 0.4);
-        }
-
-        .search-box input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .song-list {
-            margin-top: 20px;
-        }
-
-        .song-item {
-            padding: 10px 16px;
-            margin: 6px 0;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border-left: 4px solid transparent;
-            border-right: 1px solid rgba(255, 20, 147, 0.1);
-            font-size: 0.9em;
-        }
-
-        .song-item:hover {
-            background: rgba(255, 20, 147, 0.15);
-            border-left-color: #ff1493;
-            transform: translateX(8px);
-            box-shadow: 0 5px 15px rgba(255, 20, 147, 0.3);
-        }
-
-        /* Окно поздравления */
-        .greeting-modal {
-            display: none;
-            position: fixed;
-            z-index: 1001;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
-            animation: fadeIn 0.3s;
-        }
-
-        .greeting-content {
-            background: #000000;
-            margin: 5% auto;
-            padding: 30px;
-            border: 3px solid #ff1493;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 600px;
-            position: relative;
-            animation: slideDown 0.3s;
-            box-shadow: 0 0 50px rgba(255, 20, 147, 0.5);
-        }
-
-        .greeting-content h2 {
-            margin-bottom: 15px;
-        }
-
-        .greeting-content p {
-            font-size: 0.95em;
-            line-height: 1.6;
-            margin-bottom: 15px;
-            color: #ff1493;
-        }
-
-        .selected-song-display {
-            background: rgba(255, 20, 147, 0.2);
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border-left: 4px solid #ff1493;
-            font-weight: 600;
-            font-size: 0.9em;
-        }
-
-        .greeting-input {
-            width: 100%;
-            padding: 12px;
-            font-size: 14px;
-            border: 2px solid #ff1493;
-            border-radius: 15px;
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            outline: none;
-            margin-bottom: 10px;
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s;
-        }
-
-        .greeting-input:focus {
-            border-color: #ff69b4;
-            box-shadow: 0 0 20px rgba(255, 20, 147, 0.4);
-        }
-
-        .greeting-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .btn-confirm, .btn-back {
-            flex: 1;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: 700;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-confirm {
-            background: linear-gradient(135deg, #ff1493 0%, #ff69b4 100%);
-            color: white;
-            box-shadow: 0 6px 25px rgba(255, 20, 147, 0.5);
-        }
-
-        .btn-confirm:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 35px rgba(255, 20, 147, 0.7);
-        }
-
-        .btn-back {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 2px solid #ff1493;
-        }
-
-        .btn-back:hover {
-            background: rgba(255, 20, 147, 0.2);
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            margin-top: 40px;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .modal-content::-webkit-scrollbar {
-            width: 12px;
-        }
-
-        .modal-content::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-        }
-
-        .modal-content::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #ff1493 0%, #ff69b4 100%);
-            border-radius: 10px;
-        }
-
-        .modal-content::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
-        }
-
-        h3 {
-            color: #ff1493;
-            margin-top: 15px;
-            font-size: 1.1em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(255, 20, 147, 0.3);
-        }
-
-        @media (max-width: 768px) {
             .hero {
-                height: 400px;
+                position: relative;
+                width: 100%;
+                height: 600px;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
-            
+
+            .hero img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center;
+            }
+
+            .hero-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%);
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+                padding-bottom: 50px;
+            }
+
             .order-button-hero {
-                padding: 15px 40px;
-                font-size: 18px;
+                background: linear-gradient(135deg, #FF1493 0%, #FF69B4 100%);
+                border: none;
+                padding: 16px 50px;
+                border-radius: 50px;
+                cursor: pointer;
+                transition: all 0.3s;
+                box-shadow: 0 10px 40px rgba(255, 20, 147, 0.6);
+                font-size: 16px;
+                font-weight: 700;
+                color: white;
+                text-transform: uppercase;
+                letter-spacing: 1.5px;
+            }
+
+            .order-button-hero:hover {
+                transform: translateY(-5px) scale(1.05);
+                box-shadow: 0 15px 50px rgba(255, 20, 147, 0.8);
+            }
+
+            main {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 15px 10px;
+            }
+
+            .repertoire {
+                background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(58, 26, 42, 0.5) 100%);
+                padding: 25px;
+                border-radius: 20px;
+                backdrop-filter: blur(10px);
+                margin-top: 1px;
+                border: 1px solid rgba(255, 20, 147, 0.2);
+            }
+
+            .orange-text {
+                color: #FF1493;
+                font-weight: 700;
+            }
+
+            .line {
+                border: none;
+                border-top: 2px solid #FF1493;
+                margin: 15px 0;
+                box-shadow: 0 1px 10px rgba(255, 20, 147, 0.3);
+            }
+
+            h2 {
+                color: #FF1493;
+                text-align: center;
+                margin: 12px 0;
+                font-size: 1.5em;
+                text-transform: uppercase;
+                letter-spacing: 1.5px;
+                text-shadow: 0 0 20px rgba(255, 20, 147, 0.5);
+            }
+
+            .condition {
+                font-size: 0.95em;
+                line-height: 1.5;
+                text-align: center;
+                margin-bottom: 8px;
+            }
+
+            .repertoire p {
+                line-height: 1.5;
+                margin: 6px 0;
+                text-align: center;
+                font-size: 0.95em;
+            }
+
+            .contacts {
+                background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(58, 26, 42, 0.5) 100%);
+                padding: 30px 25px;
+                border-radius: 20px;
+                backdrop-filter: blur(10px);
+                margin-top: 25px;
+                border: 1px solid rgba(255, 20, 147, 0.2);
+                text-align: center;
+            }
+
+            .contacts h2 {
+                margin-bottom: 25px;
             }
 
             .contact-links {
-                grid-template-columns: 1fr;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 15px;
+                max-width: 900px;
+                margin: 0 auto;
             }
-        }
-            
-        /* ЭКРАН ОПЛАТЫ */
-        .payment-modal {
-            display: none;
-            position: fixed;
-            z-index: 1002;
-            left: 0; 
-            top: 0;
-            width: 100%; 
-            height: 100%;
-            background-color: rgba(0,0,0,0.97);
-            animation: fadeIn 0.3s;
-        }
 
-        .payment-content {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            margin: 15% auto;
-            padding: 50px 30px;
-            border: 3px solid #ff1493;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 430px;
-            text-align: center;
-            animation: slideDown 0.3s;
-            box-shadow: 0 0 60px rgba(255, 20, 147, 0.6);
-        }
+            .contact-item {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(255, 20, 147, 0.1);
+                padding: 12px 20px;
+                border-radius: 50px;
+                text-decoration: none;
+                color: white;
+                font-weight: 600;
+                font-size: 0.9em;
+                transition: all 0.3s;
+                border: 2px solid rgba(255, 20, 147, 0.3);
+            }
 
-        .payment-amount {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 4.5em;
-            font-weight: 900;
-            color: #ff1493;
-            text-shadow: 0 0 30px rgba(255, 20, 147, 0.8);
-            line-height: 1;
-        }
+            .contact-item:hover {
+                background: rgba(255, 20, 147, 0.25);
+                border-color: #FF1493;
+                transform: translateY(-3px);
+                box-shadow: 0 5px 20px rgba(255, 20, 147, 0.4);
+            }
 
-        .payment-label {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1em;
-            font-weight: 600;
-            color: rgba(255,255,255,0.7);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin: 10px 0 35px;
-        }
+            .contact-item i {
+                font-size: 20px;
+                color: #FF1493;
+            }
 
-        .btn-pay {
-            width: 100%;
-            padding: 18px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 17px;
-            font-weight: 700;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            background: linear-gradient(135deg, #ff1493 0%, #ff69b4 100%);
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 6px 30px rgba(255, 20, 147, 0.6);
-            transition: all 0.3s;
-            margin-bottom: 12px;
-        }
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.92);
+                animation: fadeIn 0.3s;
+            }
 
-        .btn-pay:hover { 
-            transform: translateY(-3px); 
-        }
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
 
-        .btn-pay-back {
-            width: 100%;
-            padding: 12px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            border: 2px solid rgba(255,255,255,0.2);
-            border-radius: 50px;
-            cursor: pointer;
-            background: transparent;
-            color: rgba(255,255,255,0.5);
-            transition: all 0.3s;
-        }
+            .modal-content {
+                background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #3a1a2a 100%);
+                margin: 2% auto;
+                padding: 25px;
+                border: 3px solid #FF1493;
+                border-radius: 20px;
+                width: 90%;
+                max-width: 800px;
+                max-height: 85vh;
+                overflow-y: auto;
+                position: relative;
+                animation: slideDown 0.3s;
+                box-shadow: 0 0 50px rgba(255, 20, 147, 0.5);
+            }
 
-        .btn-pay-back:hover { 
-            border-color: #ff1493; 
-            color: white; 
-        }
-    </style>
-</head>
-<body>
-    <!-- Hero секция с фото и кнопкой -->
-    <div class="hero">
-        <img src="Tigr_Lila_Head.jpeg" alt="LAPA TIGRA">
-        <div class="hero-overlay">
-            <button class="order-button-hero" id="openModalBtn">
-                Заказать песню
-            </button>
-        </div>
-    </div>
+            @keyframes slideDown {
+                from {
+                    transform: translateY(-50px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
 
-    <main>
-        <div class="repertoire">
-            <h2>Заказ песни с поздравлением за донат 1000₽</h2>
-            
-            <p class="condition">
-                Выберете песню из репертуара, нажмите на кнопку "заказать песню". Выберете сумму доната 1000₽ и в комментариях укажите название трека и текст поздравления.
-            </p>
-            <p>Не забудьте написать имя, кого будем поздравлять</p>
-            
-            <hr class="line">
+            .close {
+                color: #FF1493;
+                position: absolute;
+                right: 20px;
+                top: 20px;
+                font-size: 35px;
+                font-weight: bold;
+                cursor: pointer;
+                transition: all 0.3s;
+                text-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
+            }
 
-            <p><span class="pink-text">Заказанная песня исполняется в порядке очереди в промежутке:</span></p>
-            <p>
-                С 20:30 до 21:00<br>
-                C 21:30 до 22:00<br>
-                C 22:30 до 23:00<br>
-                (пт, сб) C 23:30 до 00:00
-            </p>
-            
-            <hr class="line">
+            .close:hover {
+                color: #FF69B4;
+                transform: rotate(90deg);
+                text-shadow: 0 0 20px rgba(255, 105, 180, 0.8);
+            }
 
-            <p class="pink-text">ПЕСНИ ИСПОЛНЯЮТСЯ ТОЛЬКО ИЗ РЕПЕРТУАРА</p>
-        </div>
+            .search-box {
+                margin: 20px 0;
+                text-align: center;
+            }
 
-        <!-- Контакты -->
-        <div class="contacts">
-            <h2>Контакты</h2>
-            <div class="contact-links">
-                <a href="https://instagram.com/lapa_tigra_music?igshid=MDM4ZDc5MmU=" target="_blank" class="contact-item">
-                    <i class="fab fa-instagram"></i>
-                    <span>LAPA TIGRA</span>
-                </a>
-                <a href="https://www.instagram.com/tvoya.lila?igsh=MTlrbnI4OTN6bHR1NA==" target="_blank" class="contact-item">
-                    <i class="fab fa-instagram"></i>
-                    <span>Твоя Лила</span>
-                </a>
+            .search-box input {
+                width: 100%;
+                max-width: 500px;
+                padding: 12px 20px;
+                font-size: 14px;
+                border: 2px solid #FF1493;
+                border-radius: 30px;
+                background: rgba(0, 0, 0, 0.6);
+                color: white;
+                outline: none;
+                transition: all 0.3s;
+            }
+
+            .search-box input:focus {
+                border-color: #FF69B4;
+                box-shadow: 0 0 20px rgba(255, 20, 147, 0.4);
+            }
+
+            .search-box input::placeholder {
+                color: rgba(255, 255, 255, 0.5);
+            }
+
+            .song-list {
+                margin-top: 20px;
+            }
+
+            .song-item {
+                padding: 10px 16px;
+                margin: 6px 0;
+                background: rgba(0, 0, 0, 0.4);
+                border-radius: 12px;
+                cursor: pointer;
+                transition: all 0.3s;
+                border-left: 4px solid transparent;
+                border-right: 1px solid rgba(255, 20, 147, 0.1);
+                font-size: 0.9em;
+            }
+
+            .song-item:hover {
+                background: rgba(255, 20, 147, 0.15);
+                border-left-color: #FF1493;
+                transform: translateX(8px);
+                box-shadow: 0 5px 15px rgba(255, 20, 147, 0.3);
+            }
+
+            .greeting-modal {
+                display: none;
+                position: fixed;
+                z-index: 1001;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.95);
+                animation: fadeIn 0.3s;
+            }
+
+            .greeting-content {
+                background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #3a1a2a 100%);
+                margin: 5% auto;
+                padding: 30px;
+                border: 3px solid #FF1493;
+                border-radius: 20px;
+                width: 90%;
+                max-width: 600px;
+                position: relative;
+                animation: slideDown 0.3s;
+                box-shadow: 0 0 50px rgba(255, 20, 147, 0.5);
+            }
+
+            .greeting-content h2 {
+                margin-bottom: 15px;
+            }
+
+            .greeting-content p {
+                font-size: 0.95em;
+                line-height: 1.6;
+                margin-bottom: 15px;
+                color: #FF1493;
+            }
+
+            .selected-song-display {
+                background: rgba(255, 20, 147, 0.2);
+                padding: 12px;
+                border-radius: 10px;
+                margin-bottom: 15px;
+                border-left: 4px solid #FF1493;
+                font-weight: 600;
+                font-size: 0.9em;
+            }
+
+            .greeting-input {
+                width: 100%;
+                padding: 12px;
+                font-size: 14px;
+                border: 2px solid #FF1493;
+                border-radius: 15px;
+                background: rgba(0, 0, 0, 0.6);
+                color: white;
+                outline: none;
+                margin-bottom: 10px;
+                font-family: 'Montserrat', sans-serif;
+                transition: all 0.3s;
+            }
+
+            .greeting-input:focus {
+                border-color: #FF69B4;
+                box-shadow: 0 0 20px rgba(255, 20, 147, 0.4);
+            }
+
+            .greeting-textarea {
+                min-height: 120px;
+                resize: vertical;
+            }
+
+            .button-group {
+                display: flex;
+                gap: 15px;
+                margin-top: 20px;
+            }
+
+            .btn-confirm, .btn-back {
+                flex: 1;
+                padding: 12px;
+                font-size: 14px;
+                font-weight: 700;
+                border: none;
+                border-radius: 50px;
+                cursor: pointer;
+                transition: all 0.3s;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .btn-confirm {
+                background: linear-gradient(135deg, #FF1493 0%, #FF69B4 100%);
+                color: white;
+                box-shadow: 0 6px 25px rgba(255, 20, 147, 0.5);
+            }
+
+            .btn-confirm:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 35px rgba(255, 20, 147, 0.7);
+            }
+
+            .btn-back {
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
+                border: 2px solid #FF1493;
+            }
+
+            .btn-back:hover {
+                background: rgba(255, 20, 147, 0.2);
+            }
+
+            footer {
+                text-align: center;
+                padding: 20px;
+                margin-top: 40px;
+                color: rgba(255, 255, 255, 0.7);
+            }
+
+            h3 {
+                color: #FF1493;
+                margin-top: 15px;
+                font-size: 1.1em;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                text-shadow: 0 0 10px rgba(255, 20, 147, 0.3);
+            }
+
+            /* ЭКРАН ОПЛАТЫ */
+            .payment-modal {
+                display: none;
+                position: fixed;
+                z-index: 1002;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.97);
+                animation: fadeIn 0.3s;
+            }
+
+            .payment-content {
+                background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #3a1a2a 100%);
+                margin: 15% auto;
+                padding: 40px 30px;
+                border: 3px solid #FF1493;
+                border-radius: 20px;
+                width: 90%;
+                max-width: 400px;
+                position: relative;
+                animation: slideDown 0.3s;
+                box-shadow: 0 0 60px rgba(255, 20, 147, 0.6);
+                text-align: center;
+            }
+
+            .payment-amount {
+                font-size: 3.5em;
+                font-weight: 900;
+                color: #FF1493;
+                text-shadow: 0 0 30px rgba(255, 20, 147, 0.8);
+                margin-bottom: 8px;
+                letter-spacing: 2px;
+            }
+
+            .payment-label {
+                font-size: 1em;
+                color: rgba(255, 255, 255, 0.7);
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                margin-bottom: 30px;
+                font-weight: 500;
+            }
+
+            .payment-selected-song {
+                background: rgba(255, 20, 147, 0.15);
+                border: 1px solid rgba(255, 20, 147, 0.4);
+                border-radius: 12px;
+                padding: 12px;
+                margin-bottom: 25px;
+                font-size: 0.85em;
+                color: #FF69B4;
+                font-weight: 600;
+            }
+
+            .btn-pay {
+                width: 100%;
+                padding: 16px;
+                font-size: 1em;
+                font-weight: 700;
+                border: none;
+                border-radius: 50px;
+                cursor: pointer;
+                background: linear-gradient(135deg, #FF1493 0%, #FF69B4 100%);
+                color: white;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                box-shadow: 0 8px 30px rgba(255, 20, 147, 0.6);
+                transition: all 0.3s;
+                margin-bottom: 15px;
+                font-family: 'Montserrat', sans-serif;
+            }
+
+            .btn-pay:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 40px rgba(255, 20, 147, 0.8);
+            }
+
+            .btn-pay-back {
+                width: 100%;
+                padding: 12px;
+                font-size: 0.9em;
+                font-weight: 600;
+                border: 2px solid rgba(255, 20, 147, 0.5);
+                border-radius: 50px;
+                cursor: pointer;
+                background: transparent;
+                color: rgba(255, 255, 255, 0.7);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                transition: all 0.3s;
+                font-family: 'Montserrat', sans-serif;
+            }
+
+            .btn-pay-back:hover {
+                background: rgba(255, 20, 147, 0.15);
+                border-color: #FF1493;
+                color: white;
+            }
+
+            @media (max-width: 768px) {
+                .hero {
+                    height: 400px;
+                }
+                
+                .order-button-hero {
+                    padding: 15px 40px;
+                    font-size: 18px;
+                }
+
+                .contact-links {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="hero">
+            <img src="Tigr_Lila_Head.jpg" alt="LAPA TIGRA">
+            <div class="hero-overlay">
+                <button class="order-button-hero" id="openModalBtn">
+                    Заказать песню
+                </button>
             </div>
         </div>
-    </main>
 
-    <!-- Модальное окно с репертуаром -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Выберите песню</h2>
-            
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="🔍 Поиск по репертуару...">
+        <main>
+            <div class="repertoire">
+                <h2>Заказ песни с поздравлением за донат 1000₽</h2>
+                <p class="condition">
+                    Выберете песню из репертуара, нажмите на кнопку "заказать песню". Выберете сумму доната 1000₽ и в комментариях укажите название трека и текст поздравления.
+                </p>
+                <p>Не забудьте написать имя, кого будем поздравлять</p>
+                <hr class="line">
+                <p><span class="orange-text">Заказанная песня исполняется в порядке очереди в промежутке:</span></p>
+                <p>
+                    С 20:30 до 21:00<br>
+                    C 21:30 до 22:00<br>
+                    C 22:30 до 23:00<br>
+                    (пт, сб) C 23:30 до 00:00
+                </p>
+                <hr class="line">
+                <p class="orange-text">ПЕСНИ ИСПОЛНЯЮТСЯ ТОЛЬКО ИЗ РЕПЕРТУАРА</p>
             </div>
 
-            <div class="song-list" id="songList"></div>
-        </div>
-    </div>
+            <div class="contacts">
+                <h2>Контакты</h2>
+                <div class="contact-links">
+                    <a href="https://music.yandex.ru/artist/19420584" target="_blank" class="contact-item">
+                        <i class="fas fa-music"></i>
+                        <span>Яндекс Музыка</span>
+                    </a>
+                    <a href="https://instagram.com/lapa_tigra_music?igshid=MDM4ZDc5MmU=" target="_blank" class="contact-item">
+                        <i class="fab fa-instagram"></i>
+                        <span>Instagram</span>
+                    </a>
+                    <a href="https://vk.com/lapa.tigra" target="_blank" class="contact-item">
+                        <i class="fab fa-vk"></i>
+                        <span>ВКонтакте</span>
+                    </a>
+                    <a href="https://t.me/lapa_tigra_music" target="_blank" class="contact-item">
+                        <i class="fab fa-telegram"></i>
+                        <span>Telegram</span>
+                    </a>
+                </div>
+            </div>
+        </main>
 
-    <!-- Окно поздравления -->
-    <div id="greetingModal" class="greeting-modal">
-        <div class="greeting-content">
-            <span class="close" id="closeGreeting">&times;</span>
-            <h2>Оформление заказа</h2>
-            
-            <p>Информация будет скопирована автоматически. Вставьте её в комментарий при оплате 1000₽</p>
-            
-            <div class="selected-song-display" id="selectedSongDisplay"></div>
-            
-            <textarea class="greeting-input greeting-textarea" id="greetingText" placeholder="Текст поздравления"></textarea>
-            
-            <div class="button-group">
-                <button class="btn-back" id="backBtn">Назад</button>
-                <button class="btn-confirm" id="confirmBtn">Ок</button>
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Выберите песню</h2>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="🔍 Поиск по репертуару...">
+                </div>
+                <div class="song-list" id="songList"></div>
             </div>
         </div>
-    </div>
 
-    <footer>
-        <div class="footer">
+        <div id="greetingModal" class="greeting-modal">
+            <div class="greeting-content">
+                <span class="close" id="closeGreeting">&times;</span>
+                <h2>Оформление заказа</h2>
+                <p>Напишите ваше поздравление</p>
+                <div class="selected-song-display" id="selectedSongDisplay"></div>
+                <textarea class="greeting-input greeting-textarea" id="greetingText" placeholder="Текст поздравления"></textarea>
+                <div class="button-group">
+                    <button class="btn-back" id="backBtn">Назад</button>
+                    <button class="btn-confirm" id="confirmBtn">Ок</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Экран оплаты -->
+        <div id="paymentModal" class="payment-modal">
+            <div class="payment-content">
+                <div class="payment-amount">1000₽</div>
+                <div class="payment-label">Поздравление</div>
+                <div class="payment-selected-song" id="paymentSongDisplay"></div>
+                <button class="btn-pay" id="payBtn">💳 Оплатить</button>
+                <button class="btn-pay-back" id="payBackBtn">← Назад</button>
+            </div>
+        </div>
+
+        <footer>
             <p>© 2025 LAPA TIGRA</p>
-        </div>
-    </footer>
+        </footer>
 
-    <!-- Экран оплаты -->
-    <div id="paymentModal" class="payment-modal">
-        <div class="payment-content">
-            <div class="payment-amount">1000₽</div>
-            <div class="payment-label">Поздравление</div>
-            <button class="btn-pay" id="payBtn">💳 Оплатить</button>
-            <button class="btn-pay-back" id="payBackBtn">← Назад</button>
-        </div>
-    </div>
-    
-    <script>
-        // Репертуар
-        const songs = [
+        <script>
+            const songs = [
             { category: 'А', items: [
                 'А- Студио - Еще люблю',
                 'А- Студио - Ночь подруга',
@@ -750,7 +729,7 @@
                 'Ленинград - Сиськи',
                 'Ленинград - WWW',
                 'Леприконсы - Хали Гали',
-                'Лолита - Пошлю его на...', // Заменил звездочки
+                'Лолита - Пошлю его на ***',
                 'Лолита - На Титанике'
             ]},
             { category: 'М', items: [
@@ -893,127 +872,117 @@
             ]}
         ];
 
-        const modal = document.getElementById('myModal');
-        const btn = document.getElementById('openModalBtn');
-        const span = document.getElementsByClassName('close')[0];
-        const searchInput = document.getElementById('searchInput');
-        const songList = document.getElementById('songList');
-        
-        const greetingModal = document.getElementById('greetingModal');
-        const closeGreeting = document.getElementById('closeGreeting');
-        const selectedSongDisplay = document.getElementById('selectedSongDisplay');
-        const greetingText = document.getElementById('greetingText');
-        const backBtn = document.getElementById('backBtn');
-        const confirmBtn = document.getElementById('confirmBtn');
-        const paymentModal = document.getElementById('paymentModal');
-        const payBtn = document.getElementById('payBtn');
-        const payBackBtn = document.getElementById('payBackBtn');
-        
-        let selectedSong = null;
-
-        // Открыть модальное окно
-        btn.onclick = function() {
-            modal.style.display = 'block';
-            renderSongs();
-        }
-
-        // Закрыть модальное окно (крестик)
-        span.onclick = function() {
-            modal.style.display = 'none';
-        }
-
-        // Отрисовка списка песен
-        function renderSongs(filter = '') {
-            songList.innerHTML = '';
+            const modal = document.getElementById('myModal');
+            const btn = document.getElementById('openModalBtn');
+            const closeModal = document.getElementsByClassName('close')[0];
+            const searchInput = document.getElementById('searchInput');
+            const songList = document.getElementById('songList');
+            const greetingModal = document.getElementById('greetingModal');
+            const closeGreeting = document.getElementById('closeGreeting');
+            const selectedSongDisplay = document.getElementById('selectedSongDisplay');
+            const greetingText = document.getElementById('greetingText');
+            const backBtn = document.getElementById('backBtn');
+            const confirmBtn = document.getElementById('confirmBtn');
+            const paymentModal = document.getElementById('paymentModal');
+            const paymentSongDisplay = document.getElementById('paymentSongDisplay');
+            const payBtn = document.getElementById('payBtn');
+            const payBackBtn = document.getElementById('payBackBtn');
             
-            songs.forEach(category => {
-                const filteredItems = category.items.filter(song => 
-                    song.toLowerCase().includes(filter.toLowerCase())
-                );
+            let selectedSong = null;
 
-                if (filteredItems.length > 0) {
-                    const categoryTitle = document.createElement('h3');
-                    categoryTitle.textContent = category.category;
-                    songList.appendChild(categoryTitle);
-
-                    filteredItems.forEach(song => {
-                        const songItem = document.createElement('div');
-                        songItem.className = 'song-item';
-                        songItem.textContent = song;
-                        
-                        songItem.onclick = function() {
-                            selectedSong = song;
-                            selectedSongDisplay.textContent = `Выбрана песня: "${selectedSong}"`;
-                            modal.style.display = 'none';
-                            greetingModal.style.display = 'block';
-                        };
-
-                        songList.appendChild(songItem);
-                    });
-                }
-            });
-        }
-
-        // Поиск
-        searchInput.addEventListener('input', function(e) {
-            renderSongs(e.target.value);
-        });
-
-        // Закрыть окно поздравления
-        closeGreeting.onclick = function() {
-            greetingModal.style.display = 'none';
-        }
-
-        // Кнопка "Назад" из окна поздравления
-        backBtn.onclick = function() {
-            greetingModal.style.display = 'none';
-            modal.style.display = 'block';
-        }
-
-        // Кнопка "Ок" — показать экран оплаты
-        confirmBtn.onclick = function() {
-            const greeting = greetingText.value.trim();
-            if (!greeting) {
-                alert('Пожалуйста, напишите текст поздравления');
-                return;
+            btn.onclick = function() {
+                modal.style.display = 'block';
+                renderSongs();
             }
-            greetingModal.style.display = 'none';
-            paymentModal.style.display = 'block';
-        };
 
-        // Назад из экрана оплаты
-        payBackBtn.onclick = function() {
-            paymentModal.style.display = 'none';
-            greetingModal.style.display = 'block';
-        };
+            closeModal.onclick = function() {
+                modal.style.display = 'none';
+            }
 
-        // Оплатить — замените ссылку на вашу ссылку оплаты!
-        payBtn.onclick = function() {
-            const greeting = greetingText.value.trim();
+            function renderSongs(filter = '') {
+                songList.innerHTML = '';
+                songs.forEach(category => {
+                    const items = category.items.filter(s => s.toLowerCase().includes(filter.toLowerCase()));
+                    if (items.length > 0) {
+                        const h3 = document.createElement('h3');
+                        h3.textContent = category.category;
+                        songList.appendChild(h3);
+                        items.forEach(song => {
+                            const div = document.createElement('div');
+                            div.className = 'song-item';
+                            div.textContent = song;
+                            div.onclick = function() {
+                                selectedSong = song;
+                                selectedSongDisplay.textContent = `Выбрана песня: "${selectedSong}"`;
+                                modal.style.display = 'none';
+                                greetingText.value = '';
+                                greetingModal.style.display = 'block';
+                            };
+                            songList.appendChild(div);
+                        });
+                    }
+                });
+            }
+
+            searchInput.addEventListener('input', function(e) {
+                renderSongs(e.target.value);
+            });
+
+            closeGreeting.onclick = function() {
+                greetingModal.style.display = 'none';
+            }
+
+            backBtn.onclick = function() {
+                greetingModal.style.display = 'none';
+                modal.style.display = 'block';
+            }
+
+            confirmBtn.onclick = function () {
+                const greeting = greetingText.value.trim();
             
-            // Отправка данных на сервер (закомментировано, чтобы не было ошибки, если сервера нет)
-            // fetch('https://ordersongs.vercel.app/api/notify', {
-            //     method: 'POST',
-            //     headers: {'Content-Type': 'application/json'},
-            //     body: JSON.stringify({ song: selectedSong, greeting: greeting })
-            // }).catch(e => console.error('Ошибка отправки:', e));
-
-            // Здесь можно добавить логику копирования в буфер обмена, если нужно
-            // alert(`Скопируйте этот текст для комментария к оплате:\n\nПесня: ${selectedSong}\nПоздравление: ${greeting}`);
+                if (!greeting) {
+                    alert('Пожалуйста, напишите текст поздравления');
+                    return;
+                }
             
-            // Переход на страницу оплаты
-            setTimeout(() => {
-                // ЗАМЕНИТЕ ЭТУ ССЫЛКУ НА ВАШУ РЕАЛЬНУЮ ССЫЛКУ ДЛЯ ОПЛАТЫ
-                window.location.href = 'https://tips.yandex.ru/guest/payment/8888490'; 
-            }, 500);
-        };
+                // Показываем экран оплаты вместо сразу редиректа
+                paymentSongDisplay.textContent = selectedSong;
+                greetingModal.style.display = 'none';
+                paymentModal.style.display = 'block';
+            };
 
-        // Закрытие по клику вне окна
-        window.onclick = function(e) {
-            if (e.target == modal) modal.style.display = 'none';
-            if (e.target == greetingModal) greetingModal.style.display = 'none';
-            if (e.target == paymentModal) paymentModal.style.display = 'none';
-        };
-    </script>
-</body>
+            payBackBtn.onclick = function() {
+                paymentModal.style.display = 'none';
+                greetingModal.style.display = 'block';
+            };
+
+            payBtn.onclick = function() {
+                const greeting = greetingText.value.trim();
+
+                fetch('/telegram-bot.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        song: selectedSong,
+                        greeting: greeting
+                    })
+                }).then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                }).then(data => {
+                    console.log('Response data:', data);
+                }).catch(e => console.error('Error:', e));
+
+                setTimeout(() => {
+                    window.location.href = 'https://tips.yandex.ru/guest/payment/8888490';
+                }, 500);
+            };
+
+            window.onclick = function(event) {
+                if (event.target == modal) modal.style.display = 'none';
+                if (event.target == greetingModal) greetingModal.style.display = 'none';
+                if (event.target == paymentModal) paymentModal.style.display = 'none';
+            }
+        </script>
+    </body>
 </html>
