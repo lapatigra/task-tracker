@@ -452,6 +452,85 @@
                 grid-template-columns: 1fr;
             }
         }
+            
+/* ЭКРАН ОПЛАТЫ */
+.payment-modal {
+    display: none;
+    position: fixed;
+    z-index: 1002;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.97);
+    animation: fadeIn 0.3s;
+}
+
+.payment-content {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d1810 100%);
+    margin: 15% auto;
+    padding: 50px 30px;
+    border: 3px solid #ff5722;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 430px;
+    text-align: center;
+    animation: slideDown 0.3s;
+    box-shadow: 0 0 60px rgba(255,87,34,0.6);
+}
+
+.payment-amount {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 5.5em;
+    font-weight: 900;
+    color: #ff5722;
+    text-shadow: 0 0 30px rgba(255,87,34,0.8);
+    line-height: 1;
+}
+
+.payment-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1em;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin: 10px 0 35px;
+}
+
+.btn-pay {
+    width: 100%;
+    padding: 18px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #ff5722 0%, #ff6f00 100%);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 6px 30px rgba(255,87,34,0.6);
+    transition: all 0.3s;
+    margin-bottom: 12px;
+}
+
+.btn-pay:hover { transform: translateY(-3px); }
+
+.btn-pay-back {
+    width: 100%;
+    padding: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 50px;
+    cursor: pointer;
+    background: transparent;
+    color: rgba(255,255,255,0.5);
+    transition: all 0.3s;
+}
+
+.btn-pay-back:hover { border-color: #ff5722; color: white; }
     </style>
 </head>
 <body>
@@ -544,6 +623,16 @@
         </div>
     </footer>
 
+    <!-- Экран оплаты -->
+    <div id="paymentModal" class="payment-modal">
+        <div class="payment-content">
+            <div class="payment-amount">1000₽</div>
+            <div class="payment-label">Поздравление</div>
+            <button class="btn-pay" id="payBtn">💳 Оплатить</button>
+            <button class="btn-pay-back" id="payBackBtn">← Назад</button>
+        </div>
+    </div>
+    
     <script>
         // Репертуар
         const songs = [
@@ -873,70 +962,48 @@
             modal.style.display = 'block';
         }
 
-        // Кнопка "Перейти к оплате"
-        confirmBtn.onclick = function() {
-            const greeting = greetingText.value.trim();
-            
-            if (!greeting) {
-                alert('Пожалуйста, напишите текст поздравления');
-                return;
-            }
-            
-            const orderText = `Песня: ${selectedSong}\nПоздравление: ${greeting}`;
-            
-            // Пытаемся скопировать в буфер обмена
-            const copyToClipboard = async () => {
-                try {
-                    // Пробуем современный API
-                    if (navigator.clipboard && navigator.clipboard.writeText) {
-                        await navigator.clipboard.writeText(orderText);
-                        return true;
-                    }
-                    
-                    // Резервный метод для старых браузеров
-                    const textArea = document.createElement('textarea');
-                    textArea.value = orderText;
-                    textArea.style.position = 'fixed';
-                    textArea.style.left = '-999999px';
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    textArea.setSelectionRange(0, 99999);
-                    const success = document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    return success;
-                } catch (err) {
-                    console.error('Ошибка копирования:', err);
-                    return false;
-                }
-            };
-            
-            copyToClipboard().then(success => {
-                if (success) {
-                    alert('✅ Текст скопирован!\n\nВыберите донат 1000₽ и вставьте скопированный текст в комментарий при оплате.');
-                } else {
-                    // Если не удалось скопировать, показываем текст
-                    alert('Скопируйте этот текст:\n\n' + orderText + '\n\nВыберите донат 1000₽ и вставьте текст в комментарий при оплате.');
-                }
-                
-                window.open('https://tips.yandex.ru/guest/payment/3044586', '_blank');
-                greetingModal.style.display = 'none';
-                
-                // Очищаем поля
-                greetingText.value = '';
-                selectedSong = null;
-            });
-        }
+      const paymentModal = document.getElementById('paymentModal');
+const payBtn = document.getElementById('payBtn');
+const payBackBtn = document.getElementById('payBackBtn');
+
+// Кнопка "Ок" — показать экран оплаты
+confirmBtn.onclick = function() {
+    const greeting = greetingText.value.trim();
+    if (!greeting) {
+        alert('Пожалуйста, напишите текст поздравления');
+        return;
+    }
+    greetingModal.style.display = 'none';
+    paymentModal.style.display = 'block';
+};
+
+// Назад из экрана оплаты
+payBackBtn.onclick = function() {
+    paymentModal.style.display = 'none';
+    greetingModal.style.display = 'block';
+};
+
+// Оплатить — замените ссылку на вашу ссылку оплаты!
+payBtn.onclick = function() {
+    const greeting = greetingText.value.trim();
+    fetch('https://ordersongs.vercel.app/api/notify', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ song: selectedSong, greeting: greeting })
+    }).catch(e => console.error(e));
+
+    setTimeout(() => {
+        window.location.href = 'https://tips.yandex.ru/guest/payment/8888490';
+    }, 500);
+};
 
         // Закрытие по клику вне окна
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
-            if (event.target == greetingModal) {
-                greetingModal.style.display = 'none';
-            }
-        }
-    </script>
+       window.onclick = function(e) {
+        if (e.target == modal) modal.style.display = 'none';
+        if (e.target == greetingModal) greetingModal.style.display = 'none';
+        if (e.target == paymentModal) paymentModal.style.display = 'none';
+    };
+</script>
 </body>
 ```
 
