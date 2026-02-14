@@ -15,11 +15,95 @@
 ```
     body {
         font-family: 'Montserrat', sans-serif;
-        background: #0a0a0a;
+        background: #080808;
         color: #fff;
         min-height: 100vh;
         display: flex;
         justify-content: center;
+        align-items: flex-start;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    /* Атмосферный фон для ПК */
+    body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background:
+            radial-gradient(ellipse 60% 50% at 20% 50%, rgba(255,87,34,0.12) 0%, transparent 70%),
+            radial-gradient(ellipse 60% 50% at 80% 50%, rgba(180,30,10,0.10) 0%, transparent 70%),
+            radial-gradient(ellipse 100% 40% at 50% 100%, rgba(255,111,0,0.08) 0%, transparent 60%),
+            #080808;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    /* Декоративные линии по бокам */
+    body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image:
+            repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 39px,
+                rgba(255,87,34,0.03) 39px,
+                rgba(255,87,34,0.03) 40px
+            ),
+            repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 59px,
+                rgba(255,87,34,0.025) 59px,
+                rgba(255,87,34,0.025) 60px
+            );
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    /* Боковые логотипы / надписи (только на широком экране) */
+    .side-decoration {
+        display: none;
+    }
+
+    @media (min-width: 700px) {
+        .side-decoration {
+            display: flex;
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            z-index: 1;
+            opacity: 0.18;
+            pointer-events: none;
+        }
+        .side-decoration.left { left: 3vw; }
+        .side-decoration.right { right: 3vw; }
+        .side-deco-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            color: #ff5722;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+        .side-deco-line {
+            width: 1px;
+            height: 120px;
+            background: linear-gradient(to bottom, transparent, #ff5722, transparent);
+        }
+        .side-deco-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ff5722;
+        }
     }
 
     #app {
@@ -27,6 +111,20 @@
         max-width: 430px;
         background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d1810 100%);
         min-height: 100vh;
+        position: relative;
+        z-index: 2;
+        box-shadow: 0 0 80px rgba(255,87,34,0.15), 0 0 200px rgba(255,87,34,0.08);
+    }
+
+    @media (min-width: 700px) {
+        #app {
+            box-shadow:
+                0 0 0 1px rgba(255,87,34,0.15),
+                0 0 60px rgba(255,87,34,0.2),
+                0 0 120px rgba(255,87,34,0.1),
+                -60px 0 80px rgba(255,87,34,0.05),
+                60px 0 80px rgba(255,87,34,0.05);
+        }
     }
 
     /* HERO */
@@ -404,6 +502,26 @@
 
 </head>
 <body>
+    <!-- Декоративные элементы по бокам для ПК -->
+    <div class="side-decoration left">
+        <div class="side-deco-dot"></div>
+        <div class="side-deco-line"></div>
+        <div class="side-deco-text">LAPA TIGRA</div>
+        <div class="side-deco-line"></div>
+        <div class="side-deco-text">LIVE MUSIC</div>
+        <div class="side-deco-line"></div>
+        <div class="side-deco-dot"></div>
+    </div>
+    <div class="side-decoration right">
+        <div class="side-deco-dot"></div>
+        <div class="side-deco-line"></div>
+        <div class="side-deco-text">ЗАКАЗ ПЕСНИ</div>
+        <div class="side-deco-line"></div>
+        <div class="side-deco-text">1000 ₽</div>
+        <div class="side-deco-line"></div>
+        <div class="side-deco-dot"></div>
+    </div>
+
     <div id="app">
 
 ```
