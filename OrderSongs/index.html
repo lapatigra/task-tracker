@@ -8,9 +8,13 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
         <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
 
 ```
         body {
@@ -29,12 +33,14 @@
             min-height: 100vh;
         }
 
-        /* HERO */
         .hero {
             position: relative;
             width: 100%;
             aspect-ratio: 1 / 1;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .hero img {
@@ -46,13 +52,15 @@
 
         .hero-overlay {
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%);
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            padding-bottom: 40px;
+            padding-bottom: 50px;
         }
 
         .order-button-hero {
@@ -63,12 +71,11 @@
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 10px 40px rgba(255, 87, 34, 0.6);
-            font-family: 'Montserrat', sans-serif;
             font-size: 16px;
             font-weight: 700;
             color: white;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
         }
 
         .order-button-hero:hover {
@@ -76,133 +83,132 @@
             box-shadow: 0 15px 50px rgba(255, 87, 34, 0.8);
         }
 
-        /* MAIN */
-        main { padding: 25px 20px; }
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 25px 20px;
+        }
 
         .repertoire {
-            background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(45,24,16,0.5) 100%);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(45, 24, 16, 0.5) 100%);
             padding: 25px;
             border-radius: 20px;
+            backdrop-filter: blur(10px);
+            margin-top: 20px;
             border: 1px solid rgba(255, 87, 34, 0.2);
-            margin-bottom: 25px;
         }
 
-        .contacts {
-            background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(45,24,16,0.5) 100%);
-            padding: 25px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 87, 34, 0.2);
-            text-align: center;
+        .orange-text {
+            color: #ff5722;
+            font-weight: 700;
         }
-
-        .orange-text { color: #ff5722; font-weight: 700; }
 
         .line {
             border: none;
             border-top: 2px solid #ff5722;
             margin: 15px 0;
+            box-shadow: 0 1px 10px rgba(255, 87, 34, 0.3);
         }
 
         h2 {
             color: #ff5722;
             text-align: center;
             margin: 12px 0;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1.4em;
-            font-weight: 800;
+            font-size: 1.5em;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 1.5px;
             text-shadow: 0 0 20px rgba(255, 87, 34, 0.5);
         }
 
-        h3 {
-            color: #ff5722;
-            margin-top: 15px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1em;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        .condition {
+            font-size: 0.95em;
+            line-height: 1.5;
+            text-align: center;
+            margin-bottom: 8px;
         }
 
-        p {
+        .repertoire p {
             line-height: 1.5;
             margin: 6px 0;
             text-align: center;
-            font-size: 0.88em;
-            color: #fff;
-            font-weight: 300;
+            font-size: 0.95em;
         }
+
+        .contacts {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(45, 24, 16, 0.5) 100%);
+            padding: 30px 25px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            margin-top: 25px;
+            border: 1px solid rgba(255, 87, 34, 0.2);
+            text-align: center;
+        }
+
+        .contacts h2 {
+            margin-bottom: 25px;
+        }
+
         .contact-links {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
         .contact-item {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             background: rgba(255, 87, 34, 0.1);
-            padding: 12px;
+            padding: 12px 20px;
             border-radius: 50px;
             text-decoration: none;
             color: white;
-            font-family: 'Montserrat', sans-serif;
             font-weight: 600;
-            font-size: 0.82em;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            border: 2px solid rgba(255, 87, 34, 0.3);
+            font-size: 0.9em;
             transition: all 0.3s;
+            border: 2px solid rgba(255, 87, 34, 0.3);
         }
 
         .contact-item:hover {
             background: rgba(255, 87, 34, 0.25);
             border-color: #ff5722;
             transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(255, 87, 34, 0.4);
         }
 
-        .contact-item i { font-size: 18px; color: #ff5722; }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: rgba(255,255,255,0.4);
-            font-size: 0.8em;
+        .contact-item i {
+            font-size: 20px;
+            color: #ff5722;
         }
 
-        /* АНИМАЦИИ */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideDown {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        /* МОДАЛЬНЫЕ ОКНА */
-        .modal, .greeting-modal, .payment-modal {
+        .modal {
             display: none;
             position: fixed;
             z-index: 1000;
-            left: 0; top: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.92);
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.92);
             animation: fadeIn 0.3s;
         }
 
-        .payment-modal { z-index: 1002; background-color: rgba(0,0,0,0.97); }
-        .greeting-modal { z-index: 1001; }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
-        .modal-content, .greeting-content {
+        .modal-content {
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d1810 100%);
             margin: 2% auto;
             padding: 25px;
             border: 3px solid #ff5722;
             border-radius: 20px;
             width: 90%;
-            max-width: 430px;
+            max-width: 800px;
             max-height: 85vh;
             overflow-y: auto;
             position: relative;
@@ -210,73 +216,119 @@
             box-shadow: 0 0 50px rgba(255, 87, 34, 0.5);
         }
 
-        .greeting-content { margin: 5% auto; max-height: none; overflow-y: visible; }
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
 
         .close {
             color: #ff5722;
             position: absolute;
-            right: 20px; top: 15px;
+            right: 20px;
+            top: 20px;
             font-size: 35px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
+            text-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
         }
 
-        .close:hover { transform: rotate(90deg); color: #ff6f00; }
+        .close:hover {
+            color: #ff6f00;
+            transform: rotate(90deg);
+            text-shadow: 0 0 20px rgba(255, 111, 0, 0.8);
+        }
 
-        /* ПОИСК */
-        .search-box { margin: 20px 0; text-align: center; }
+        .search-box {
+            margin: 20px 0;
+            text-align: center;
+        }
 
         .search-box input {
             width: 100%;
+            max-width: 500px;
             padding: 12px 20px;
             font-size: 14px;
             border: 2px solid #ff5722;
             border-radius: 30px;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0, 0, 0, 0.6);
             color: white;
             outline: none;
-            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s;
         }
 
-        .search-box input::placeholder { color: rgba(255,255,255,0.5); }
+        .search-box input:focus {
+            border-color: #ff6f00;
+            box-shadow: 0 0 20px rgba(255, 87, 34, 0.4);
+        }
 
-        /* СПИСОК ПЕСЕН */
-        .song-list { margin-top: 10px; }
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
 
-        h3 {
-            color: #ff5722;
-            margin-top: 15px;
-            font-size: 1em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .song-list {
+            margin-top: 20px;
         }
 
         .song-item {
             padding: 10px 16px;
-            margin: 5px 0;
-            background: rgba(0,0,0,0.4);
+            margin: 6px 0;
+            background: rgba(0, 0, 0, 0.4);
             border-radius: 12px;
             cursor: pointer;
-            font-size: 0.9em;
-            border-left: 4px solid transparent;
             transition: all 0.3s;
-            color: #fff;
+            border-left: 4px solid transparent;
+            border-right: 1px solid rgba(255, 87, 34, 0.1);
+            font-size: 0.9em;
         }
 
         .song-item:hover {
             background: rgba(255, 87, 34, 0.15);
             border-left-color: #ff5722;
             transform: translateX(8px);
+            box-shadow: 0 5px 15px rgba(255, 87, 34, 0.3);
         }
 
-        /* ФОРМА ПОЗДРАВЛЕНИЯ */
-        .greeting-content h2 { margin-bottom: 15px; }
+        .greeting-modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            animation: fadeIn 0.3s;
+        }
 
-        .greeting-content > p {
-            font-size: 0.9em;
-            color: #ff5722;
+        .greeting-content {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d1810 100%);
+            margin: 5% auto;
+            padding: 30px;
+            border: 3px solid #ff5722;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            animation: slideDown 0.3s;
+            box-shadow: 0 0 50px rgba(255, 87, 34, 0.5);
+        }
+
+        .greeting-content h2 {
             margin-bottom: 15px;
+        }
+
+        .greeting-content p {
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #ff5722;
         }
 
         .selected-song-display {
@@ -287,7 +339,6 @@
             border-left: 4px solid #ff5722;
             font-weight: 600;
             font-size: 0.9em;
-            color: #fff;
         }
 
         .greeting-input {
@@ -296,29 +347,41 @@
             font-size: 14px;
             border: 2px solid #ff5722;
             border-radius: 15px;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0, 0, 0, 0.6);
             color: white;
             outline: none;
             margin-bottom: 10px;
             font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s;
         }
 
-        .greeting-textarea { min-height: 120px; resize: vertical; }
+        .greeting-input:focus {
+            border-color: #ff6f00;
+            box-shadow: 0 0 20px rgba(255, 87, 34, 0.4);
+        }
 
-        .button-group { display: flex; gap: 15px; margin-top: 15px; }
+        .greeting-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
 
         .btn-confirm, .btn-back {
             flex: 1;
             padding: 12px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 700;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
         }
 
         .btn-confirm {
@@ -327,141 +390,113 @@
             box-shadow: 0 6px 25px rgba(255, 87, 34, 0.5);
         }
 
-        .btn-confirm:hover { transform: translateY(-3px); }
+        .btn-confirm:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 35px rgba(255, 87, 34, 0.7);
+        }
 
         .btn-back {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
             border: 2px solid #ff5722;
         }
 
-        /* ЭКРАН ОПЛАТЫ */
-        .payment-content {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d1810 100%);
-            margin: 15% auto;
-            padding: 50px 30px;
-            border: 3px solid #ff5722;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 430px;
+        .btn-back:hover {
+            background: rgba(255, 87, 34, 0.2);
+        }
+
+        footer {
             text-align: center;
-            animation: slideDown 0.3s;
-            box-shadow: 0 0 60px rgba(255, 87, 34, 0.6);
+            padding: 20px;
+            margin-top: 40px;
+            color: rgba(255, 255, 255, 0.7);
         }
 
-        .payment-amount {
-            font-size: 5.5em;
-            font-weight: 900;
-            font-family: 'Montserrat', sans-serif;
+        h3 {
             color: #ff5722;
-            text-shadow: 0 0 30px rgba(255, 87, 34, 0.8);
-            line-height: 1;
-        }
-
-        .payment-label {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1em;
-            font-weight: 600;
-            color: rgba(255,255,255,0.7);
+            margin-top: 15px;
+            font-size: 1.1em;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            margin: 10px 0 35px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(255, 87, 34, 0.3);
         }
 
-        .btn-pay {
-            width: 100%;
-            padding: 18px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 17px;
-            font-weight: 700;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            background: linear-gradient(135deg, #ff5722 0%, #ff6f00 100%);
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 6px 30px rgba(255, 87, 34, 0.6);
-            transition: all 0.3s;
-            margin-bottom: 12px;
+        @media (max-width: 768px) {
+            .order-button-hero {
+                padding: 15px 40px;
+                font-size: 18px;
+            }
+
+            .contact-links {
+                grid-template-columns: 1fr;
+            }
         }
-
-        .btn-pay:hover { transform: translateY(-3px); }
-
-        .btn-pay-back {
-            width: 100%;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            border: 2px solid rgba(255,255,255,0.2);
-            border-radius: 50px;
-            cursor: pointer;
-            background: transparent;
-            color: rgba(255,255,255,0.5);
-            transition: all 0.3s;
-        }
-
-        .btn-pay-back:hover { border-color: #ff5722; color: white; }
     </style>
 </head>
 <body>
     <div id="app">
+    <div class="hero">
+        <img src="IMG_4643.jpeg" alt="LAPA TIGRA">
+        <div class="hero-overlay">
+            <button class="order-button-hero" id="openModalBtn">
+                Заказать песню
+            </button>
+        </div>
+    </div>
 
-        <div class="hero">
-            <img src="IMG_4643.jpeg" alt="LAPA TIGRA">
-            <div class="hero-overlay">
-                <button class="order-button-hero" id="openModalBtn">Заказать песню</button>
-            </div>
+    <main>
+        <div class="repertoire">
+            <h2>Заказ песни с поздравлением за донат 1000₽</h2>
+            <p class="condition">
+                Выберете песню из репертуара, нажмите на кнопку "заказать песню". Выберете сумму доната 1000₽ и в комментариях укажите название трека и текст поздравления.
+            </p>
+            <p>Не забудьте написать имя, кого будем поздравлять</p>
+            <hr class="line">
+            <p><span class="orange-text">Заказанная песня исполняется в порядке очереди в промежутке:</span></p>
+            <p>
+                С 20:30 до 21:00<br>
+                C 21:30 до 22:00<br>
+                C 22:30 до 23:00<br>
+                (пт, сб) C 23:30 до 00:00
+            </p>
+            <hr class="line">
+            <p class="orange-text">ПЕСНИ ИСПОЛНЯЮТСЯ ТОЛЬКО ИЗ РЕПЕРТУАРА</p>
         </div>
 
-        <main>
-            <div class="repertoire">
-                <h2>Заказ песни с поздравлением за донат 1000₽</h2>
-                <p>Выберете песню из репертуара, нажмите "заказать песню". Выберете сумму доната 1000₽ и в комментариях укажите название трека и текст поздравления.</p>
-                <p>Не забудьте написать имя, кого будем поздравлять</p>
-                <hr class="line">
-                <p><span class="orange-text">Заказанная песня исполняется в порядке очереди:</span></p>
-                <p>С 20:30 до 21:00 &nbsp;|&nbsp; С 21:30 до 22:00<br>С 22:30 до 23:00 &nbsp;|&nbsp; (пт, сб) С 23:30 до 00:00</p>
-                <hr class="line">
-                <p class="orange-text">ПЕСНИ ИСПОЛНЯЮТСЯ ТОЛЬКО ИЗ РЕПЕРТУАРА</p>
+        <div class="contacts">
+            <h2>Контакты</h2>
+            <div class="contact-links">
+                <a href="https://music.yandex.ru/artist/19420584" target="_blank" class="contact-item">
+                    <i class="fas fa-music"></i>
+                    <span>Яндекс Музыка</span>
+                </a>
+                <a href="https://instagram.com/lapa_tigra_music?igshid=MDM4ZDc5MmU=" target="_blank" class="contact-item">
+                    <i class="fab fa-instagram"></i>
+                    <span>Instagram</span>
+                </a>
+                <a href="https://vk.com/lapa.tigra" target="_blank" class="contact-item">
+                    <i class="fab fa-vk"></i>
+                    <span>ВКонтакте</span>
+                </a>
+                <a href="https://t.me/lapa_tigra_music" target="_blank" class="contact-item">
+                    <i class="fab fa-telegram"></i>
+                    <span>Telegram</span>
+                </a>
             </div>
+        </div>
+    </main>
 
-            <div class="contacts">
-                <h2>Контакты</h2>
-                <div class="contact-links">
-                    <a href="https://music.yandex.ru/artist/19420584" target="_blank" class="contact-item">
-                        <i class="fas fa-music"></i><span>Яндекс Музыка</span>
-                    </a>
-                    <a href="https://instagram.com/lapa_tigra_music?igshid=MDM4ZDc5MmU=" target="_blank" class="contact-item">
-                        <i class="fab fa-instagram"></i><span>Instagram</span>
-                    </a>
-                    <a href="https://vk.com/lapa.tigra" target="_blank" class="contact-item">
-                        <i class="fab fa-vk"></i><span>ВКонтакте</span>
-                    </a>
-                    <a href="https://t.me/lapa_tigra_music" target="_blank" class="contact-item">
-                        <i class="fab fa-telegram"></i><span>Telegram</span>
-                    </a>
-                </div>
-            </div>
-        </main>
-
-        <footer><p>© 2025 LAPA TIGRA</p></footer>
-
-    </div><!-- конец #app -->
-
-    <!-- Список песен -->
     <div id="myModal" class="modal">
         <div class="modal-content">
-            <span class="close" id="closeModal">&times;</span>
+            <span class="close">&times;</span>
             <h2>Выберите песню</h2>
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="🔍 Поиск...">
+                <input type="text" id="searchInput" placeholder="🔍 Поиск по репертуару...">
             </div>
             <div class="song-list" id="songList"></div>
         </div>
     </div>
 
-    <!-- Поздравление -->
     <div id="greetingModal" class="greeting-modal">
         <div class="greeting-content">
             <span class="close" id="closeGreeting">&times;</span>
@@ -476,7 +511,7 @@
         </div>
     </div>
 
-    <!-- Экран оплаты -->
+    <!-- Экран подтверждения оплаты -->
     <div id="paymentModal" class="payment-modal">
         <div class="payment-content">
             <div class="payment-amount">1000₽</div>
@@ -485,6 +520,11 @@
             <button class="btn-pay-back" id="payBackBtn">← Назад</button>
         </div>
     </div>
+
+    <footer>
+        <p>© 2025 LAPA TIGRA</p>
+    </footer>
+    </div><!-- конец #app -->
 
     <script>
         const songs = [
@@ -507,12 +547,13 @@
             { category: 'Х', items: ['Хабиб - Ягода - Малинка', 'ХОЛИДЕЙБОЙ - Хулиганка', 'ХОЛИДЕЙБОЙ - Пожары']},
             { category: 'Ч', items: ['Чебанов - Солдат любви']},
             { category: 'Ш', items: ['Шатунов - Белые розы', 'Шатунов - Седая ночь', 'Шатунов - День рождения']},
-            { category: 'Э', items: ['Элджей х Федук - Розовое вино']},
+            { category: 'Э', items: ['Элджей х Федук- Розовое вино']},
             { category: 'ЗАРУБЕЖНЫЕ', items: ['Blur - Song 2', 'Bon Jovi - Its My Life', 'Bomfunk MCs - Freestyler', 'Bruno Mars – Uptown Funk', 'DNCE - Cake by the ocean', 'Elvis Presley - Blues way shoes', 'Fly Project - La musica', 'JONY - Комета', 'Justin Timberlake - Cant stop the Feeling', 'John Newman - Love me again', 'Limp Bizkit - Behind Blue Eyes', 'Linkin Park - In the end', 'Maneskin - Beggin', 'Maroon 5 - This Love', 'Michael Teo - Nosa', 'Pharrell - Happy', 'Questpistols - Белая стрекоза', 'Questpistols - Революция', 'Red Hot Chili Peppers - Cant stop', 'Robbie Williams - Feel', 'Ricky Martin - Livin la Vida Loca', 'Stone Sour - Througth the glass', 'The Black Eyed Peas – Lets Get It Started']}
         ];
 
         const modal = document.getElementById('myModal');
-        const closeModal = document.getElementById('closeModal');
+        const btn = document.getElementById('openModalBtn');
+        const closeModal = document.getElementsByClassName('close')[0];
         const searchInput = document.getElementById('searchInput');
         const songList = document.getElementById('songList');
         const greetingModal = document.getElementById('greetingModal');
@@ -522,28 +563,28 @@
         const backBtn = document.getElementById('backBtn');
         const confirmBtn = document.getElementById('confirmBtn');
         const paymentModal = document.getElementById('paymentModal');
+        const paymentSongDisplay = document.getElementById('paymentSongDisplay');
         const payBtn = document.getElementById('payBtn');
         const payBackBtn = document.getElementById('payBackBtn');
-
+        
         let selectedSong = null;
 
-        // Открыть список песен
-        document.getElementById('openModalBtn').onclick = function() {
+        btn.onclick = function() {
             modal.style.display = 'block';
             renderSongs();
-        };
+        }
 
-        closeModal.onclick = function() { modal.style.display = 'none'; };
-        closeGreeting.onclick = function() { greetingModal.style.display = 'none'; };
+        closeModal.onclick = function() {
+            modal.style.display = 'none';
+        }
 
-        // Отрисовка песен
         function renderSongs(filter = '') {
             songList.innerHTML = '';
-            songs.forEach(cat => {
-                const items = cat.items.filter(s => s.toLowerCase().includes(filter.toLowerCase()));
+            songs.forEach(category => {
+                const items = category.items.filter(s => s.toLowerCase().includes(filter.toLowerCase()));
                 if (items.length > 0) {
                     const h3 = document.createElement('h3');
-                    h3.textContent = cat.category;
+                    h3.textContent = category.category;
                     songList.appendChild(h3);
                     items.forEach(song => {
                         const div = document.createElement('div');
@@ -551,9 +592,8 @@
                         div.textContent = song;
                         div.onclick = function() {
                             selectedSong = song;
-                            selectedSongDisplay.textContent = song;
+                            selectedSongDisplay.textContent = `Выбрана песня: "${selectedSong}"`;
                             modal.style.display = 'none';
-                            greetingText.value = '';
                             greetingModal.style.display = 'block';
                         };
                         songList.appendChild(div);
@@ -562,32 +602,32 @@
             });
         }
 
-        searchInput.addEventListener('input', e => renderSongs(e.target.value));
+        searchInput.addEventListener('input', function(e) {
+            renderSongs(e.target.value);
+        });
 
-        // Назад из поздравления
+        closeGreeting.onclick = function() {
+            greetingModal.style.display = 'none';
+        }
+
         backBtn.onclick = function() {
             greetingModal.style.display = 'none';
             modal.style.display = 'block';
-        };
+        }
 
-        // Ок — показать экран оплаты
-        confirmBtn.onclick = function() {
+        confirmBtn.onclick = function () {
             const greeting = greetingText.value.trim();
             if (!greeting) {
                 alert('Пожалуйста, напишите текст поздравления');
                 return;
             }
+            // Показываем экран оплаты
+            paymentSongDisplay.textContent = `🎤 ${selectedSong}`;
             greetingModal.style.display = 'none';
             paymentModal.style.display = 'block';
         };
 
-        // Назад из экрана оплаты
-        payBackBtn.onclick = function() {
-            paymentModal.style.display = 'none';
-            greetingModal.style.display = 'block';
-        };
-
-        // Оплатить
+        // Кнопка оплатить
         payBtn.onclick = function() {
             const greeting = greetingText.value.trim();
             fetch('https://ordersongs.vercel.app/api/notify', {
@@ -601,11 +641,17 @@
             }, 500);
         };
 
-        window.onclick = function(e) {
-            if (e.target == modal) modal.style.display = 'none';
-            if (e.target == greetingModal) greetingModal.style.display = 'none';
-            if (e.target == paymentModal) paymentModal.style.display = 'none';
+        // Назад из экрана оплаты
+        payBackBtn.onclick = function() {
+            paymentModal.style.display = 'none';
+            greetingModal.style.display = 'block';
         };
+
+        window.onclick = function(event) {
+            if (event.target == modal) modal.style.display = 'none';
+            if (event.target == greetingModal) greetingModal.style.display = 'none';
+            if (event.target == paymentModal) paymentModal.style.display = 'none';
+        }
     </script>
 </body>
 ```
