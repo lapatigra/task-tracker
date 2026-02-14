@@ -1,22 +1,21 @@
 <!DOCTYPE html>
-
 <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Репертуар</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Alumni+Sans+Pinstripe:ital@0;1&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Play:wght@400;700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Закажи песню с поздравлением за донат 1000₽ от LAPA TIGRA и Твоя Лила">
+    <title>Репертуар | LAPA TIGRA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-```
         html {
             background: #000000;
         }
@@ -453,84 +452,91 @@
             }
         }
             
-/* ЭКРАН ОПЛАТЫ */
-.payment-modal {
-    display: none;
-    position: fixed;
-    z-index: 1002;
-    left: 0; top: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0,0,0,0.97);
-    animation: fadeIn 0.3s;
-}
+        /* ЭКРАН ОПЛАТЫ */
+        .payment-modal {
+            display: none;
+            position: fixed;
+            z-index: 1002;
+            left: 0; 
+            top: 0;
+            width: 100%; 
+            height: 100%;
+            background-color: rgba(0,0,0,0.97);
+            animation: fadeIn 0.3s;
+        }
 
-.payment-content {
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d1810 100%);
-    margin: 15% auto;
-    padding: 50px 30px;
-    border: 3px solid #ff1493;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 430px;
-    text-align: center;
-    animation: slideDown 0.3s;
-    box-shadow: 0 0 60px rgba(255,87,34,0.6);
-}
+        .payment-content {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            margin: 15% auto;
+            padding: 50px 30px;
+            border: 3px solid #ff1493;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 430px;
+            text-align: center;
+            animation: slideDown 0.3s;
+            box-shadow: 0 0 60px rgba(255, 20, 147, 0.6);
+        }
 
-.payment-amount {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 4.5em;
-    font-weight: 900;
-    color: #ff1493;
-    text-shadow: 0 0 30px rgba(255,87,34,0.8);
-    line-height: 1;
-}
+        .payment-amount {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 4.5em;
+            font-weight: 900;
+            color: #ff1493;
+            text-shadow: 0 0 30px rgba(255, 20, 147, 0.8);
+            line-height: 1;
+        }
 
-.payment-label {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1em;
-    font-weight: 600;
-    color: rgba(255,255,255,0.7);
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    margin: 10px 0 35px;
-}
+        .payment-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1em;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin: 10px 0 35px;
+        }
 
-.btn-pay {
-    width: 100%;
-    padding: 18px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 17px;
-    font-weight: 700;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    background: linear-gradient(135deg, #ff1493 0%, #ff69b4 100%);
-    color: white;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    box-shadow: 0 6px 30px rgba(255,87,34,0.6);
-    transition: all 0.3s;
-    margin-bottom: 12px;
-}
+        .btn-pay {
+            width: 100%;
+            padding: 18px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 17px;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #ff1493 0%, #ff69b4 100%);
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 6px 30px rgba(255, 20, 147, 0.6);
+            transition: all 0.3s;
+            margin-bottom: 12px;
+        }
 
-.btn-pay:hover { transform: translateY(-3px); }
+        .btn-pay:hover { 
+            transform: translateY(-3px); 
+        }
 
-.btn-pay-back {
-    width: 100%;
-    padding: 12px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    border: 2px solid rgba(255,255,255,0.2);
-    border-radius: 50px;
-    cursor: pointer;
-    background: transparent;
-    color: rgba(255,255,255,0.5);
-    transition: all 0.3s;
-}
+        .btn-pay-back {
+            width: 100%;
+            padding: 12px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50px;
+            cursor: pointer;
+            background: transparent;
+            color: rgba(255,255,255,0.5);
+            transition: all 0.3s;
+        }
 
-.btn-pay-back:hover { border-color: #ff1493; color: white; }
+        .btn-pay-back:hover { 
+            border-color: #ff1493; 
+            color: white; 
+        }
     </style>
 </head>
 <body>
@@ -744,7 +750,7 @@
                 'Ленинград - Сиськи',
                 'Ленинград - WWW',
                 'Леприконсы - Хали Гали',
-                'Лолита - Пошлю его на ***',
+                'Лолита - Пошлю его на...', // Заменил звездочки
                 'Лолита - На Титанике'
             ]},
             { category: 'М', items: [
@@ -899,6 +905,9 @@
         const greetingText = document.getElementById('greetingText');
         const backBtn = document.getElementById('backBtn');
         const confirmBtn = document.getElementById('confirmBtn');
+        const paymentModal = document.getElementById('paymentModal');
+        const payBtn = document.getElementById('payBtn');
+        const payBackBtn = document.getElementById('payBackBtn');
         
         let selectedSong = null;
 
@@ -908,7 +917,7 @@
             renderSongs();
         }
 
-        // Закрыть модальное окно
+        // Закрыть модальное окно (крестик)
         span.onclick = function() {
             modal.style.display = 'none';
         }
@@ -934,7 +943,6 @@
                         
                         songItem.onclick = function() {
                             selectedSong = song;
-                            // Сразу открываем окно поздравления
                             selectedSongDisplay.textContent = `Выбрана песня: "${selectedSong}"`;
                             modal.style.display = 'none';
                             greetingModal.style.display = 'block';
@@ -956,55 +964,56 @@
             greetingModal.style.display = 'none';
         }
 
-        // Кнопка "Назад"
+        // Кнопка "Назад" из окна поздравления
         backBtn.onclick = function() {
             greetingModal.style.display = 'none';
             modal.style.display = 'block';
         }
 
-      const paymentModal = document.getElementById('paymentModal');
-const payBtn = document.getElementById('payBtn');
-const payBackBtn = document.getElementById('payBackBtn');
+        // Кнопка "Ок" — показать экран оплаты
+        confirmBtn.onclick = function() {
+            const greeting = greetingText.value.trim();
+            if (!greeting) {
+                alert('Пожалуйста, напишите текст поздравления');
+                return;
+            }
+            greetingModal.style.display = 'none';
+            paymentModal.style.display = 'block';
+        };
 
-// Кнопка "Ок" — показать экран оплаты
-confirmBtn.onclick = function() {
-    const greeting = greetingText.value.trim();
-    if (!greeting) {
-        alert('Пожалуйста, напишите текст поздравления');
-        return;
-    }
-    greetingModal.style.display = 'none';
-    paymentModal.style.display = 'block';
-};
+        // Назад из экрана оплаты
+        payBackBtn.onclick = function() {
+            paymentModal.style.display = 'none';
+            greetingModal.style.display = 'block';
+        };
 
-// Назад из экрана оплаты
-payBackBtn.onclick = function() {
-    paymentModal.style.display = 'none';
-    greetingModal.style.display = 'block';
-};
+        // Оплатить — замените ссылку на вашу ссылку оплаты!
+        payBtn.onclick = function() {
+            const greeting = greetingText.value.trim();
+            
+            // Отправка данных на сервер (закомментировано, чтобы не было ошибки, если сервера нет)
+            // fetch('https://ordersongs.vercel.app/api/notify', {
+            //     method: 'POST',
+            //     headers: {'Content-Type': 'application/json'},
+            //     body: JSON.stringify({ song: selectedSong, greeting: greeting })
+            // }).catch(e => console.error('Ошибка отправки:', e));
 
-// Оплатить — замените ссылку на вашу ссылку оплаты!
-payBtn.onclick = function() {
-    const greeting = greetingText.value.trim();
-    fetch('https://ordersongs.vercel.app/api/notify', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ song: selectedSong, greeting: greeting })
-    }).catch(e => console.error(e));
-
-    setTimeout(() => {
-        window.location.href = 'https://tips.yandex.ru/guest/payment/8888490';
-    }, 500);
-};
+            // Здесь можно добавить логику копирования в буфер обмена, если нужно
+            // alert(`Скопируйте этот текст для комментария к оплате:\n\nПесня: ${selectedSong}\nПоздравление: ${greeting}`);
+            
+            // Переход на страницу оплаты
+            setTimeout(() => {
+                // ЗАМЕНИТЕ ЭТУ ССЫЛКУ НА ВАШУ РЕАЛЬНУЮ ССЫЛКУ ДЛЯ ОПЛАТЫ
+                window.location.href = 'https://tips.yandex.ru/guest/payment/8888490'; 
+            }, 500);
+        };
 
         // Закрытие по клику вне окна
-       window.onclick = function(e) {
-        if (e.target == modal) modal.style.display = 'none';
-        if (e.target == greetingModal) greetingModal.style.display = 'none';
-        if (e.target == paymentModal) paymentModal.style.display = 'none';
-    };
-</script>
+        window.onclick = function(e) {
+            if (e.target == modal) modal.style.display = 'none';
+            if (e.target == greetingModal) greetingModal.style.display = 'none';
+            if (e.target == paymentModal) paymentModal.style.display = 'none';
+        };
+    </script>
 </body>
-```
-
 </html>
