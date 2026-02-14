@@ -698,17 +698,22 @@
         greetingModal.style.display = 'block';
     };
 
-    payBtn.onclick = function() {
+    payBtn.onclick = async function() {
         const greeting = greetingText.value.trim();
-        fetch('https://ordersongs.vercel.app/api/notify', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ song: selectedSong, greeting: greeting })
-        }).catch(e => console.error(e));
+        payBtn.disabled = true;
+        payBtn.textContent = '⏳ Отправка...';
 
-        setTimeout(() => {
-            window.location.href = 'https://tips.yandex.ru/guest/payment/8888490';
-        }, 500);
+        try {
+            await fetch('https://ordersongs.vercel.app/api/notify', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ song: selectedSong, greeting: greeting })
+            });
+        } catch(e) {
+            console.error('Notify error:', e);
+        }
+
+        window.location.href = 'https://tips.yandex.ru/guest/payment/8888490';
     };
 
     window.onclick = function(e) {
