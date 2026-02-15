@@ -12,491 +12,500 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body {
-        font-family: 'Montserrat', sans-serif;
-        background: #080808;
-        color: #fff;
-        min-height: 100vh;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        position: relative;
-        overflow-x: hidden;
-    }
+```
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: #080808;
+    color: #fff;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    position: relative;
+    overflow-x: hidden;
+}
 
-    /* Атмосферный фон для ПК */
-    body::before {
-        content: '';
-        position: fixed;
-        inset: 0;
-        background:
-            radial-gradient(ellipse 60% 50% at 20% 50%, rgba(255,87,34,0.12) 0%, transparent 70%),
-            radial-gradient(ellipse 60% 50% at 80% 50%, rgba(180,30,10,0.10) 0%, transparent 70%),
-            radial-gradient(ellipse 100% 40% at 50% 100%, rgba(255,111,0,0.08) 0%, transparent 60%),
-            #080808;
-        z-index: 0;
-        pointer-events: none;
-    }
+/* Атмосферный фон для ПК */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 60% 50% at 20% 50%, rgba(255,87,34,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 80% 50%, rgba(180,30,10,0.10) 0%, transparent 70%),
+        radial-gradient(ellipse 100% 40% at 50% 100%, rgba(255,111,0,0.08) 0%, transparent 60%),
+        #080808;
+    z-index: 0;
+    pointer-events: none;
+}
 
-    /* Декоративные линии по бокам */
-    body::after {
-        content: '';
-        position: fixed;
-        inset: 0;
-        background-image:
-            repeating-linear-gradient(
-                90deg,
-                transparent,
-                transparent 39px,
-                rgba(255,87,34,0.03) 39px,
-                rgba(255,87,34,0.03) 40px
-            ),
-            repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 59px,
-                rgba(255,87,34,0.025) 59px,
-                rgba(255,87,34,0.025) 60px
-            );
-        z-index: 0;
-        pointer-events: none;
-    }
+/* Декоративные линии по бокам */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 39px,
+            rgba(255,87,34,0.03) 39px,
+            rgba(255,87,34,0.03) 40px
+        ),
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 59px,
+            rgba(255,87,34,0.025) 59px,
+            rgba(255,87,34,0.025) 60px
+        );
+    z-index: 0;
+    pointer-events: none;
+}
 
-    /* Боковые логотипы / надписи (только на широком экране) */
+/* Боковые логотипы / надписи (только на широком экране) */
+.side-decoration {
+    display: none;
+}
+
+@media (min-width: 700px) {
     .side-decoration {
-        display: none;
-    }
-
-    @media (min-width: 700px) {
-        .side-decoration {
-            display: flex;
-            position: fixed;
-            top: 50%;
-            transform: translateY(-50%);
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            z-index: 1;
-            opacity: 0.18;
-            pointer-events: none;
-        }
-        .side-decoration.left { left: 3vw; }
-        .side-decoration.right { right: 3vw; }
-        .side-deco-text {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            color: #ff5722;
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-        }
-        .side-deco-line {
-            width: 1px;
-            height: 120px;
-            background: linear-gradient(to bottom, transparent, #ff5722, transparent);
-        }
-        .side-deco-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #ff5722;
-        }
-    }
-
-    #app {
-        width: 100%;
-        max-width: 430px;
-        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d1810 100%);
-        min-height: 100vh;
-        position: relative;
-        z-index: 2;
-        box-shadow: 0 0 80px rgba(255,87,34,0.15), 0 0 200px rgba(255,87,34,0.08);
-    }
-
-    @media (min-width: 700px) {
-        #app {
-            box-shadow:
-                0 0 0 1px rgba(255,87,34,0.15),
-                0 0 60px rgba(255,87,34,0.2),
-                0 0 120px rgba(255,87,34,0.1),
-                -60px 0 80px rgba(255,87,34,0.05),
-                60px 0 80px rgba(255,87,34,0.05);
-        }
-    }
-
-    /* HERO */
-    .hero {
-        position: relative;
-        width: 100%;
-        aspect-ratio: 1 / 1;
-        overflow: hidden;
-    }
-
-    .hero img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-    }
-
-    .hero-overlay {
-        position: absolute;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%);
         display: flex;
-        align-items: flex-end;
-        justify-content: center;
-        padding-bottom: 40px;
-    }
-
-    .order-button-hero {
-        background: linear-gradient(135deg, #ff5722 0%, #ff6f00 100%);
-        border: none;
-        padding: 16px 50px;
-        border-radius: 50px;
-        cursor: pointer;
-        transition: all 0.3s;
-        box-shadow: 0 10px 40px rgba(255,87,34,0.6);
-        font-family: 'Montserrat', sans-serif;
-        font-size: 16px;
-        font-weight: 700;
-        color: white;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-    }
-
-    .order-button-hero:hover {
-        transform: translateY(-5px) scale(1.05);
-    }
-
-    /* MAIN */
-    main { padding: 25px 20px; }
-
-    .repertoire {
-        background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(45,24,16,0.5) 100%);
-        padding: 25px;
-        border-radius: 20px;
-        border: 1px solid rgba(255,87,34,0.2);
-        margin-bottom: 25px;
-    }
-
-    .contacts {
-        background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(45,24,16,0.5) 100%);
-        padding: 25px;
-        border-radius: 20px;
-        border: 1px solid rgba(255,87,34,0.2);
-        text-align: center;
-    }
-
-    .orange-text { color: #ff5722; font-weight: 700; }
-
-    .line {
-        border: none;
-        border-top: 2px solid #ff5722;
-        margin: 15px 0;
-    }
-
-    h2 {
-        font-family: 'Montserrat', sans-serif;
-        color: #ff5722;
-        text-align: center;
-        margin: 12px 0;
-        font-size: 1.3em;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        text-shadow: 0 0 20px rgba(255,87,34,0.5);
-    }
-
-    h3 {
-        font-family: 'Montserrat', sans-serif;
-        color: #ff5722;
-        margin-top: 15px;
-        font-size: 0.95em;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    p {
-        font-family: 'Montserrat', sans-serif;
-        line-height: 1.5;
-        margin: 6px 0;
-        text-align: center;
-        font-size: 0.88em;
-        color: #fff;
-        font-weight: 300;
-    }
-
-    .contact-links {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-top: 20px;
-    }
-
-    .contact-item {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        background: rgba(255,87,34,0.1);
-        padding: 12px;
-        border-radius: 50px;
-        text-decoration: none;
-        color: white;
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 600;
-        font-size: 0.8em;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        border: 2px solid rgba(255,87,34,0.3);
-        transition: all 0.3s;
-    }
-
-    .contact-item:hover {
-        background: rgba(255,87,34,0.25);
-        border-color: #ff5722;
-        transform: translateY(-3px);
-    }
-
-    .contact-item i { font-size: 18px; color: #ff5722; }
-
-    footer {
-        text-align: center;
-        padding: 20px;
-        color: rgba(255,255,255,0.4);
-        font-size: 0.8em;
-        font-family: 'Montserrat', sans-serif;
-    }
-
-    /* АНИМАЦИИ */
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideDown {
-        from { transform: translateY(-50px); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-    }
-
-    /* МОДАЛЬНЫЕ ОКНА */
-    .modal, .greeting-modal, .payment-modal {
-        display: none;
         position: fixed;
-        z-index: 1000;
-        left: 0; top: 0;
-        width: 100%; height: 100%;
-        background-color: rgba(0,0,0,0.92);
-        animation: fadeIn 0.3s;
+        top: 50%;
+        transform: translateY(-50%);
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        z-index: 1;
+        opacity: 0.18;
+        pointer-events: none;
     }
-
-    .greeting-modal { z-index: 1001; }
-    .payment-modal { z-index: 1002; background-color: rgba(0,0,0,0.97); }
-
-    .modal-content, .greeting-content {
-        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d1810 100%);
-        margin: 2% auto;
-        padding: 25px;
-        border: 3px solid #ff5722;
-        border-radius: 20px;
-        width: 90%;
-        max-width: 430px;
-        max-height: 85vh;
-        overflow-y: auto;
-        position: relative;
-        animation: slideDown 0.3s;
-        box-shadow: 0 0 50px rgba(255,87,34,0.5);
-    }
-
-    .greeting-content {
-        margin: 5% auto;
-        max-height: none;
-        overflow-y: visible;
-    }
-
-    .close {
-        color: #ff5722;
-        position: absolute;
-        right: 20px; top: 15px;
-        font-size: 35px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-
-    .close:hover { transform: rotate(90deg); color: #ff6f00; }
-
-    .search-box { margin: 20px 0; text-align: center; }
-
-    .search-box input {
-        width: 100%;
-        padding: 12px 20px;
-        font-size: 14px;
-        border: 2px solid #ff5722;
-        border-radius: 30px;
-        background: rgba(0,0,0,0.6);
-        color: white;
-        outline: none;
+    .side-decoration.left { left: 3vw; }
+    .side-decoration.right { right: 3vw; }
+    .side-deco-text {
         font-family: 'Montserrat', sans-serif;
-    }
-
-    .search-box input::placeholder { color: rgba(255,255,255,0.5); }
-
-    .song-list { margin-top: 10px; }
-
-    .song-item {
-        padding: 10px 16px;
-        margin: 5px 0;
-        background: rgba(0,0,0,0.4);
-        border-radius: 12px;
-        cursor: pointer;
-        font-family: 'Montserrat', sans-serif;
-        font-size: 0.9em;
-        color: #fff;
-        border-left: 4px solid transparent;
-        transition: all 0.3s;
-    }
-
-    .song-item:hover {
-        background: rgba(255,87,34,0.15);
-        border-left-color: #ff5722;
-        transform: translateX(8px);
-    }
-
-    .greeting-content > p {
-        font-size: 0.9em;
-        color: #ff5722;
-        margin-bottom: 15px;
-        font-weight: 500;
-    }
-
-    .selected-song-display {
-        background: rgba(255,87,34,0.2);
-        padding: 12px;
-        border-radius: 10px;
-        margin-bottom: 15px;
-        border-left: 4px solid #ff5722;
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 600;
-        font-size: 0.9em;
-        color: #fff;
-    }
-
-    .greeting-input {
-        width: 100%;
-        padding: 12px;
-        font-size: 14px;
-        border: 2px solid #ff5722;
-        border-radius: 15px;
-        background: rgba(0,0,0,0.6);
-        color: white;
-        outline: none;
-        margin-bottom: 10px;
-        font-family: 'Montserrat', sans-serif;
-    }
-
-    .greeting-textarea { min-height: 120px; resize: vertical; }
-
-    .button-group { display: flex; gap: 15px; margin-top: 15px; }
-
-    .btn-confirm, .btn-back {
-        flex: 1;
-        padding: 12px;
-        font-family: 'Montserrat', sans-serif;
-        font-size: 13px;
-        font-weight: 700;
-        border: none;
-        border-radius: 50px;
-        cursor: pointer;
-        transition: all 0.3s;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 8px;
         text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    .btn-confirm {
-        background: linear-gradient(135deg, #ff5722 0%, #ff6f00 100%);
-        color: white;
-        box-shadow: 0 6px 25px rgba(255,87,34,0.5);
-    }
-
-    .btn-confirm:hover { transform: translateY(-3px); }
-
-    .btn-back {
-        background: rgba(255,255,255,0.1);
-        color: white;
-        border: 2px solid #ff5722;
-    }
-
-    /* ЭКРАН ОПЛАТЫ */
-    .payment-content {
-        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d1810 100%);
-        margin: 15% auto;
-        padding: 50px 30px;
-        border: 3px solid #ff5722;
-        border-radius: 20px;
-        width: 90%;
-        max-width: 430px;
-        text-align: center;
-        animation: slideDown 0.3s;
-        box-shadow: 0 0 60px rgba(255,87,34,0.6);
-    }
-
-    .payment-amount {
-        font-family: 'Montserrat', sans-serif;
-        font-size: 5.5em;
-        font-weight: 900;
         color: #ff5722;
-        text-shadow: 0 0 30px rgba(255,87,34,0.8);
-        line-height: 1;
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
     }
-
-    .payment-label {
-        font-family: 'Montserrat', sans-serif;
-        font-size: 1em;
-        font-weight: 600;
-        color: rgba(255,255,255,0.7);
-        text-transform: uppercase;
-        letter-spacing: 3px;
-        margin: 10px 0 35px;
+    .side-deco-line {
+        width: 1px;
+        height: 120px;
+        background: linear-gradient(to bottom, transparent, #ff5722, transparent);
     }
-
-    .btn-pay {
-        width: 100%;
-        padding: 18px;
-        font-family: 'Montserrat', sans-serif;
-        font-size: 17px;
-        font-weight: 700;
-        border: none;
-        border-radius: 50px;
-        cursor: pointer;
-        background: linear-gradient(135deg, #ff5722 0%, #ff6f00 100%);
-        color: white;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        box-shadow: 0 6px 30px rgba(255,87,34,0.6);
-        transition: all 0.3s;
-        margin-bottom: 12px;
+    .side-deco-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #ff5722;
     }
+}
 
-    .btn-pay:hover { transform: translateY(-3px); }
+#app {
+    width: 100%;
+    max-width: 430px;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d1810 100%);
+    min-height: 100vh;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 0 80px rgba(255,87,34,0.15), 0 0 200px rgba(255,87,34,0.08);
+}
 
-    .btn-pay-back {
-        width: 100%;
-        padding: 12px;
-        font-family: 'Montserrat', sans-serif;
-        font-size: 14px;
-        font-weight: 600;
-        border: 2px solid rgba(255,255,255,0.2);
-        border-radius: 50px;
-        cursor: pointer;
-        background: transparent;
-        color: rgba(255,255,255,0.5);
-        transition: all 0.3s;
+@media (min-width: 700px) {
+    #app {
+        box-shadow:
+            0 0 0 1px rgba(255,87,34,0.15),
+            0 0 60px rgba(255,87,34,0.2),
+            0 0 120px rgba(255,87,34,0.1),
+            -60px 0 80px rgba(255,87,34,0.05),
+            60px 0 80px rgba(255,87,34,0.05);
     }
+}
 
-    .btn-pay-back:hover { border-color: #ff5722; color: white; }
+/* HERO */
+.hero {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+}
+
+.hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 40px;
+}
+
+@keyframes pulse-glow {
+    0%   { box-shadow: 0 10px 40px rgba(255,87,34,0.6), 0 0 0 0 rgba(255,87,34,0.6); }
+    70%  { box-shadow: 0 10px 40px rgba(255,87,34,0.6), 0 0 0 36px rgba(255,87,34,0); }
+    100% { box-shadow: 0 10px 40px rgba(255,87,34,0.6), 0 0 0 0 rgba(255,87,34,0); }
+}
+
+.order-button-hero {
+    background: linear-gradient(135deg, #ff5722 0%, #ff6f00 100%);
+    border: none;
+    padding: 18px 56px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.3s;
+    animation: pulse-glow 1.4s ease-in-out infinite;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.order-button-hero:hover {
+    transform: translateY(-5px) scale(1.07);
+}
+
+/* MAIN */
+main { padding: 25px 20px; }
+
+.repertoire {
+    background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(45,24,16,0.5) 100%);
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,87,34,0.2);
+    margin-bottom: 25px;
+}
+
+.contacts {
+    background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(45,24,16,0.5) 100%);
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,87,34,0.2);
+    text-align: center;
+}
+
+.orange-text { color: #ff5722; font-weight: 700; }
+
+.line {
+    border: none;
+    border-top: 2px solid #ff5722;
+    margin: 15px 0;
+}
+
+h2 {
+    font-family: 'Montserrat', sans-serif;
+    color: #ff5722;
+    text-align: center;
+    margin: 12px 0;
+    font-size: 1.3em;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px rgba(255,87,34,0.5);
+}
+
+h3 {
+    font-family: 'Montserrat', sans-serif;
+    color: #ff5722;
+    margin-top: 15px;
+    font-size: 0.95em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+p {
+    font-family: 'Montserrat', sans-serif;
+    line-height: 1.5;
+    margin: 6px 0;
+    text-align: center;
+    font-size: 0.88em;
+    color: #fff;
+    font-weight: 300;
+}
+
+.contact-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(255,87,34,0.1);
+    padding: 12px;
+    border-radius: 50px;
+    text-decoration: none;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 0.8em;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: 2px solid rgba(255,87,34,0.3);
+    transition: all 0.3s;
+}
+
+.contact-item:hover {
+    background: rgba(255,87,34,0.25);
+    border-color: #ff5722;
+    transform: translateY(-3px);
+}
+
+.contact-item i { font-size: 18px; color: #ff5722; }
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: rgba(255,255,255,0.4);
+    font-size: 0.8em;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* АНИМАЦИИ */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideDown {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* МОДАЛЬНЫЕ ОКНА */
+.modal, .greeting-modal, .payment-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.92);
+    animation: fadeIn 0.3s;
+}
+
+.greeting-modal { z-index: 1001; }
+.payment-modal { z-index: 1002; background-color: rgba(0,0,0,0.97); }
+
+.modal-content, .greeting-content {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d1810 100%);
+    margin: 2% auto;
+    padding: 25px;
+    border: 3px solid #ff5722;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 430px;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideDown 0.3s;
+    box-shadow: 0 0 50px rgba(255,87,34,0.5);
+}
+
+.greeting-content {
+    margin: 5% auto;
+    max-height: none;
+    overflow-y: visible;
+}
+
+.close {
+    color: #ff5722;
+    position: absolute;
+    right: 20px; top: 15px;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.close:hover { transform: rotate(90deg); color: #ff6f00; }
+
+.search-box { margin: 20px 0; text-align: center; }
+
+.search-box input {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 14px;
+    border: 2px solid #ff5722;
+    border-radius: 30px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.search-box input::placeholder { color: rgba(255,255,255,0.5); }
+
+.song-list { margin-top: 10px; }
+
+.song-item {
+    padding: 10px 16px;
+    margin: 5px 0;
+    background: rgba(0,0,0,0.4);
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9em;
+    color: #fff;
+    border-left: 4px solid transparent;
+    transition: all 0.3s;
+}
+
+.song-item:hover {
+    background: rgba(255,87,34,0.15);
+    border-left-color: #ff5722;
+    transform: translateX(8px);
+}
+
+.greeting-content > p {
+    font-size: 0.9em;
+    color: #ff5722;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.selected-song-display {
+    background: rgba(255,87,34,0.2);
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border-left: 4px solid #ff5722;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 0.9em;
+    color: #fff;
+}
+
+.greeting-input {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    border: 2px solid #ff5722;
+    border-radius: 15px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    outline: none;
+    margin-bottom: 10px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.greeting-textarea { min-height: 120px; resize: vertical; }
+
+.button-group { display: flex; gap: 15px; margin-top: 15px; }
+
+.btn-confirm, .btn-back {
+    flex: 1;
+    padding: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-confirm {
+    background: linear-gradient(135deg, #ff5722 0%, #ff6f00 100%);
+    color: white;
+    box-shadow: 0 6px 25px rgba(255,87,34,0.5);
+}
+
+.btn-confirm:hover { transform: translateY(-3px); }
+
+.btn-back {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 2px solid #ff5722;
+}
+
+/* ЭКРАН ОПЛАТЫ */
+.payment-content {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d1810 100%);
+    margin: 15% auto;
+    padding: 50px 30px;
+    border: 3px solid #ff5722;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 430px;
+    text-align: center;
+    animation: slideDown 0.3s;
+    box-shadow: 0 0 60px rgba(255,87,34,0.6);
+}
+
+.payment-amount {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 5.5em;
+    font-weight: 900;
+    color: #ff5722;
+    text-shadow: 0 0 30px rgba(255,87,34,0.8);
+    line-height: 1;
+}
+
+.payment-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1em;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin: 10px 0 35px;
+}
+
+.btn-pay {
+    width: 100%;
+    padding: 18px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #ff5722 0%, #ff6f00 100%);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 6px 30px rgba(255,87,34,0.6);
+    transition: all 0.3s;
+    margin-bottom: 12px;
+}
+
+.btn-pay:hover { transform: translateY(-3px); }
+
+.btn-pay-back {
+    width: 100%;
+    padding: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 50px;
+    cursor: pointer;
+    background: transparent;
+    color: rgba(255,255,255,0.5);
+    transition: all 0.3s;
+}
+
+.btn-pay-back:hover { border-color: #ff5722; color: white; }
+```
+
 </style>
 
 </head>
@@ -521,51 +530,54 @@
         <div class="side-deco-dot"></div>
     </div>
 
-    <div id="app">
+```
+<div id="app">
 
-    <div class="hero">
-        <img src="IMG_4643.jpeg" alt="LAPA TIGRA">
-        <div class="hero-overlay">
-            <button class="order-button-hero" id="openModalBtn">Заказать песню</button>
-        </div>
+<div class="hero">
+    <img src="IMG_4643.jpeg" alt="LAPA TIGRA">
+    <div class="hero-overlay">
+        <button class="order-button-hero" id="openModalBtn">Заказать песню</button>
+    </div>
+</div>
+
+<main>
+    <div class="repertoire">
+        <h2>Заказ песни с поздравлением за донат 1000₽</h2>
+        <p>Выберете песню из репертуара, нажмите "заказать песню". Выберете сумму доната 1000₽ и в комментариях укажите название трека и текст поздравления.</p>
+        <p>Не забудьте написать имя, кого будем поздравлять</p>
+        <hr class="line">
+        <p><span class="orange-text">Заказанная песня исполняется в порядке очереди:</span></p>
+        <p>С 20:30 до 21:00 &nbsp;|&nbsp; С 21:30 до 22:00<br>С 22:30 до 23:00 &nbsp;|&nbsp; (пт, сб) С 23:30 до 00:00</p>
+        <hr class="line">
+        <p class="orange-text">ПЕСНИ ИСПОЛНЯЮТСЯ ТОЛЬКО ИЗ РЕПЕРТУАРА</p>
     </div>
 
-    <main>
-        <div class="repertoire">
-            <h2>Заказ песни с поздравлением за донат 1000₽</h2>
-            <p>Выберете песню из репертуара, нажмите "заказать песню". Выберете сумму доната 1000₽ и в комментариях укажите название трека и текст поздравления.</p>
-            <p>Не забудьте написать имя, кого будем поздравлять</p>
-            <hr class="line">
-            <p><span class="orange-text">Заказанная песня исполняется в порядке очереди:</span></p>
-            <p>С 20:30 до 21:00 &nbsp;|&nbsp; С 21:30 до 22:00<br>С 22:30 до 23:00 &nbsp;|&nbsp; (пт, сб) С 23:30 до 00:00</p>
-            <hr class="line">
-            <p class="orange-text">ПЕСНИ ИСПОЛНЯЮТСЯ ТОЛЬКО ИЗ РЕПЕРТУАРА</p>
+    <div class="contacts">
+        <h2>Контакты</h2>
+        <div class="contact-links">
+            <a href="https://music.yandex.ru/artist/19420584" target="_blank" class="contact-item">
+                <i class="fas fa-music"></i><span>Яндекс Музыка</span>
+            </a>
+            <a href="https://instagram.com/lapa_tigra_music?igshid=MDM4ZDc5MmU=" target="_blank" class="contact-item">
+                <i class="fab fa-instagram"></i><span>Instagram</span>
+            </a>
+            <a href="https://vk.com/lapa.tigra" target="_blank" class="contact-item">
+                <i class="fab fa-vk"></i><span>ВКонтакте</span>
+            </a>
+            <a href="https://t.me/lapa_tigra_music" target="_blank" class="contact-item">
+                <i class="fab fa-telegram"></i><span>Telegram</span>
+            </a>
         </div>
+    </div>
+</main>
 
-        <div class="contacts">
-            <h2>Контакты</h2>
-            <div class="contact-links">
-                <a href="https://music.yandex.ru/artist/19420584" target="_blank" class="contact-item">
-                    <i class="fas fa-music"></i><span>Яндекс Музыка</span>
-                </a>
-                <a href="https://instagram.com/lapa_tigra_music?igshid=MDM4ZDc5MmU=" target="_blank" class="contact-item">
-                    <i class="fab fa-instagram"></i><span>Instagram</span>
-                </a>
-                <a href="https://vk.com/lapa.tigra" target="_blank" class="contact-item">
-                    <i class="fab fa-vk"></i><span>ВКонтакте</span>
-                </a>
-                <a href="https://t.me/lapa_tigra_music" target="_blank" class="contact-item">
-                    <i class="fab fa-telegram"></i><span>Telegram</span>
-                </a>
-            </div>
-        </div>
-    </main>
-
-    <footer><p>© 2025 LAPA TIGRA</p></footer>
+<footer><p>© 2025 LAPA TIGRA</p></footer>
+```
 
 </div>
 
 <!-- Список песен -->
+
 <div id="myModal" class="modal">
     <div class="modal-content">
         <span class="close" id="closeModal">&times;</span>
@@ -578,6 +590,7 @@
 </div>
 
 <!-- Поздравление -->
+
 <div id="greetingModal" class="greeting-modal">
     <div class="greeting-content">
         <span class="close" id="closeGreeting">&times;</span>
@@ -593,6 +606,7 @@
 </div>
 
 <!-- Экран оплаты -->
+
 <div id="paymentModal" class="payment-modal">
     <div class="payment-content">
         <div class="payment-amount">1000₽</div>
