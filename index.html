@@ -491,6 +491,26 @@
         color: #ff6b35;
     }
 
+    .muscle-delete {
+        width: 28px;
+        height: 28px;
+        background: transparent;
+        border: none;
+        color: #999;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 5px;
+    }
+
+    .muscle-delete:active {
+        transform: scale(0.9);
+        color: #ff3535;
+    }
+
     .add-category-btn {
         background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
         color: white;
@@ -737,8 +757,7 @@
 ```
     <div class="tabs">
         <button class="tab active" onclick="switchTab('tasks')">Задачи</button>
-        <button class="tab" onclick="switchTab('muscles')">Мышцы</button>
-        <button class="tab" onclick="switchTab('week')">Неделя</button>
+        <button class="tab" onclick="switchTab('program')">Программа</button>
         <button class="tab" onclick="switchTab('month')">Месяц</button>
         <button class="tab" onclick="switchTab('year')">Год</button>
     </div>
@@ -750,30 +769,11 @@
         </div>
     </div>
 
-    <div id="musclesSection" class="content-section">
+    <div id="programSection" class="content-section">
         <div class="muscle-tracker">
-            <h2 class="chart-title">Трекер групп мышц</h2>
+            <h2 class="chart-title">Программа тренировок</h2>
+            <button class="add-category-btn" onclick="openAddExerciseModal()">+ Добавить упражнение</button>
             <div class="muscle-grid" id="muscleGrid"></div>
-        </div>
-    </div>
-
-    <div id="weekSection" class="content-section">
-        <div class="stats-container">
-            <h2 class="chart-title">Итоги недели</h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Всего задач</div>
-                    <div class="stat-value" id="weekTotal">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Выполнено</div>
-                    <div class="stat-value" id="weekCompleted">0</div>
-                </div>
-            </div>
-            <div class="chart-container">
-                <div class="chart-title">По категориям</div>
-                <div class="bar-chart" id="weekChart"></div>
-            </div>
         </div>
     </div>
 
@@ -829,17 +829,18 @@
     </div>
 </div>
 
-<script>
-    const muscleGroups = [
-        'Плечи',
-        'Трицепс',
-        'Бицепс',
-        'Отжимания',
-        'Пресс',
-        'Подтягивания',
-        'Ноги'
-    ];
+<div id="addExerciseModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-title">Новое упражнение</div>
+        <input type="text" id="newExerciseInput" class="modal-input" placeholder="Название упражнения" maxlength="30">
+        <div class="modal-buttons">
+            <button class="modal-btn secondary" onclick="closeAddExerciseModal()">Отмена</button>
+            <button class="modal-btn primary" onclick="addNewExercise()">Добавить</button>
+        </div>
+    </div>
+</div>
 
+<script>
     // Firebase Configuration
     const firebaseConfig = {
         apiKey: "AIzaSyBDr6IVKewAVwv7FqxChVRv5pylnsHTdTw",
@@ -871,8 +872,9 @@
     let muscles = {};
     let collapsedCategories = {};
     let categories = [];
+    let exerciseList = [];
 
-    // Загрузка категорий
+    // Загрузка категорий задач
     function loadCategories() {
         const saved = localStorage.getItem('categories');
         return saved ? JSON.parse(saved) : [
@@ -885,10 +887,31 @@
         ];
     }
 
+    // Загрузка списка упражнений
+    function loadExerciseList() {
+        const saved = localStorage.getItem('exerciseList');
+        return saved ? JSON.parse(saved) : [
+            'Плечи',
+            'Трицепс',
+            'Бицепс',
+            'Отжимания',
+            'Пресс',
+            'Подтягивания',
+            'Ноги'
+        ];
+    }
+
     function saveCategories() {
         localStorage.setItem('categories', JSON.stringify(categories));
         if (isFirebaseEnabled) {
             database.ref('categories').set(categories);
+        }
+    }
+
+    function saveExerciseList() {
+        localStorage.setItem('exerciseList', JSON.stringify(exerciseList));
+        if (isFirebaseEnabled) {
+            database.ref('exerciseList').set(exerciseList);
         }
     }
 
@@ -898,6 +921,7 @@
                 const tasksSnapshot = await database.ref('tasks').once('value');
                 const musclesSnapshot = await database.ref('muscles').once('value');
                 const categoriesSnapshot = await database.ref('categories').once('value');
+                const exerciseListSnapshot = await database.ref('exerciseList').once('value');
                 
                 tasks = tasksSnapshot.val() || {};
                 muscles = musclesSnapshot.val() || {};
@@ -905,6 +929,11 @@
                     categories = categoriesSnapshot.val();
                 } else {
                     categories = loadCategories();
+                }
+                if (exerciseListSnapshot.val()) {
+                    exerciseList = exerciseListSnapshot.val();
+                } else {
+                    exerciseList = loadExerciseList();
                 }
             } catch (error) {
                 console.log('Ошибка загрузки из Firebase:', error);
@@ -924,6 +953,7 @@
         muscles = savedMuscles ? JSON.parse(savedMuscles) : {};
         collapsedCategories = savedCollapsed ? JSON.parse(savedCollapsed) : {};
         categories = loadCategories();
+        exerciseList = loadExerciseList();
     }
 
     function saveTasks() {
@@ -985,18 +1015,70 @@
         }
     }
 
+    function openAddExerciseModal() {
+        document.getElementById('addExerciseModal').classList.add('active');
+        document.getElementById('newExerciseInput').value = '';
+        document.getElementById('newExerciseInput').focus();
+    }
+
+    function closeAddExerciseModal() {
+        document.getElementById('addExerciseModal').classList.remove('active');
+    }
+
+    function addNewExercise() {
+        const input = document.getElementById('newExerciseInput');
+        const newExercise = input.value.trim();
+        
+        if (newExercise && !exerciseList.includes(newExercise)) {
+            exerciseList.push(newExercise);
+            saveExerciseList();
+            closeAddExerciseModal();
+            renderMuscleTracker();
+        } else if (exerciseList.includes(newExercise)) {
+            alert('Такое упражнение уже существует!');
+        } else {
+            alert('Введите название упражнения!');
+        }
+    }
+
+    function deleteExercise(exercise) {
+        if (confirm(`Удалить упражнение "${exercise}"? Все данные по этому упражнению будут потеряны.`)) {
+            exerciseList = exerciseList.filter(ex => ex !== exercise);
+            saveExerciseList();
+            
+            // Удаляем все данные по этому упражнению
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const key = getMuscleKey(year, month, exercise);
+            delete muscles[key];
+            saveMuscles();
+            
+            renderMuscleTracker();
+        }
+    }
+
     // Закрытие модального окна по клику вне его
     document.addEventListener('click', function(e) {
-        const modal = document.getElementById('addCategoryModal');
-        if (e.target === modal) {
+        const categoryModal = document.getElementById('addCategoryModal');
+        const exerciseModal = document.getElementById('addExerciseModal');
+        
+        if (e.target === categoryModal) {
             closeAddCategoryModal();
+        }
+        if (e.target === exerciseModal) {
+            closeAddExerciseModal();
         }
     });
 
-    // Добавление категории по Enter
+    // Добавление по Enter
     document.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter' && document.getElementById('addCategoryModal').classList.contains('active')) {
-            addNewCategory();
+        if (e.key === 'Enter') {
+            if (document.getElementById('addCategoryModal').classList.contains('active')) {
+                addNewCategory();
+            }
+            if (document.getElementById('addExerciseModal').classList.contains('active')) {
+                addNewExercise();
+            }
         }
     });
 
@@ -1012,8 +1094,7 @@
         event.target.classList.add('active');
         document.getElementById(tab + 'Section').classList.add('active');
         
-        if (tab === 'muscles') renderMuscleTracker();
-        if (tab === 'week') updateWeekStats();
+        if (tab === 'program') renderMuscleTracker();
         if (tab === 'month') updateMonthStats();
         if (tab === 'year') updateYearStats();
     }
@@ -1053,7 +1134,7 @@
             if (collapsedCategories.hasOwnProperty(collapseKey)) {
                 isCollapsed = collapsedCategories[collapseKey];
             } else {
-                isCollapsed = !isDesktop; // false для десктопа, true для мобильного
+                isCollapsed = !isDesktop;
             }
             
             // Показываем разный счётчик в зависимости от состояния
@@ -1153,7 +1234,7 @@
         const month = currentDate.getMonth();
         const grid = document.getElementById('muscleGrid');
         
-        grid.innerHTML = muscleGroups.map(muscle => {
+        grid.innerHTML = exerciseList.map(muscle => {
             const key = getMuscleKey(year, month, muscle);
             const count = muscles[key] || 0;
             const hasValue = count > 0;
@@ -1167,6 +1248,7 @@
                         <div class="muscle-btn ${hasValue ? 'active' : ''}" 
                              onclick="incrementMuscle(${year}, ${month}, '${muscle}')">+</div>
                         ${count > 0 ? `<div class="muscle-reset" onclick="resetMuscle(${year}, ${month}, '${muscle}')">×</div>` : '<div style="width: 28px;"></div>'}
+                        <div class="muscle-delete" onclick="deleteExercise('${muscle}')">🗑</div>
                     </div>
                 </div>
             `;
@@ -1181,56 +1263,6 @@
             if (tasks[key]) count++;
         }
         return count;
-    }
-
-    function updateWeekStats() {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = today.getMonth();
-        const day = today.getDate();
-        const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1;
-        
-        const weekStart = day - dayOfWeek;
-        
-        let total = 0;
-        let completed = 0;
-        const categoryStats = {};
-        
-        categories.forEach(cat => categoryStats[cat] = { total: 0, completed: 0 });
-        
-        for (let i = 0; i < 7; i++) {
-            const currentDay = weekStart + i;
-            if (currentDay > 0 && currentDay <= new Date(year, month + 1, 0).getDate()) {
-                categories.forEach(category => {
-                    const key = getTaskKey(year, month, currentDay, category);
-                    categoryStats[category].total++;
-                    total++;
-                    if (tasks[key]) {
-                        categoryStats[category].completed++;
-                        completed++;
-                    }
-                });
-            }
-        }
-        
-        document.getElementById('weekTotal').textContent = total;
-        document.getElementById('weekCompleted').textContent = completed;
-        
-        const chartHtml = categories.map(cat => {
-            const percent = categoryStats[cat].total > 0 
-                ? (categoryStats[cat].completed / categoryStats[cat].total * 100).toFixed(0)
-                : 0;
-            return `
-                <div class="bar-item">
-                    <div class="bar-label">${cat}</div>
-                    <div class="bar-track">
-                        <div class="bar-fill" style="width: ${percent}%">${categoryStats[cat].completed}/${categoryStats[cat].total}</div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-        
-        document.getElementById('weekChart').innerHTML = chartHtml;
     }
 
     function updateMonthStats() {
