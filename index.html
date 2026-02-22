@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -11,735 +10,876 @@
     <title>Трекер Результативности</title>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
+            min-height: 100vh;
         }
 
-    html {
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
-        min-height: 100vh;
-    }
-
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
-        min-height: 100vh;
-        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-        color: #e0e0e0;
-    }
-
-    .container {
-        max-width: 100%;
-        margin: 0 auto;
-        padding: 10px;
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
-        min-height: 100vh;
-    }
-
-    .header {
-        background: rgba(30, 30, 30, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        padding: 20px;
-        margin-bottom: 15px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 107, 53, 0.2);
-    }
-
-    .header h1 {
-        font-size: 24px;
-        font-weight: 700;
-        color: #ff9a56;
-        margin-bottom: 10px;
-        text-align: center;
-    }
-
-    .month-selector {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 15px;
-    }
-
-    .month-btn {
-        background: #ff6b35;
-        color: white;
-        border: none;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        font-size: 20px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s;
-    }
-
-    .month-btn:active {
-        transform: scale(0.95);
-        background: #ff5722;
-    }
-
-    .current-month {
-        font-size: 20px;
-        font-weight: 600;
-        color: #ff9a56;
-        min-width: 150px;
-        text-align: center;
-    }
-
-    .tabs {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 15px;
-    }
-
-    .tab {
-        flex: 1;
-        background: rgba(30, 30, 30, 0.9);
-        border: none;
-        padding: 10px 8px;
-        border-radius: 15px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-        color: #999;
-    }
-
-    .tab.active {
-        background: rgba(40, 40, 40, 0.95);
-        color: #ff9a56;
-        box-shadow: 0 4px 12px rgba(255, 154, 86, 0.3);
-        border: 1px solid rgba(255, 154, 86, 0.3);
-    }
-
-    .content-section {
-        display: none;
-    }
-
-    .content-section.active {
-        display: block;
-    }
-
-    .tasks-grid {
-        background: rgba(30, 30, 30, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        padding: 15px;
-        margin-bottom: 15px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 107, 53, 0.1);
-    }
-
-    .task-category {
-        margin-bottom: 10px;
-    }
-
-    .category-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px;
-        background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
-        border-radius: 12px;
-        margin-bottom: 10px;
-        color: white;
-        font-weight: 600;
-        cursor: pointer;
-        user-select: none;
-        transition: all 0.3s;
-    }
-
-    .category-header:active {
-        transform: scale(0.98);
-    }
-
-    .category-name {
-        font-size: 16px;
-    }
-
-    .category-toggle {
-        font-size: 18px;
-        transition: transform 0.3s;
-        margin-left: 10px;
-    }
-
-    .category-toggle.collapsed {
-        transform: rotate(-90deg);
-    }
-
-    .category-content {
-        max-height: 2000px;
-        overflow: hidden;
-        transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
-        opacity: 1;
-    }
-
-    .category-content.collapsed {
-        max-height: 0;
-        opacity: 0;
-    }
-
-    .category-count {
-        background: rgba(255, 255, 255, 0.3);
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 14px;
-    }
-
-    .week-container {
-        margin-bottom: 15px;
-    }
-
-    .week-header {
-        font-size: 12px;
-        color: #999;
-        margin-bottom: 8px;
-        padding-left: 5px;
-        font-weight: 600;
-    }
-
-    .days-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 6px;
-    }
-
-    .day-cell {
-        aspect-ratio: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: #2a2a2a;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: all 0.2s;
-        position: relative;
-    }
-
-    .day-label {
-        font-size: 10px;
-        color: #999;
-        margin-bottom: 2px;
-    }
-
-    .day-checkbox {
-        width: 20px;
-        height: 20px;
-        appearance: none;
-        border: 2px solid #444;
-        border-radius: 6px;
-        cursor: pointer;
-        position: relative;
-        transition: all 0.2s;
-        background: #1a1a1a;
-    }
-
-    .day-checkbox:checked {
-        background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
-        border-color: #ff6b35;
-    }
-
-    .day-checkbox:checked::after {
-        content: '✓';
-        position: absolute;
-        color: white;
-        font-size: 14px;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .stats-container {
-        background: rgba(30, 30, 30, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        padding: 20px;
-        margin-bottom: 15px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 107, 53, 0.1);
-    }
-
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        margin-bottom: 20px;
-    }
-
-    .stat-card {
-        background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
-        padding: 15px;
-        border-radius: 15px;
-        color: white;
-    }
-
-    .stat-label {
-        font-size: 12px;
-        opacity: 0.9;
-        margin-bottom: 5px;
-    }
-
-    .stat-value {
-        font-size: 28px;
-        font-weight: 700;
-    }
-
-    .chart-container {
-        margin-top: 20px;
-        background: #2a2a2a;
-        padding: 15px;
-        border-radius: 15px;
-    }
-
-    .chart-title {
-        font-size: 16px;
-        font-weight: 600;
-        color: #ff9a56;
-        margin-bottom: 15px;
-        text-align: center;
-    }
-
-    .bar-chart {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .bar-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .bar-label {
-        min-width: 100px;
-        font-size: 14px;
-        color: #ccc;
-    }
-
-    .bar-track {
-        flex: 1;
-        height: 30px;
-        background: #1a1a1a;
-        border-radius: 15px;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .bar-fill {
-        height: 100%;
-        background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        padding-right: 10px;
-        color: white;
-        font-size: 12px;
-        font-weight: 600;
-        transition: width 0.5s ease;
-    }
-
-    .summary-list {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .summary-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px;
-        background: #2a2a2a;
-        border-radius: 12px;
-    }
-
-    .summary-category {
-        font-weight: 600;
-        color: #e0e0e0;
-    }
-
-    .summary-stats {
-        display: flex;
-        gap: 15px;
-        font-size: 14px;
-    }
-
-    .summary-stat {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .summary-stat-label {
-        font-size: 11px;
-        color: #999;
-    }
-
-    .summary-stat-value {
-        font-weight: 700;
-        color: #ff9a56;
-    }
-
-    .muscle-tracker {
-        background: rgba(30, 30, 30, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        padding: 20px;
-        margin-bottom: 15px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 107, 53, 0.1);
-    }
-
-    .muscle-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-top: 15px;
-    }
-
-    .muscle-item {
-        background: #2a2a2a;
-        padding: 10px 15px;
-        border-radius: 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: all 0.2s;
-    }
-
-    .muscle-item.completed {
-        background: linear-gradient(135deg, rgba(255, 154, 86, 0.2) 0%, rgba(255, 107, 53, 0.2) 100%);
-        border: 1px solid rgba(255, 154, 86, 0.3);
-    }
-
-    .muscle-name {
-        font-size: 15px;
-        color: #e0e0e0;
-        font-weight: 500;
-        flex: 1;
-    }
-
-    .muscle-counter {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .muscle-btn {
-        width: 32px;
-        height: 32px;
-        background: #1a1a1a;
-        border: 2px solid #444;
-        border-radius: 8px;
-        color: #ff9a56;
-        font-size: 20px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.2s;
-        user-select: none;
-    }
-
-    .muscle-btn:active {
-        transform: scale(0.9);
-        background: #222;
-    }
-
-    .muscle-btn.active {
-        background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
-        border-color: #ff6b35;
-        color: white;
-    }
-
-    .muscle-count {
-        min-width: 30px;
-        text-align: center;
-        font-size: 18px;
-        font-weight: 700;
-        color: #ff9a56;
-    }
-
-    .muscle-reset {
-        width: 28px;
-        height: 28px;
-        background: transparent;
-        border: none;
-        color: #666;
-        font-size: 16px;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .muscle-reset:active {
-        transform: scale(0.9);
-        color: #ff6b35;
-    }
-
-    .muscle-delete {
-        width: 28px;
-        height: 28px;
-        background: transparent;
-        border: none;
-        color: #999;
-        font-size: 18px;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-left: 5px;
-    }
-
-    .muscle-delete:active {
-        transform: scale(0.9);
-        color: #ff3535;
-    }
-
-    .add-category-btn {
-        background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
-        color: white;
-        border: none;
-        padding: 12px 20px;
-        border-radius: 12px;
-        font-size: 15px;
-        font-weight: 600;
-        cursor: pointer;
-        margin: 10px 0;
-        width: 100%;
-        transition: all 0.3s;
-    }
-
-    .add-category-btn:active {
-        transform: scale(0.98);
-    }
-
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        z-index: 1000;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
-
-    .modal.active {
-        display: flex;
-    }
-
-    .modal-content {
-        background: #2a2a2a;
-        border-radius: 20px;
-        padding: 25px;
-        max-width: 400px;
-        width: 100%;
-        border: 1px solid rgba(255, 154, 86, 0.3);
-    }
-
-    .modal-title {
-        font-size: 20px;
-        font-weight: 700;
-        color: #ff9a56;
-        margin-bottom: 20px;
-        text-align: center;
-    }
-
-    .modal-input {
-        width: 100%;
-        background: #1a1a1a;
-        border: 2px solid #444;
-        border-radius: 12px;
-        padding: 12px 15px;
-        color: #e0e0e0;
-        font-size: 16px;
-        margin-bottom: 15px;
-        outline: none;
-    }
-
-    .modal-input:focus {
-        border-color: #ff9a56;
-    }
-
-    .modal-buttons {
-        display: flex;
-        gap: 10px;
-    }
-
-    .modal-btn {
-        flex: 1;
-        padding: 12px;
-        border: none;
-        border-radius: 12px;
-        font-size: 15px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .modal-btn.primary {
-        background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
-        color: white;
-    }
-
-    .modal-btn.secondary {
-        background: #1a1a1a;
-        color: #999;
-        border: 2px solid #444;
-    }
-
-    .modal-btn:active {
-        transform: scale(0.98);
-    }
-
-    @media (max-width: 380px) {
-        .days-grid {
-            gap: 4px;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
+            min-height: 100vh;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            color: #e0e0e0;
         }
-        
-        .day-checkbox {
-            width: 18px;
-            height: 18px;
-        }
-    }
 
-    /* Десктопная версия - горизонтальное расположение */
-    @media (min-width: 768px) {
         .container {
-            max-width: 1400px;
-            padding: 20px;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 8px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
+            min-height: 100vh;
         }
 
         .header {
-            margin-bottom: 20px;
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 107, 53, 0.2);
         }
 
+        .header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ff9a56;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .month-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .month-btn {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .month-btn:active { transform: scale(0.95); background: #ff5722; }
+
+        .current-month {
+            font-size: 17px;
+            font-weight: 600;
+            color: #ff9a56;
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .tab {
+            flex: 1;
+            background: rgba(30, 30, 30, 0.9);
+            border: none;
+            padding: 8px 4px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #999;
+        }
+
+        .tab.active {
+            background: rgba(40, 40, 40, 0.95);
+            color: #ff9a56;
+            box-shadow: 0 4px 12px rgba(255, 154, 86, 0.3);
+            border: 1px solid rgba(255, 154, 86, 0.3);
+        }
+
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+
+        /* ===== ЗАДАЧИ ===== */
         .tasks-grid {
-            padding: 20px;
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 10px;
+            margin-bottom: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 107, 53, 0.1);
         }
 
-        #tasksGrid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 15px;
-        }
-
-        .task-category {
-            margin-bottom: 0;
-        }
+        .task-category { margin-bottom: 8px; }
 
         .category-header {
-            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 10px 12px;
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            border-radius: 10px;
+            margin-bottom: 6px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s;
         }
 
-        .category-name {
-            font-size: 14px;
+        .category-header:active { transform: scale(0.98); }
+        .category-name { font-size: 14px; }
+        .category-toggle { font-size: 16px; transition: transform 0.3s; margin-left: 8px; }
+        .category-toggle.collapsed { transform: rotate(-90deg); }
+
+        .category-content {
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 1;
         }
+
+        .category-content.collapsed { max-height: 0; opacity: 0; }
 
         .category-count {
-            font-size: 12px;
+            background: rgba(255, 255, 255, 0.3);
             padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 13px;
         }
+
+        .week-container { margin-bottom: 10px; }
 
         .week-header {
             font-size: 11px;
-        }
-
-        .week-container {
-            margin-bottom: 10px;
+            color: #999;
+            margin-bottom: 5px;
+            padding-left: 4px;
+            font-weight: 600;
         }
 
         .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
             gap: 4px;
         }
 
         .day-cell {
-            padding: 2px;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #2a2a2a;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
         }
 
-        .day-label {
-            font-size: 9px;
-        }
+        .day-label { font-size: 9px; color: #999; margin-bottom: 2px; }
 
         .day-checkbox {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
+            appearance: none;
+            border: 2px solid #444;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+            background: #1a1a1a;
+        }
+
+        .day-checkbox:checked {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            border-color: #ff6b35;
         }
 
         .day-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
             font-size: 12px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
 
-        /* Компактные вкладки на десктопе */
-        .tabs {
-            max-width: 600px;
-            margin: 0 auto 20px;
-        }
-
-        /* Статистика на весь экран */
+        /* ===== СТАТИСТИКА ===== */
         .stats-container {
-            max-width: 1200px;
-            margin: 0 auto 20px;
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 107, 53, 0.1);
         }
 
-        .muscle-tracker {
-            max-width: 600px;
-            margin: 0 auto;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 14px;
         }
 
-        /* Кнопка добавления категории компактнее */
-        .add-category-btn {
-            margin: 10px 0;
-            grid-column: 1 / -1;
+        .stat-card {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            padding: 12px;
+            border-radius: 12px;
+            color: white;
         }
 
-        /* На десктопе делаем категорию развёрнутой по умолчанию */
-        .task-category {
-            margin-bottom: 0;
-        }
-    }
+        .stat-label { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .stat-value { font-size: 26px; font-weight: 700; }
 
-    /* Для очень широких экранов - еще компактнее */
-    @media (min-width: 1200px) {
-        #tasksGrid {
-            grid-template-columns: repeat(3, 1fr);
+        .chart-container {
+            margin-top: 14px;
+            background: #2a2a2a;
+            padding: 12px;
+            border-radius: 12px;
         }
 
-        .category-header {
+        .chart-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ff9a56;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+
+        .bar-item { display: flex; align-items: center; gap: 8px; }
+
+        .bar-label { min-width: 90px; font-size: 13px; color: #ccc; }
+
+        .bar-track {
+            flex: 1;
+            height: 26px;
+            background: #1a1a1a;
+            border-radius: 13px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            transition: width 0.5s ease;
+        }
+
+        .summary-list { display: flex; flex-direction: column; gap: 8px; }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: #2a2a2a;
+            border-radius: 10px;
+        }
+
+        .summary-category { font-weight: 600; color: #e0e0e0; font-size: 14px; }
+        .summary-stats { display: flex; gap: 12px; font-size: 13px; }
+        .summary-stat { display: flex; flex-direction: column; align-items: center; }
+        .summary-stat-label { font-size: 10px; color: #999; }
+        .summary-stat-value { font-weight: 700; color: #ff9a56; }
+
+        /* ===== ТАЙМЕР ===== */
+        .timer-card {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px 16px;
+            margin-bottom: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 107, 53, 0.1);
+        }
+
+        .timer-settings-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #ff9a56;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .timer-setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .timer-setting-row:last-of-type { border-bottom: none; }
+
+        .timer-setting-label {
+            font-size: 15px;
+            color: #ccc;
+            font-weight: 500;
+        }
+
+        .timer-spinner {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .spinner-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #ff6b35;
+            background: transparent;
+            color: #ff9a56;
+            font-size: 22px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            line-height: 1;
+        }
+
+        .spinner-btn:active { background: #ff6b35; color: white; transform: scale(0.93); }
+
+        .spinner-val {
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .timer-start-btn {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+
+        .timer-start-btn:active { transform: scale(0.97); }
+
+        /* активный таймер */
+        .timer-active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .timer-phase-label {
             font-size: 13px;
-            padding: 8px 10px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: #ff9a56;
+            margin-bottom: 4px;
         }
 
-        .day-label {
-            font-size: 8px;
+        .timer-round-label {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 20px;
         }
 
-        .day-checkbox {
-            width: 14px;
-            height: 14px;
+        .timer-ring-wrap {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin-bottom: 28px;
         }
-    }
-</style>
 
+        .timer-ring {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .timer-ring-bg {
+            fill: none;
+            stroke: #2a2a2a;
+            stroke-width: 12;
+        }
+
+        .timer-ring-progress {
+            fill: none;
+            stroke: #ff6b35;
+            stroke-width: 12;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s linear, stroke 0.4s;
+        }
+
+        .timer-digits {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 64px;
+            font-weight: 800;
+            color: #fff;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -2px;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 20px;
+        }
+
+        .timer-ctrl-btn {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: none;
+            font-size: 26px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-ctrl-btn:active { transform: scale(0.9); }
+
+        .timer-ctrl-btn.pause { background: #ff6b35; color: white; }
+        .timer-ctrl-btn.stop { background: #333; color: #bbb; border: 2px solid #444; }
+
+        /* завершено */
+        .timer-done {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 0 10px;
+            gap: 12px;
+        }
+
+        .timer-done-icon { font-size: 60px; }
+
+        .timer-done-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ff9a56;
+            margin-bottom: 10px;
+        }
+
+        /* ===== МЫШЦЫ (убрано) ===== */
+        .muscle-tracker {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 107, 53, 0.1);
+        }
+
+        .muscle-grid { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+
+        .muscle-item {
+            background: #2a2a2a;
+            padding: 8px 12px;
+            border-radius: 9px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .muscle-item.completed {
+            background: linear-gradient(135deg, rgba(255, 154, 86, 0.2) 0%, rgba(255, 107, 53, 0.2) 100%);
+            border: 1px solid rgba(255, 154, 86, 0.3);
+        }
+
+        .muscle-name { font-size: 14px; color: #e0e0e0; font-weight: 500; flex: 1; }
+        .muscle-counter { display: flex; align-items: center; gap: 8px; }
+
+        .muscle-btn {
+            width: 30px;
+            height: 30px;
+            background: #1a1a1a;
+            border: 2px solid #444;
+            border-radius: 7px;
+            color: #ff9a56;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .muscle-btn:active { transform: scale(0.9); background: #222; }
+
+        .muscle-btn.active {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            border-color: #ff6b35;
+            color: white;
+        }
+
+        .muscle-count { min-width: 28px; text-align: center; font-size: 16px; font-weight: 700; color: #ff9a56; }
+
+        .muscle-reset {
+            width: 26px;
+            height: 26px;
+            background: transparent;
+            border: none;
+            color: #666;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .muscle-reset:active { transform: scale(0.9); color: #ff6b35; }
+
+
+        /* ===== DRAG & DROP ===== */
+        .drag-handle {
+            cursor: grab;
+            color: #666;
+            font-size: 18px;
+            padding: 0 6px;
+            user-select: none;
+            touch-action: none;
+            flex-shrink: 0;
+        }
+        .drag-handle:active { cursor: grabbing; }
+        .ex-handle { font-size: 15px; color: #555; padding: 0 4px; }
+
+        .dragging {
+            opacity: 0.45;
+            transform: scale(0.98);
+        }
+
+        .drag-over-top {
+            border-top: 2px solid #ff6b35 !important;
+        }
+        .drag-over-bottom {
+            border-bottom: 2px solid #ff6b35 !important;
+        }
+
+        /* handle для категорий задач — в шапке */
+        .category-handle {
+            cursor: grab;
+            color: rgba(255,255,255,0.5);
+            font-size: 16px;
+            padding: 0 4px;
+            user-select: none;
+            touch-action: none;
+        }
+
+        /* ===== КНОПКИ ДОБАВЛЕНИЯ ===== */
+        .add-category-btn {
+            background: transparent;
+            color: #ff9a56;
+            border: 2px dashed rgba(255, 154, 86, 0.5);
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 8px;
+            width: 100%;
+            transition: all 0.25s;
+            letter-spacing: 0.3px;
+        }
+
+        .add-category-btn:hover {
+            background: rgba(255, 154, 86, 0.08);
+            border-color: #ff9a56;
+        }
+
+        .add-category-btn:active {
+            transform: scale(0.98);
+            background: rgba(255, 154, 86, 0.14);
+        }
+
+        /* ===== МОДАЛЬНЫЕ ОКНА ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: #2a2a2a;
+            border-radius: 18px;
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid rgba(255, 154, 86, 0.3);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ff9a56;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .modal-input {
+            width: 100%;
+            background: #1a1a1a;
+            border: 2px solid #444;
+            border-radius: 10px;
+            padding: 10px 13px;
+            color: #e0e0e0;
+            font-size: 16px;
+            margin-bottom: 12px;
+            outline: none;
+        }
+
+        .modal-input:focus { border-color: #ff9a56; }
+
+        .modal-buttons { display: flex; gap: 8px; }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            color: white;
+        }
+
+        .modal-btn.secondary { background: #1a1a1a; color: #999; border: 2px solid #444; }
+        .modal-btn:active { transform: scale(0.98); }
+
+        /* ===== ПРОГРАММА ТРЕНИРОВОК ===== */
+        .program-section {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 10px;
+            margin-bottom: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 107, 53, 0.1);
+        }
+
+        .program-add-btn {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .program-add-btn:active { transform: scale(0.98); }
+
+        .program-group {
+            background: #222;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 107, 53, 0.15);
+        }
+
+        .program-group-header {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            background: linear-gradient(135deg, rgba(255, 154, 86, 0.25) 0%, rgba(255, 107, 53, 0.25) 100%);
+            cursor: pointer;
+            user-select: none;
+            gap: 8px;
+        }
+
+        .program-group-header:active { opacity: 0.85; }
+
+        .program-group-name {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 700;
+            color: #ff9a56;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .program-group-toggle {
+            font-size: 14px;
+            color: #ff9a56;
+            transition: transform 0.3s;
+        }
+
+        .program-group-toggle.collapsed { transform: rotate(-90deg); }
+
+        .program-group-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .program-icon-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 7px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .program-icon-btn:active { transform: scale(0.9); }
+
+        .program-icon-btn.add { background: #ff6b35; color: white; }
+        .program-icon-btn.delete { background: #333; color: #888; }
+        .program-icon-btn.delete:active { color: #ff4444; }
+
+        .program-group-body {
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 1;
+        }
+
+        .program-group-body.collapsed { max-height: 0; opacity: 0; }
+
+        .program-exercise {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            gap: 8px;
+        }
+
+        .program-exercise-name {
+            flex: 1;
+            font-size: 14px;
+            color: #ddd;
+            line-height: 1.3;
+        }
+
+        .program-exercise-actions {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .program-add-exercise-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 8px;
+            background: transparent;
+            border: 1px dashed rgba(255, 107, 53, 0.4);
+            border-radius: 8px;
+            color: #ff9a56;
+            font-size: 13px;
+            cursor: pointer;
+            margin: 6px 0 4px;
+            transition: all 0.2s;
+        }
+
+        .program-add-exercise-btn:active { background: rgba(255, 107, 53, 0.1); }
+
+        /* Статус авторизации */
+        .auth-status {
+            position: fixed;
+            bottom: 12px;
+            right: 12px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #444;
+            z-index: 999;
+        }
+
+        .auth-status.connected { background: #4caf50; }
+
+        @media (max-width: 380px) {
+            .days-grid { gap: 3px; }
+            .day-checkbox { width: 16px; height: 16px; }
+        }
+
+        @media (min-width: 768px) {
+            .container { max-width: 1400px; padding: 20px; }
+            .header { margin-bottom: 16px; padding: 16px 20px; }
+            .tasks-grid { padding: 16px; }
+
+            #tasksGrid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 12px;
+            }
+
+            .task-category { margin-bottom: 0; }
+            .tabs { max-width: 600px; margin: 0 auto 16px; }
+            .stats-container { max-width: 1200px; margin: 0 auto 16px; }
+            .muscle-tracker { max-width: 600px; margin: 0 auto; }
+            .program-section { max-width: 700px; margin: 0 auto 16px; }
+            .add-category-btn { grid-column: 1 / -1; }
+        }
+
+        @media (min-width: 1200px) {
+            #tasksGrid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -752,93 +892,177 @@
             </div>
         </div>
 
-    <div class="tabs">
-        <button class="tab active" onclick="switchTab('tasks')">Задачи</button>
-        <button class="tab" onclick="switchTab('program')">Программа</button>
-        <button class="tab" onclick="switchTab('month')">Месяц</button>
-        <button class="tab" onclick="switchTab('year')">Год</button>
-    </div>
-
-    <div id="tasksSection" class="content-section active">
-        <div class="tasks-grid">
-            <button class="add-category-btn" onclick="openAddCategoryModal()">+ Добавить категорию</button>
-            <div id="tasksGrid"></div>
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('tasks', this)">Задачи</button>
+            <button class="tab" onclick="switchTab('program', this)">Программа</button>
+            <button class="tab" onclick="switchTab('timer', this)">Таймер</button>
+            <button class="tab" onclick="switchTab('month', this)">Месяц</button>
+            <button class="tab" onclick="switchTab('year', this)">Год</button>
         </div>
-    </div>
 
-    <div id="programSection" class="content-section">
-        <div class="muscle-tracker">
-            <h2 class="chart-title">Программа тренировок</h2>
-            <button class="add-category-btn" onclick="openAddExerciseModal()">+ Добавить упражнение</button>
-            <div class="muscle-grid" id="muscleGrid"></div>
-        </div>
-    </div>
-
-    <div id="monthSection" class="content-section">
-        <div class="stats-container">
-            <h2 class="chart-title">Итоги месяца</h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Всего задач</div>
-                    <div class="stat-value" id="monthTotal">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Выполнено</div>
-                    <div class="stat-value" id="monthCompleted">0</div>
-                </div>
-            </div>
-            <div class="chart-container">
-                <div class="chart-title">По категориям</div>
-                <div class="bar-chart" id="monthChart"></div>
+        <!-- ЗАДАЧИ -->
+        <div id="tasksSection" class="content-section active">
+            <div class="tasks-grid">
+                <button class="add-category-btn" onclick="openAddCategoryModal()">+ Добавить категорию</button>
+                <div id="tasksGrid"></div>
             </div>
         </div>
-    </div>
 
-    <div id="yearSection" class="content-section">
-        <div class="stats-container">
-            <h2 class="chart-title">Итоги года</h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Всего задач</div>
-                    <div class="stat-value" id="yearTotal">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Выполнено</div>
-                    <div class="stat-value" id="yearCompleted">0</div>
-                </div>
-            </div>
-            <div class="chart-container">
-                <div class="chart-title">Статистика по месяцам</div>
-                <div class="summary-list" id="yearSummary"></div>
+        <!-- ПРОГРАММА ТРЕНИРОВОК -->
+        <div id="programSection" class="content-section">
+            <div class="program-section">
+                <button class="program-add-btn" onclick="openAddGroupModal()">+ Добавить группу (день)</button>
+                <div id="programGrid"></div>
             </div>
         </div>
-    </div>
-</div>
 
-<div id="addCategoryModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-title">Новая категория</div>
-        <input type="text" id="newCategoryInput" class="modal-input" placeholder="Название категории" maxlength="20">
-        <div class="modal-buttons">
-            <button class="modal-btn secondary" onclick="closeAddCategoryModal()">Отмена</button>
-            <button class="modal-btn primary" onclick="addNewCategory()">Добавить</button>
+        <!-- ТАЙМЕР -->
+        <div id="timerSection" class="content-section">
+            <div class="timer-card">
+                <div class="timer-settings" id="timerSettings">
+                    <div class="timer-settings-title">Интервальный таймер</div>
+                    <div class="timer-setting-row">
+                        <span class="timer-setting-label">Раундов</span>
+                        <div class="timer-spinner">
+                            <button class="spinner-btn" onclick="adjustSetting('rounds',-1)">−</button>
+                            <span class="spinner-val" id="settingRounds">5</span>
+                            <button class="spinner-btn" onclick="adjustSetting('rounds',1)">+</button>
+                        </div>
+                    </div>
+                    <div class="timer-setting-row">
+                        <span class="timer-setting-label">Работа</span>
+                        <div class="timer-spinner">
+                            <button class="spinner-btn" onclick="adjustSetting('work',-5)">−</button>
+                            <span class="spinner-val" id="settingWork">40 с</span>
+                            <button class="spinner-btn" onclick="adjustSetting('work',5)">+</button>
+                        </div>
+                    </div>
+                    <div class="timer-setting-row">
+                        <span class="timer-setting-label">Отдых</span>
+                        <div class="timer-spinner">
+                            <button class="spinner-btn" onclick="adjustSetting('rest',-5)">−</button>
+                            <span class="spinner-val" id="settingRest">20 с</span>
+                            <button class="spinner-btn" onclick="adjustSetting('rest',5)">+</button>
+                        </div>
+                    </div>
+                    <div class="timer-setting-row">
+                        <span class="timer-setting-label">Подготовка</span>
+                        <div class="timer-spinner">
+                            <button class="spinner-btn" onclick="adjustSetting('prep',-5)">−</button>
+                            <span class="spinner-val" id="settingPrep">10 с</span>
+                            <button class="spinner-btn" onclick="adjustSetting('prep',5)">+</button>
+                        </div>
+                    </div>
+                    <button class="timer-start-btn" onclick="startTimer()">▶ Старт</button>
+                </div>
+                <div class="timer-active" id="timerActive" style="display:none">
+                    <div class="timer-phase-label" id="timerPhaseLabel">ПОДГОТОВКА</div>
+                    <div class="timer-round-label" id="timerRoundLabel">Раунд 1 / 5</div>
+                    <div class="timer-ring-wrap">
+                        <svg class="timer-ring" viewBox="0 0 200 200">
+                            <circle class="timer-ring-bg" cx="100" cy="100" r="88"/>
+                            <circle class="timer-ring-progress" id="timerRingProgress" cx="100" cy="100" r="88" stroke-dasharray="553" stroke-dashoffset="0"/>
+                        </svg>
+                        <div class="timer-digits" id="timerDigits">10</div>
+                    </div>
+                    <div class="timer-controls">
+                        <button class="timer-ctrl-btn pause" id="timerPauseBtn" onclick="togglePause()">⏸</button>
+                        <button class="timer-ctrl-btn stop" onclick="stopTimer()">⏹</button>
+                    </div>
+                </div>
+                <div class="timer-done" id="timerDone" style="display:none">
+                    <div class="timer-done-icon">🎉</div>
+                    <div class="timer-done-text">Отличная работа!</div>
+                    <button class="timer-start-btn" onclick="resetTimer()">Повторить</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- МЕСЯЦ -->
+        <div id="monthSection" class="content-section">
+            <div class="stats-container">
+                <h2 class="chart-title">Итоги месяца</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Всего задач</div>
+                        <div class="stat-value" id="monthTotal">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Выполнено</div>
+                        <div class="stat-value" id="monthCompleted">0</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">По категориям</div>
+                    <div class="bar-chart" id="monthChart"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ГОД -->
+        <div id="yearSection" class="content-section">
+            <div class="stats-container">
+                <h2 class="chart-title">Итоги года</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Всего задач</div>
+                        <div class="stat-value" id="yearTotal">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Выполнено</div>
+                        <div class="stat-value" id="yearCompleted">0</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Статистика по месяцам</div>
+                    <div class="summary-list" id="yearSummary"></div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<div id="addExerciseModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-title">Новое упражнение</div>
-        <input type="text" id="newExerciseInput" class="modal-input" placeholder="Название упражнения" maxlength="30">
-        <div class="modal-buttons">
-            <button class="modal-btn secondary" onclick="closeAddExerciseModal()">Отмена</button>
-            <button class="modal-btn primary" onclick="addNewExercise()">Добавить</button>
+    <!-- Индикатор соединения -->
+    <div class="auth-status" id="authStatus"></div>
+
+    <!-- Модалка: добавить категорию задач -->
+    <div id="addCategoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Новая категория</div>
+            <input type="text" id="newCategoryInput" class="modal-input" placeholder="Название категории" maxlength="20">
+            <div class="modal-buttons">
+                <button class="modal-btn secondary" onclick="closeModal('addCategoryModal')">Отмена</button>
+                <button class="modal-btn primary" onclick="addNewCategory()">Добавить</button>
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- Модалка: добавить группу программы -->
+    <div id="addGroupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Новая группа</div>
+            <input type="text" id="newGroupInput" class="modal-input" placeholder="Например: День 1 — Грудь" maxlength="40">
+            <div class="modal-buttons">
+                <button class="modal-btn secondary" onclick="closeModal('addGroupModal')">Отмена</button>
+                <button class="modal-btn primary" onclick="addNewGroup()">Добавить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка: добавить упражнение -->
+    <div id="addExerciseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Новое упражнение</div>
+            <input type="text" id="newExerciseInput" class="modal-input" placeholder="Например: Жим лёжа 4×10" maxlength="60">
+            <input type="hidden" id="newExerciseGroupId">
+            <div class="modal-buttons">
+                <button class="modal-btn secondary" onclick="closeModal('addExerciseModal')">Отмена</button>
+                <button class="modal-btn primary" onclick="addNewExercise()">Добавить</button>
+            </div>
+        </div>
+    </div>
 
 <script>
-    // Firebase Configuration
+    // ==================== FIREBASE ====================
     const firebaseConfig = {
         apiKey: "AIzaSyBDr6IVKewAVwv7FqxChVRv5pylnsHTdTw",
         authDomain: "todo-8e256.firebaseapp.com",
@@ -846,94 +1070,90 @@
         projectId: "todo-8e256",
         storageBucket: "todo-8e256.firebasestorage.app",
         messagingSenderId: "659322901199",
-        appId: "1:659322901199:web:a7819a4878706567e55dba",
-        measurementId: "G-491KYXN5K2"
+        appId: "1:659322901199:web:a7819a4878706567e55dba"
     };
 
-    // Инициализация Firebase
     let database = null;
+    let auth = null;
     let isFirebaseEnabled = false;
+    let currentUserId = null;
 
     try {
         firebase.initializeApp(firebaseConfig);
         database = firebase.database();
+        auth = firebase.auth();
         isFirebaseEnabled = true;
-        console.log('Firebase подключен');
-    } catch (error) {
-        console.log('Firebase не подключен, используется localStorage:', error);
-        isFirebaseEnabled = false;
+    } catch (e) {
+        console.log('Firebase init error:', e);
     }
 
+    // Анонимный вход — решает проблему с безопасностью
+    async function signInAnonymously() {
+        if (!auth) return;
+        try {
+            const result = await auth.signInAnonymously();
+            currentUserId = result.user.uid;
+            document.getElementById('authStatus').classList.add('connected');
+            console.log('Вошли анонимно, uid:', currentUserId);
+        } catch (e) {
+            console.log('Auth error:', e);
+        }
+    }
+
+    // ==================== ДАННЫЕ ====================
     let currentDate = new Date();
     let tasks = {};
     let muscles = {};
     let collapsedCategories = {};
     let categories = [];
-    let exerciseList = [];
+    // Программа: [{id, name, collapsed, exercises: [{id, name}]}]
+    let program = [];
+    let collapsedGroups = {};
 
-    // Загрузка категорий задач
     function loadCategories() {
         const saved = localStorage.getItem('categories');
-        return saved ? JSON.parse(saved) : [
-            'Спорт',
-            'Студия',
-            'Дневник',
-            'Выступления',
-            'Контент',
-            'Релизы'
-        ];
-    }
-
-    // Загрузка списка упражнений
-    function loadExerciseList() {
-        const saved = localStorage.getItem('exerciseList');
-        return saved ? JSON.parse(saved) : [
-            'Плечи',
-            'Трицепс',
-            'Бицепс',
-            'Отжимания',
-            'Пресс',
-            'Подтягивания',
-            'Ноги'
-        ];
+        return saved ? JSON.parse(saved) : ['Спорт', 'Студия', 'Дневник', 'Выступления', 'Контент', 'Релизы'];
     }
 
     function saveCategories() {
         localStorage.setItem('categories', JSON.stringify(categories));
-        if (isFirebaseEnabled) {
+        if (isFirebaseEnabled && currentUserId) {
             database.ref('categories').set(categories);
         }
     }
 
-    function saveExerciseList() {
-        localStorage.setItem('exerciseList', JSON.stringify(exerciseList));
-        if (isFirebaseEnabled) {
-            database.ref('exerciseList').set(exerciseList);
+    function saveProgram() {
+        localStorage.setItem('program', JSON.stringify(program));
+        if (isFirebaseEnabled && currentUserId) {
+            database.ref('program').set(program);
         }
     }
 
     async function loadData() {
-        if (isFirebaseEnabled) {
+        if (isFirebaseEnabled && currentUserId) {
             try {
-                const tasksSnapshot = await database.ref('tasks').once('value');
-                const musclesSnapshot = await database.ref('muscles').once('value');
-                const categoriesSnapshot = await database.ref('categories').once('value');
-                const exerciseListSnapshot = await database.ref('exerciseList').once('value');
-                
-                tasks = tasksSnapshot.val() || {};
-                muscles = musclesSnapshot.val() || {};
-                if (categoriesSnapshot.val()) {
-                    categories = categoriesSnapshot.val();
-                } else {
-                    categories = loadCategories();
+                const [tasksSnap, musclesSnap, catsSnap, progSnap] = await Promise.all([
+                    database.ref('tasks').once('value'),
+                    database.ref('muscles').once('value'),
+                    database.ref('categories').once('value'),
+                    database.ref('program').once('value'),
+                ]);
+                tasks = tasksSnap.val() || {};
+                muscles = musclesSnap.val() || {};
+                categories = catsSnap.val() || loadCategories();
+                program = progSnap.val() || [];
+                // Firebase возвращает объект, если массив — конвертируем
+                if (program && !Array.isArray(program)) {
+                    program = Object.values(program);
                 }
-                if (exerciseListSnapshot.val()) {
-                    exerciseList = exerciseListSnapshot.val();
-                } else {
-                    exerciseList = loadExerciseList();
-                }
-            } catch (error) {
-                console.log('Ошибка загрузки из Firebase:', error);
+                program.forEach(g => {
+                    if (g.exercises && !Array.isArray(g.exercises)) {
+                        g.exercises = Object.values(g.exercises);
+                    }
+                    if (!g.exercises) g.exercises = [];
+                });
+            } catch (e) {
+                console.log('Firebase load error:', e);
                 loadFromLocalStorage();
             }
         } else {
@@ -945,38 +1165,65 @@
         const savedTasks = localStorage.getItem('taskTracker');
         const savedMuscles = localStorage.getItem('muscleTracker');
         const savedCollapsed = localStorage.getItem('collapsedCategories');
-        
+        const savedProgram = localStorage.getItem('program');
         tasks = savedTasks ? JSON.parse(savedTasks) : {};
         muscles = savedMuscles ? JSON.parse(savedMuscles) : {};
         collapsedCategories = savedCollapsed ? JSON.parse(savedCollapsed) : {};
         categories = loadCategories();
-        exerciseList = loadExerciseList();
+        program = savedProgram ? JSON.parse(savedProgram) : [];
     }
 
     function saveTasks() {
         localStorage.setItem('taskTracker', JSON.stringify(tasks));
-        if (isFirebaseEnabled) {
-            database.ref('tasks').set(tasks);
-        }
+        if (isFirebaseEnabled && currentUserId) database.ref('tasks').set(tasks);
     }
 
     function saveMuscles() {
         localStorage.setItem('muscleTracker', JSON.stringify(muscles));
-        if (isFirebaseEnabled) {
-            database.ref('muscles').set(muscles);
-        }
+        if (isFirebaseEnabled && currentUserId) database.ref('muscles').set(muscles);
     }
 
     function saveCollapsedState() {
         localStorage.setItem('collapsedCategories', JSON.stringify(collapsedCategories));
     }
 
-    function getTaskKey(year, month, day, category) {
-        return `${year}-${month}-${day}-${category}`;
+    function getTaskKey(year, month, day, category) { return `${year}-${month}-${day}-${category}`; }
+    function getMuscleKey(year, month, muscle) { return `${year}-${month}-${muscle}`; }
+    function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+    // ==================== МОДАЛКИ ====================
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+
+    document.addEventListener('click', function(e) {
+        ['addCategoryModal', 'addGroupModal', 'addExerciseModal'].forEach(id => {
+            if (e.target === document.getElementById(id)) closeModal(id);
+        });
+    });
+
+    document.addEventListener('keypress', function(e) {
+        if (e.key !== 'Enter') return;
+        if (document.getElementById('addCategoryModal').classList.contains('active')) addNewCategory();
+        else if (document.getElementById('addGroupModal').classList.contains('active')) addNewGroup();
+        else if (document.getElementById('addExerciseModal').classList.contains('active')) addNewExercise();
+    });
+
+    // ==================== КАТЕГОРИИ ====================
+    function openAddCategoryModal() {
+        document.getElementById('newCategoryInput').value = '';
+        openModal('addCategoryModal');
+        setTimeout(() => document.getElementById('newCategoryInput').focus(), 100);
     }
 
-    function getMuscleKey(year, month, muscle) {
-        return `${year}-${month}-${muscle}`;
+    function addNewCategory() {
+        const input = document.getElementById('newCategoryInput');
+        const name = input.value.trim();
+        if (!name) return;
+        if (categories.includes(name)) { alert('Такая категория уже существует!'); return; }
+        categories.push(name);
+        saveCategories();
+        closeModal('addCategoryModal');
+        updateDisplay();
     }
 
     function toggleCategory(category) {
@@ -986,391 +1233,774 @@
         updateDisplay();
     }
 
-    function openAddCategoryModal() {
-        document.getElementById('addCategoryModal').classList.add('active');
-        document.getElementById('newCategoryInput').value = '';
-        document.getElementById('newCategoryInput').focus();
+    // ==================== ПРОГРАММА ====================
+    function openAddGroupModal() {
+        document.getElementById('newGroupInput').value = '';
+        openModal('addGroupModal');
+        setTimeout(() => document.getElementById('newGroupInput').focus(), 100);
     }
 
-    function closeAddCategoryModal() {
-        document.getElementById('addCategoryModal').classList.remove('active');
+    function addNewGroup() {
+        const name = document.getElementById('newGroupInput').value.trim();
+        if (!name) return;
+        program.push({ id: uid(), name, exercises: [], collapsed: false });
+        saveProgram();
+        closeModal('addGroupModal');
+        renderProgram(); setTimeout(() => { initDragProgram(); initDragExercises(); }, 50);
     }
 
-    function addNewCategory() {
-        const input = document.getElementById('newCategoryInput');
-        const newCategory = input.value.trim();
-        
-        if (newCategory && !categories.includes(newCategory)) {
-            categories.push(newCategory);
-            saveCategories();
-            closeAddCategoryModal();
-            updateDisplay();
-        } else if (categories.includes(newCategory)) {
-            alert('Такая категория уже существует!');
-        } else {
-            alert('Введите название категории!');
-        }
+    function deleteGroup(groupId) {
+        if (!confirm('Удалить группу со всеми упражнениями?')) return;
+        program = program.filter(g => g.id !== groupId);
+        saveProgram();
+        renderProgram(); setTimeout(() => { initDragProgram(); initDragExercises(); }, 50);
     }
 
-    function openAddExerciseModal() {
-        document.getElementById('addExerciseModal').classList.add('active');
+    function toggleGroup(groupId) {
+        const g = program.find(g => g.id === groupId);
+        if (!g) return;
+        g.collapsed = !g.collapsed;
+        // не сохраняем в Firebase чтобы не лишний раз писать — только локально
+        renderProgram(); setTimeout(() => { initDragProgram(); initDragExercises(); }, 50);
+    }
+
+    function openAddExerciseModal(groupId) {
         document.getElementById('newExerciseInput').value = '';
-        document.getElementById('newExerciseInput').focus();
-    }
-
-    function closeAddExerciseModal() {
-        document.getElementById('addExerciseModal').classList.remove('active');
+        document.getElementById('newExerciseGroupId').value = groupId;
+        openModal('addExerciseModal');
+        setTimeout(() => document.getElementById('newExerciseInput').focus(), 100);
     }
 
     function addNewExercise() {
-        const input = document.getElementById('newExerciseInput');
-        const newExercise = input.value.trim();
-        
-        if (newExercise && !exerciseList.includes(newExercise)) {
-            exerciseList.push(newExercise);
-            saveExerciseList();
-            closeAddExerciseModal();
-            renderMuscleTracker();
-        } else if (exerciseList.includes(newExercise)) {
-            alert('Такое упражнение уже существует!');
-        } else {
-            alert('Введите название упражнения!');
-        }
+        const name = document.getElementById('newExerciseInput').value.trim();
+        const groupId = document.getElementById('newExerciseGroupId').value;
+        if (!name) return;
+        const g = program.find(g => g.id === groupId);
+        if (!g) return;
+        g.exercises.push({ id: uid(), name });
+        saveProgram();
+        closeModal('addExerciseModal');
+        renderProgram(); setTimeout(() => { initDragProgram(); initDragExercises(); }, 50);
     }
 
-    function deleteExercise(exercise) {
-        if (confirm(`Удалить упражнение "${exercise}"? Все данные по этому упражнению будут потеряны.`)) {
-            exerciseList = exerciseList.filter(ex => ex !== exercise);
-            saveExerciseList();
-            
-            // Удаляем все данные по этому упражнению
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
-            const key = getMuscleKey(year, month, exercise);
-            delete muscles[key];
-            saveMuscles();
-            
-            renderMuscleTracker();
-        }
+    function deleteExercise(groupId, exerciseId) {
+        const g = program.find(g => g.id === groupId);
+        if (!g) return;
+        g.exercises = g.exercises.filter(e => e.id !== exerciseId);
+        saveProgram();
+        renderProgram(); setTimeout(() => { initDragProgram(); initDragExercises(); }, 50);
     }
 
-    // Закрытие модального окна по клику вне его
-    document.addEventListener('click', function(e) {
-        const categoryModal = document.getElementById('addCategoryModal');
-        const exerciseModal = document.getElementById('addExerciseModal');
-        
-        if (e.target === categoryModal) {
-            closeAddCategoryModal();
+    function renderProgram() {
+        const grid = document.getElementById('programGrid');
+        if (!grid) return;
+        if (program.length === 0) {
+            grid.innerHTML = '<div style="text-align:center;color:#666;padding:20px;font-size:14px;">Нет групп. Добавьте первую!</div>';
+            return;
         }
-        if (e.target === exerciseModal) {
-            closeAddExerciseModal();
-        }
-    });
-
-    // Добавление по Enter
-    document.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            if (document.getElementById('addCategoryModal').classList.contains('active')) {
-                addNewCategory();
-            }
-            if (document.getElementById('addExerciseModal').classList.contains('active')) {
-                addNewExercise();
-            }
-        }
-    });
-
-    function changeMonth(delta) {
-        currentDate.setMonth(currentDate.getMonth() + delta);
-        updateDisplay();
-    }
-
-    function switchTab(tab) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-        
-        event.target.classList.add('active');
-        document.getElementById(tab + 'Section').classList.add('active');
-        
-        if (tab === 'program') renderMuscleTracker();
-        if (tab === 'month') updateMonthStats();
-        if (tab === 'year') updateYearStats();
-    }
-
-    function updateDisplay() {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-        
-        const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 
-                          'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-        
-        document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
-        
-        renderTasks(year, month);
-    }
-
-    function renderTasks(year, month) {
-        const grid = document.getElementById('tasksGrid');
-        grid.innerHTML = '';
-        
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        const firstDay = new Date(year, month, 1).getDay();
-        const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1;
-        
-        // Проверяем ширину экрана
-        const isDesktop = window.innerWidth >= 768;
-        
-        categories.forEach(category => {
-            const categoryDiv = document.createElement('div');
-            categoryDiv.className = 'task-category';
-            
-            const completed = getCompletedCount(year, month, category);
-            const collapseKey = `${year}-${month}-${category}`;
-            
-            // На десктопе по умолчанию развёрнуто, на мобильном - свёрнуто
-            let isCollapsed;
-            if (collapsedCategories.hasOwnProperty(collapseKey)) {
-                isCollapsed = collapsedCategories[collapseKey];
-            } else {
-                isCollapsed = !isDesktop;
-            }
-            
-            // Показываем разный счётчик в зависимости от состояния
-            const counterDisplay = isCollapsed 
-                ? `<span class="category-count">${completed}</span>`
-                : `<span class="category-count">${completed}/${daysInMonth}</span>`;
-            
-            categoryDiv.innerHTML = `
-                <div class="category-header" onclick="toggleCategory('${category}')">
-                    <span class="category-name">${category}</span>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        ${counterDisplay}
-                        <span class="category-toggle ${isCollapsed ? 'collapsed' : ''}">▼</span>
+        grid.innerHTML = program.map(g => `
+            <div class="program-group">
+                <div class="program-group-header" onclick="toggleGroup('${g.id}')"
+                     data-group-id="${g.id}">
+                    <span class="drag-handle" title="Перетащить">⠿</span>
+                    <span class="program-group-name">${escHtml(g.name)}</span>
+                    <div class="program-group-actions" onclick="event.stopPropagation()">
+                        <button class="program-icon-btn add" onclick="openAddExerciseModal('${g.id}')">+</button>
+                        <button class="program-icon-btn delete" onclick="deleteGroup('${g.id}')">🗑</button>
                     </div>
+                    <span class="program-group-toggle ${g.collapsed ? 'collapsed' : ''}">▼</span>
                 </div>
-            `;
-            
-            let weekHtml = '';
-            let currentWeekDays = [];
-            let weekNumber = 1;
-            
-            for (let i = 0; i < adjustedFirstDay; i++) {
-                currentWeekDays.push('<div class="day-cell" style="opacity: 0.3;"></div>');
-            }
-            
-            for (let day = 1; day <= daysInMonth; day++) {
-                const key = getTaskKey(year, month, day, category);
-                const isChecked = tasks[key] || false;
-                const dayName = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'][(adjustedFirstDay + day - 1) % 7];
-                
-                currentWeekDays.push(`
-                    <div class="day-cell">
-                        <div class="day-label">${dayName}</div>
-                        <input type="checkbox" 
-                               class="day-checkbox" 
-                               ${isChecked ? 'checked' : ''}
-                               onchange="toggleTask(${year}, ${month}, ${day}, '${category}')">
-                    </div>
-                `);
-                
-                if ((adjustedFirstDay + day) % 7 === 0 || day === daysInMonth) {
-                    while (currentWeekDays.length < 7) {
-                        currentWeekDays.push('<div class="day-cell" style="opacity: 0.3;"></div>');
-                    }
-                    
-                    weekHtml += `
-                        <div class="week-container">
-                            <div class="week-header">Неделя ${weekNumber}</div>
-                            <div class="days-grid">${currentWeekDays.join('')}</div>
+                <div class="program-group-body ${g.collapsed ? 'collapsed' : ''}">
+                    ${g.exercises.length === 0 ? '<div style="padding:10px 12px;color:#666;font-size:13px;">Нет упражнений</div>' : ''}
+                    ${g.exercises.map(ex => `
+                        <div class="program-exercise" data-exercise-id="${ex.id}" data-group-id="${g.id}">
+                            <span class="drag-handle ex-handle" title="Перетащить">⠿</span>
+                            <span class="program-exercise-name">${escHtml(ex.name)}</span>
+                            <div class="program-exercise-actions">
+                                <button class="program-icon-btn delete" onclick="deleteExercise('${g.id}','${ex.id}')">🗑</button>
+                            </div>
                         </div>
-                    `;
-                    currentWeekDays = [];
-                    weekNumber++;
+                    `).join('')}
+                    <button class="program-add-exercise-btn" onclick="openAddExerciseModal('${g.id}')">+ упражнение</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function escHtml(str) {
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ==================== ТАЙМЕР ====================
+    let timerSettings = { rounds: 5, work: 40, rest: 20, prep: 10 };
+    let timerState = { phase: 'idle', round: 1, timeLeft: 0, paused: false };
+    let timerInterval = null;
+    const circumference = 553; // 2 * pi * 88
+
+    function adjustSetting(key, delta) {
+        const min = key === 'rounds' ? 1 : 5;
+        const max = key === 'rounds' ? 20 : 300;
+        timerSettings[key] = Math.max(min, Math.min(max, timerSettings[key] + delta));
+        const labels = { rounds: '', work: ' с', rest: ' с', prep: ' с' };
+        const ids = { rounds: 'settingRounds', work: 'settingWork', rest: 'settingRest', prep: 'settingPrep' };
+        document.getElementById(ids[key]).textContent = timerSettings[key] + labels[key];
+    }
+
+    function startTimer() {
+        document.getElementById('timerSettings').style.display = 'none';
+        document.getElementById('timerActive').style.display = 'flex';
+        document.getElementById('timerDone').style.display = 'none';
+        timerState = { phase: 'prep', round: 1, timeLeft: timerSettings.prep, paused: false };
+        updateTimerUI();
+        runTick();
+    }
+
+    function runTick() {
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            if (timerState.paused) return;
+            timerState.timeLeft--;
+            if (timerState.timeLeft <= 0) {
+                nextPhase();
+            } else {
+                updateTimerUI();
+                // тиканье на последних 5 секундах
+                if (timerState.timeLeft <= 5) {
+                    tick();
                 }
             }
-            
-            categoryDiv.innerHTML += `<div class="category-content ${isCollapsed ? 'collapsed' : ''}">${weekHtml}</div>`;
-            grid.appendChild(categoryDiv);
-        });
+        }, 1000);
     }
 
-    function toggleTask(year, month, day, category) {
-        const key = getTaskKey(year, month, day, category);
-        tasks[key] = !tasks[key];
-        saveTasks();
-        updateDisplay();
+    function nextPhase() {
+        if (timerState.phase === 'prep') {
+            timerState.phase = 'work';
+            timerState.timeLeft = timerSettings.work;
+        } else if (timerState.phase === 'work') {
+            if (timerState.round >= timerSettings.rounds) {
+                // Готово!
+                clearInterval(timerInterval);
+                document.getElementById('timerActive').style.display = 'none';
+                document.getElementById('timerDone').style.display = 'flex';
+                beepDone();
+                return;
+            }
+            timerState.phase = 'rest';
+            timerState.timeLeft = timerSettings.rest;
+        } else if (timerState.phase === 'rest') {
+            timerState.round++;
+            timerState.phase = 'work';
+            timerState.timeLeft = timerSettings.work;
+        }
+        if (timerState.phase === 'work') beepWork();
+        else if (timerState.phase === 'rest') beepRest();
+        updateTimerUI();
     }
+
+    function updateTimerUI() {
+        const phase = timerState.phase;
+        const total = phase === 'prep' ? timerSettings.prep
+                    : phase === 'work' ? timerSettings.work
+                    : timerSettings.rest;
+        const progress = total > 0 ? timerState.timeLeft / total : 0;
+        const offset = circumference * (1 - progress);
+
+        document.getElementById('timerDigits').textContent = timerState.timeLeft;
+        document.getElementById('timerRingProgress').style.strokeDashoffset = offset;
+
+        const colors = { prep: '#888', work: '#ff6b35', rest: '#4caf50' };
+        document.getElementById('timerRingProgress').style.stroke = colors[phase] || '#ff6b35';
+
+        const labels = { prep: 'ПОДГОТОВКА', work: 'РАБОТА', rest: 'ОТДЫХ' };
+        document.getElementById('timerPhaseLabel').textContent = labels[phase] || '';
+
+        const restLabel = timerState.phase !== 'prep'
+            ? 'Раунд ' + timerState.round + ' / ' + timerSettings.rounds
+            : 'Готовься!';
+        document.getElementById('timerRoundLabel').textContent = restLabel;
+    }
+
+    function togglePause() {
+        timerState.paused = !timerState.paused;
+        document.getElementById('timerPauseBtn').textContent = timerState.paused ? '▶' : '⏸';
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+        resetTimer();
+    }
+
+    function resetTimer() {
+        clearInterval(timerInterval);
+        timerState = { phase: 'idle', round: 1, timeLeft: 0, paused: false };
+        document.getElementById('timerSettings').style.display = 'block';
+        document.getElementById('timerActive').style.display = 'none';
+        document.getElementById('timerDone').style.display = 'none';
+    }
+
+    let audioCtx = null;
+    function getAudioCtx() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        return audioCtx;
+    }
+
+    function playTone(freq, duration, type = 'sine', vol = 0.4) {
+        try {
+            const ctx = getAudioCtx();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.type = type;
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(vol, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + duration);
+        } catch(e) {}
+    }
+
+    // короткое тиканье — последние 5 сек
+    function tick() {
+        playTone(1000, 0.06, 'square', 0.15);
+    }
+
+    // смена на РАБОТУ — два восходящих тона
+    function beepWork() {
+        playTone(440, 0.12, 'sine', 0.5);
+        setTimeout(() => playTone(660, 0.2, 'sine', 0.5), 140);
+    }
+
+    // смена на ОТДЫХ — нисходящий тон
+    function beepRest() {
+        playTone(660, 0.12, 'sine', 0.4);
+        setTimeout(() => playTone(440, 0.25, 'sine', 0.3), 140);
+    }
+
+    // финальный аккорд
+    function beepDone() {
+        playTone(523, 0.15, 'sine', 0.5);
+        setTimeout(() => playTone(659, 0.15, 'sine', 0.5), 160);
+        setTimeout(() => playTone(784, 0.4, 'sine', 0.5), 320);
+    }
+
+    // ==================== МЫШЦЫ (оставлено для данных) ====================
+    const muscleGroups = ['Плечи','Трицепс','Бицепс','Отжимания','Пресс','Подтягивания','Ноги'];
 
     function incrementMuscle(year, month, muscle) {
         const key = getMuscleKey(year, month, muscle);
         muscles[key] = (muscles[key] || 0) + 1;
-        saveMuscles();
-        renderMuscleTracker();
+        saveMuscles(); renderMuscleTracker();
     }
 
     function decrementMuscle(year, month, muscle) {
         const key = getMuscleKey(year, month, muscle);
-        if (muscles[key] && muscles[key] > 0) {
-            muscles[key] = muscles[key] - 1;
-            if (muscles[key] === 0) {
-                delete muscles[key];
-            }
-            saveMuscles();
-            renderMuscleTracker();
+        if (muscles[key] > 0) {
+            muscles[key]--;
+            if (muscles[key] === 0) delete muscles[key];
+            saveMuscles(); renderMuscleTracker();
         }
     }
 
     function resetMuscle(year, month, muscle) {
-        const key = getMuscleKey(year, month, muscle);
-        delete muscles[key];
-        saveMuscles();
-        renderMuscleTracker();
+        delete muscles[getMuscleKey(year, month, muscle)];
+        saveMuscles(); renderMuscleTracker();
     }
 
     function renderMuscleTracker() {
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
         const grid = document.getElementById('muscleGrid');
-        
-        grid.innerHTML = exerciseList.map(muscle => {
+        grid.innerHTML = muscleGroups.map(muscle => {
             const key = getMuscleKey(year, month, muscle);
             const count = muscles[key] || 0;
-            const hasValue = count > 0;
-            
             return `
-                <div class="muscle-item ${hasValue ? 'completed' : ''}">
+                <div class="muscle-item ${count > 0 ? 'completed' : ''}">
                     <span class="muscle-name">${muscle}</span>
                     <div class="muscle-counter">
-                        ${hasValue ? `<div class="muscle-btn active" onclick="decrementMuscle(${year}, ${month}, '${muscle}')">−</div>` : '<div style="width: 32px;"></div>'}
+                        ${count > 0 ? `<div class="muscle-btn active" onclick="decrementMuscle(${year},${month},'${muscle}')">−</div>` : '<div style="width:30px"></div>'}
                         <div class="muscle-count">${count > 0 ? count : ''}</div>
-                        <div class="muscle-btn ${hasValue ? 'active' : ''}" 
-                             onclick="incrementMuscle(${year}, ${month}, '${muscle}')">+</div>
-                        ${count > 0 ? `<div class="muscle-reset" onclick="resetMuscle(${year}, ${month}, '${muscle}')">×</div>` : '<div style="width: 28px;"></div>'}
-                        <div class="muscle-delete" onclick="deleteExercise('${muscle}')">🗑</div>
+                        <div class="muscle-btn ${count > 0 ? 'active' : ''}" onclick="incrementMuscle(${year},${month},'${muscle}')">+</div>
+                        ${count > 0 ? `<div class="muscle-reset" onclick="resetMuscle(${year},${month},'${muscle}')">×</div>` : '<div style="width:26px"></div>'}
                     </div>
-                </div>
-            `;
+                </div>`;
         }).join('');
+    }
+
+    // ==================== ЗАДАЧИ ====================
+    function toggleTask(year, month, day, category) {
+        const key = getTaskKey(year, month, day, category);
+        tasks[key] = !tasks[key];
+        saveTasks(); updateDisplay();
     }
 
     function getCompletedCount(year, month, category) {
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         let count = 0;
-        for (let day = 1; day <= daysInMonth; day++) {
-            const key = getTaskKey(year, month, day, category);
-            if (tasks[key]) count++;
+        for (let d = 1; d <= daysInMonth; d++) {
+            if (tasks[getTaskKey(year, month, d, category)]) count++;
         }
         return count;
     }
 
+    function renderTasks(year, month) {
+        const grid = document.getElementById('tasksGrid');
+        grid.innerHTML = '';
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const firstDay = new Date(year, month, 1).getDay();
+        const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1;
+        const isDesktop = window.innerWidth >= 768;
+
+        categories.forEach(category => {
+            const categoryDiv = document.createElement('div');
+            categoryDiv.className = 'task-category';
+            const completed = getCompletedCount(year, month, category);
+            const collapseKey = `${year}-${month}-${category}`;
+            let isCollapsed;
+            if (collapsedCategories.hasOwnProperty(collapseKey)) {
+                isCollapsed = collapsedCategories[collapseKey];
+            } else {
+                isCollapsed = !isDesktop;
+            }
+
+            const counterDisplay = isCollapsed
+                ? `<span class="category-count">${completed}</span>`
+                : `<span class="category-count">${completed}/${daysInMonth}</span>`;
+
+            categoryDiv.setAttribute('data-category', category);
+            categoryDiv.innerHTML = `
+                <div class="category-header">
+                    <span class="category-handle" title="Перетащить">⠿</span>
+                    <span class="category-name" onclick="toggleCategory('${category}')" style="flex:1;cursor:pointer">${category}</span>
+                    <div style="display:flex;align-items:center;gap:8px;" onclick="toggleCategory('${category}')">
+                        ${counterDisplay}
+                        <span class="category-toggle ${isCollapsed ? 'collapsed' : ''}">▼</span>
+                    </div>
+                </div>`;
+
+            let weekHtml = '';
+            let currentWeekDays = [];
+            let weekNumber = 1;
+            const dayNames = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+
+            for (let i = 0; i < adjustedFirstDay; i++) {
+                currentWeekDays.push('<div class="day-cell" style="opacity:0.3;"></div>');
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const key = getTaskKey(year, month, day, category);
+                const isChecked = tasks[key] || false;
+                const dayName = dayNames[(adjustedFirstDay + day - 1) % 7];
+                currentWeekDays.push(`
+                    <div class="day-cell">
+                        <div class="day-label">${dayName}</div>
+                        <input type="checkbox" class="day-checkbox" ${isChecked ? 'checked' : ''}
+                               onchange="toggleTask(${year},${month},${day},'${category}')">
+                    </div>`);
+
+                if ((adjustedFirstDay + day) % 7 === 0 || day === daysInMonth) {
+                    while (currentWeekDays.length < 7) {
+                        currentWeekDays.push('<div class="day-cell" style="opacity:0.3;"></div>');
+                    }
+                    weekHtml += `
+                        <div class="week-container">
+                            <div class="week-header">Неделя ${weekNumber}</div>
+                            <div class="days-grid">${currentWeekDays.join('')}</div>
+                        </div>`;
+                    currentWeekDays = [];
+                    weekNumber++;
+                }
+            }
+
+            categoryDiv.innerHTML += `<div class="category-content ${isCollapsed ? 'collapsed' : ''}">${weekHtml}</div>`;
+            grid.appendChild(categoryDiv);
+        });
+    }
+
+    // ==================== СТАТИСТИКА ====================
     function updateMonthStats() {
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
-        
-        let total = 0;
-        let completed = 0;
+        let total = 0, completed = 0;
         const categoryStats = {};
-        
         categories.forEach(cat => categoryStats[cat] = { total: 0, completed: 0 });
-        
         for (let day = 1; day <= daysInMonth; day++) {
-            categories.forEach(category => {
-                const key = getTaskKey(year, month, day, category);
-                categoryStats[category].total++;
-                total++;
-                if (tasks[key]) {
-                    categoryStats[category].completed++;
-                    completed++;
-                }
+            categories.forEach(cat => {
+                categoryStats[cat].total++; total++;
+                if (tasks[getTaskKey(year, month, day, cat)]) { categoryStats[cat].completed++; completed++; }
             });
         }
-        
         document.getElementById('monthTotal').textContent = total;
         document.getElementById('monthCompleted').textContent = completed;
-        
-        const chartHtml = categories.map(cat => {
-            const percent = categoryStats[cat].total > 0 
-                ? (categoryStats[cat].completed / categoryStats[cat].total * 100).toFixed(0)
-                : 0;
-            return `
-                <div class="bar-item">
-                    <div class="bar-label">${cat}</div>
-                    <div class="bar-track">
-                        <div class="bar-fill" style="width: ${percent}%">${categoryStats[cat].completed}/${categoryStats[cat].total}</div>
-                    </div>
-                </div>
-            `;
+        document.getElementById('monthChart').innerHTML = categories.map(cat => {
+            const p = categoryStats[cat].total > 0 ? (categoryStats[cat].completed / categoryStats[cat].total * 100).toFixed(0) : 0;
+            return `<div class="bar-item"><div class="bar-label">${cat}</div><div class="bar-track"><div class="bar-fill" style="width:${p}%">${categoryStats[cat].completed}/${categoryStats[cat].total}</div></div></div>`;
         }).join('');
-        
-        document.getElementById('monthChart').innerHTML = chartHtml;
     }
 
     function updateYearStats() {
         const year = currentDate.getFullYear();
-        
-        let totalYear = 0;
-        let completedYear = 0;
+        const monthNames = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+        let totalYear = 0, completedYear = 0;
         const monthlyStats = [];
-        
-        const monthNames = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 
-                          'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
-        
         for (let month = 0; month < 12; month++) {
             const daysInMonth = new Date(year, month + 1, 0).getDate();
-            let monthTotal = 0;
-            let monthCompleted = 0;
-            
+            let mt = 0, mc = 0;
             for (let day = 1; day <= daysInMonth; day++) {
-                categories.forEach(category => {
-                    const key = getTaskKey(year, month, day, category);
-                    monthTotal++;
-                    totalYear++;
-                    if (tasks[key]) {
-                        monthCompleted++;
-                        completedYear++;
-                    }
+                categories.forEach(cat => {
+                    mt++; totalYear++;
+                    if (tasks[getTaskKey(year, month, day, cat)]) { mc++; completedYear++; }
                 });
             }
-            
-            const percent = monthTotal > 0 ? (monthCompleted / monthTotal * 100).toFixed(0) : 0;
-            monthlyStats.push({ name: monthNames[month], completed: monthCompleted, total: monthTotal, percent });
+            monthlyStats.push({ name: monthNames[month], completed: mc, total: mt, percent: mt > 0 ? (mc/mt*100).toFixed(0) : 0 });
         }
-        
         document.getElementById('yearTotal').textContent = totalYear;
         document.getElementById('yearCompleted').textContent = completedYear;
-        
-        const summaryHtml = monthlyStats.map(m => `
+        document.getElementById('yearSummary').innerHTML = monthlyStats.map(m => `
             <div class="summary-item">
                 <div class="summary-category">${m.name}</div>
                 <div class="summary-stats">
-                    <div class="summary-stat">
-                        <div class="summary-stat-label">Выполнено</div>
-                        <div class="summary-stat-value">${m.completed}/${m.total}</div>
-                    </div>
-                    <div class="summary-stat">
-                        <div class="summary-stat-label">Процент</div>
-                        <div class="summary-stat-value">${m.percent}%</div>
-                    </div>
+                    <div class="summary-stat"><div class="summary-stat-label">Выполнено</div><div class="summary-stat-value">${m.completed}/${m.total}</div></div>
+                    <div class="summary-stat"><div class="summary-stat-label">Процент</div><div class="summary-stat-value">${m.percent}%</div></div>
                 </div>
-            </div>
-        `).join('');
-        
-        document.getElementById('yearSummary').innerHTML = summaryHtml;
+            </div>`).join('');
     }
 
-    // Инициализация приложения
+    // ==================== НАВИГАЦИЯ ====================
+    function changeMonth(delta) {
+        currentDate.setMonth(currentDate.getMonth() + delta);
+        updateDisplay();
+    }
+
+    function switchTab(tab, el) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        if (el) el.classList.add('active');
+        document.getElementById(tab + 'Section').classList.add('active');
+
+        if (tab === 'month') updateMonthStats();
+        if (tab === 'year') updateYearStats();
+        if (tab === 'program') { renderProgram(); setTimeout(() => { initDragProgram(); initDragExercises(); }, 50); }
+    }
+
+    function updateDisplay() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const monthNames = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+        document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
+        renderTasks(year, month);
+        setTimeout(initDragCategories, 50);
+    }
+
+    window.addEventListener('resize', updateDisplay);
+
+
+    // ==================== DRAG & DROP ====================
+    let dragSrc = null;
+    let dragType = null; // 'program' | 'category'
+
+    function initDragProgram() {
+        const grid = document.getElementById('programGrid');
+        if (!grid) return;
+        const groups = grid.querySelectorAll('.program-group');
+
+        groups.forEach(el => {
+            const handle = el.querySelector('.drag-handle');
+            if (!handle) return;
+
+            // Desktop
+            handle.addEventListener('mousedown', () => { el.setAttribute('draggable', 'true'); });
+            el.addEventListener('dragstart', e => {
+                dragSrc = el; dragType = 'program';
+                setTimeout(() => el.classList.add('dragging'), 10);
+            });
+            el.addEventListener('dragend', () => {
+                el.classList.remove('dragging');
+                el.removeAttribute('draggable');
+                grid.querySelectorAll('.drag-over-top,.drag-over-bottom').forEach(x => {
+                    x.classList.remove('drag-over-top','drag-over-bottom');
+                });
+            });
+            el.addEventListener('dragover', e => {
+                e.preventDefault();
+                if (dragSrc === el) return;
+                const rect = el.getBoundingClientRect();
+                const mid = rect.top + rect.height / 2;
+                el.classList.remove('drag-over-top','drag-over-bottom');
+                el.classList.add(e.clientY < mid ? 'drag-over-top' : 'drag-over-bottom');
+            });
+            el.addEventListener('dragleave', () => {
+                el.classList.remove('drag-over-top','drag-over-bottom');
+            });
+            el.addEventListener('drop', e => {
+                e.preventDefault();
+                if (!dragSrc || dragSrc === el) return;
+                const rect = el.getBoundingClientRect();
+                const before = e.clientY < rect.top + rect.height / 2;
+                const srcId = dragSrc.querySelector('.program-group-header').dataset.groupId;
+                const tgtId = el.querySelector('.program-group-header').dataset.groupId;
+                const srcIdx = program.findIndex(g => g.id === srcId);
+                const tgtIdx = program.findIndex(g => g.id === tgtId);
+                if (srcIdx === -1 || tgtIdx === -1) return;
+                const [item] = program.splice(srcIdx, 1);
+                const newIdx = program.findIndex(g => g.id === tgtId);
+                program.splice(before ? newIdx : newIdx + 1, 0, item);
+                saveProgram();
+                renderProgram();
+                initDragProgram();
+            });
+
+            // Touch
+            setupTouchDrag(handle, el, 'program');
+        });
+    }
+
+    function initDragCategories() {
+        const grid = document.getElementById('tasksGrid');
+        if (!grid) return;
+        const items = grid.querySelectorAll('.task-category');
+
+        items.forEach(el => {
+            const handle = el.querySelector('.category-handle');
+            if (!handle) return;
+
+            handle.addEventListener('mousedown', () => { el.setAttribute('draggable', 'true'); });
+            el.addEventListener('dragstart', e => {
+                dragSrc = el; dragType = 'category';
+                setTimeout(() => el.classList.add('dragging'), 10);
+            });
+            el.addEventListener('dragend', () => {
+                el.classList.remove('dragging');
+                el.removeAttribute('draggable');
+                grid.querySelectorAll('.drag-over-top,.drag-over-bottom').forEach(x => {
+                    x.classList.remove('drag-over-top','drag-over-bottom');
+                });
+            });
+            el.addEventListener('dragover', e => {
+                e.preventDefault();
+                if (dragSrc === el) return;
+                const rect = el.getBoundingClientRect();
+                el.classList.remove('drag-over-top','drag-over-bottom');
+                el.classList.add(e.clientY < rect.top + rect.height / 2 ? 'drag-over-top' : 'drag-over-bottom');
+            });
+            el.addEventListener('dragleave', () => {
+                el.classList.remove('drag-over-top','drag-over-bottom');
+            });
+            el.addEventListener('drop', e => {
+                e.preventDefault();
+                if (!dragSrc || dragSrc === el) return;
+                const rect = el.getBoundingClientRect();
+                const before = e.clientY < rect.top + rect.height / 2;
+                const srcCat = dragSrc.dataset.category;
+                const tgtCat = el.dataset.category;
+                const srcIdx = categories.indexOf(srcCat);
+                const tgtIdx = categories.indexOf(tgtCat);
+                if (srcIdx === -1 || tgtIdx === -1) return;
+                categories.splice(srcIdx, 1);
+                const newIdx = categories.indexOf(tgtCat);
+                categories.splice(before ? newIdx : newIdx + 1, 0, srcCat);
+                saveCategories();
+                updateDisplay();
+                initDragCategories();
+            });
+
+            setupTouchDrag(handle, el, 'category');
+        });
+    }
+
+    // Touch drag — работает на айфоне
+    function setupTouchDrag(handle, el, type) {
+        let ghost = null;
+        let startY = 0;
+        let lastOver = null;
+
+        handle.addEventListener('touchstart', e => {
+            startY = e.touches[0].clientY;
+            dragSrc = el; dragType = type;
+            el.classList.add('dragging');
+
+            ghost = el.cloneNode(true);
+            ghost.style.cssText = `position:fixed;left:${el.getBoundingClientRect().left}px;top:${el.getBoundingClientRect().top}px;width:${el.offsetWidth}px;opacity:0.8;z-index:9999;pointer-events:none;transform:scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,0.5);border-radius:12px;`;
+            document.body.appendChild(ghost);
+        }, { passive: true });
+
+        handle.addEventListener('touchmove', e => {
+            e.preventDefault();
+            const t = e.touches[0];
+            if (ghost) {
+                ghost.style.top = (t.clientY - el.offsetHeight / 2) + 'px';
+            }
+            const below = document.elementFromPoint(t.clientX, t.clientY);
+            const targetEl = below ? below.closest(type === 'program' ? '.program-group' : '.task-category') : null;
+            if (lastOver && lastOver !== targetEl) {
+                lastOver.classList.remove('drag-over-top','drag-over-bottom');
+            }
+            if (targetEl && targetEl !== el) {
+                const rect = targetEl.getBoundingClientRect();
+                targetEl.classList.remove('drag-over-top','drag-over-bottom');
+                targetEl.classList.add(t.clientY < rect.top + rect.height / 2 ? 'drag-over-top' : 'drag-over-bottom');
+                lastOver = targetEl;
+            }
+        }, { passive: false });
+
+        handle.addEventListener('touchend', e => {
+            if (ghost) { ghost.remove(); ghost = null; }
+            el.classList.remove('dragging');
+            if (lastOver) {
+                const before = lastOver.classList.contains('drag-over-top');
+                lastOver.classList.remove('drag-over-top','drag-over-bottom');
+
+                if (type === 'program') {
+                    const srcId = dragSrc.querySelector('.program-group-header').dataset.groupId;
+                    const tgtId = lastOver.querySelector('.program-group-header').dataset.groupId;
+                    const srcIdx = program.findIndex(g => g.id === srcId);
+                    const tgtIdx = program.findIndex(g => g.id === tgtId);
+                    if (srcIdx !== -1 && tgtIdx !== -1 && srcIdx !== tgtIdx) {
+                        const [item] = program.splice(srcIdx, 1);
+                        const newIdx = program.findIndex(g => g.id === tgtId);
+                        program.splice(before ? newIdx : newIdx + 1, 0, item);
+                        saveProgram();
+                        renderProgram(); setTimeout(() => { initDragProgram(); initDragExercises(); }, 50);
+                        initDragProgram();
+                    }
+                } else {
+                    const srcCat = dragSrc.dataset.category;
+                    const tgtCat = lastOver.dataset.category;
+                    const srcIdx = categories.indexOf(srcCat);
+                    if (srcIdx !== -1 && srcCat !== tgtCat) {
+                        categories.splice(srcIdx, 1);
+                        const newIdx = categories.indexOf(tgtCat);
+                        categories.splice(before ? newIdx : newIdx + 1, 0, srcCat);
+                        saveCategories();
+                        updateDisplay();
+                        initDragCategories();
+                    }
+                }
+            }
+            dragSrc = null; lastOver = null;
+        });
+    }
+
+
+    function initDragExercises() {
+        document.querySelectorAll('.program-group').forEach(groupEl => {
+            const groupId = groupEl.querySelector('.program-group-header').dataset.groupId;
+            const exercises = groupEl.querySelectorAll('.program-exercise');
+
+            exercises.forEach(el => {
+                const handle = el.querySelector('.ex-handle');
+                if (!handle) return;
+
+                // Desktop drag
+                handle.addEventListener('mousedown', () => el.setAttribute('draggable', 'true'));
+                el.addEventListener('dragstart', e => {
+                    dragSrc = el; dragType = 'exercise';
+                    setTimeout(() => el.classList.add('dragging'), 10);
+                });
+                el.addEventListener('dragend', () => {
+                    el.classList.remove('dragging');
+                    el.removeAttribute('draggable');
+                    groupEl.querySelectorAll('.drag-over-top,.drag-over-bottom').forEach(x =>
+                        x.classList.remove('drag-over-top','drag-over-bottom'));
+                });
+                el.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    if (dragSrc === el || dragType !== 'exercise') return;
+                    const rect = el.getBoundingClientRect();
+                    el.classList.remove('drag-over-top','drag-over-bottom');
+                    el.classList.add(e.clientY < rect.top + rect.height / 2 ? 'drag-over-top' : 'drag-over-bottom');
+                });
+                el.addEventListener('dragleave', () =>
+                    el.classList.remove('drag-over-top','drag-over-bottom'));
+                el.addEventListener('drop', e => {
+                    e.preventDefault();
+                    if (!dragSrc || dragSrc === el || dragType !== 'exercise') return;
+                    const srcGroupId = dragSrc.dataset.groupId;
+                    const tgtGroupId = el.dataset.groupId;
+                    if (srcGroupId !== tgtGroupId) return; // только внутри одной группы
+                    const srcExId = dragSrc.dataset.exerciseId;
+                    const tgtExId = el.dataset.exerciseId;
+                    const g = program.find(g => g.id === srcGroupId);
+                    if (!g) return;
+                    const rect = el.getBoundingClientRect();
+                    const before = e.clientY < rect.top + rect.height / 2;
+                    const srcIdx = g.exercises.findIndex(ex => ex.id === srcExId);
+                    const [item] = g.exercises.splice(srcIdx, 1);
+                    const newIdx = g.exercises.findIndex(ex => ex.id === tgtExId);
+                    g.exercises.splice(before ? newIdx : newIdx + 1, 0, item);
+                    saveProgram();
+                    renderProgram();
+                    setTimeout(() => { initDragProgram(); initDragExercises(); }, 50);
+                });
+
+                // Touch
+                setupTouchDragExercise(handle, el, groupId);
+            });
+        });
+    }
+
+    function setupTouchDragExercise(handle, el, groupId) {
+        let ghost = null;
+        let lastOver = null;
+
+        handle.addEventListener('touchstart', e => {
+            dragSrc = el; dragType = 'exercise';
+            el.classList.add('dragging');
+            ghost = el.cloneNode(true);
+            const r = el.getBoundingClientRect();
+            ghost.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${el.offsetWidth}px;opacity:0.8;z-index:9999;pointer-events:none;transform:scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,0.5);border-radius:8px;background:#2a2a2a;`;
+            document.body.appendChild(ghost);
+        }, { passive: true });
+
+        handle.addEventListener('touchmove', e => {
+            e.preventDefault();
+            const t = e.touches[0];
+            if (ghost) ghost.style.top = (t.clientY - el.offsetHeight / 2) + 'px';
+            const below = document.elementFromPoint(t.clientX, t.clientY);
+            const targetEl = below ? below.closest('.program-exercise') : null;
+            if (lastOver && lastOver !== targetEl)
+                lastOver.classList.remove('drag-over-top','drag-over-bottom');
+            if (targetEl && targetEl !== el && targetEl.dataset.groupId === groupId) {
+                const rect = targetEl.getBoundingClientRect();
+                targetEl.classList.remove('drag-over-top','drag-over-bottom');
+                targetEl.classList.add(t.clientY < rect.top + rect.height / 2 ? 'drag-over-top' : 'drag-over-bottom');
+                lastOver = targetEl;
+            }
+        }, { passive: false });
+
+        handle.addEventListener('touchend', () => {
+            if (ghost) { ghost.remove(); ghost = null; }
+            el.classList.remove('dragging');
+            if (lastOver) {
+                const before = lastOver.classList.contains('drag-over-top');
+                lastOver.classList.remove('drag-over-top','drag-over-bottom');
+                const tgtExId = lastOver.dataset.exerciseId;
+                const srcExId = el.dataset.exerciseId;
+                const g = program.find(g => g.id === groupId);
+                if (g && srcExId !== tgtExId) {
+                    const srcIdx = g.exercises.findIndex(ex => ex.id === srcExId);
+                    const [item] = g.exercises.splice(srcIdx, 1);
+                    const newIdx = g.exercises.findIndex(ex => ex.id === tgtExId);
+                    g.exercises.splice(before ? newIdx : newIdx + 1, 0, item);
+                    saveProgram();
+                    renderProgram();
+                    setTimeout(() => { initDragProgram(); initDragExercises(); }, 50);
+                }
+            }
+            dragSrc = null; lastOver = null;
+        });
+    }
+
+    // ==================== ИНИЦИАЛИЗАЦИЯ ====================
     async function initApp() {
+        if (isFirebaseEnabled) {
+            await signInAnonymously();
+        }
         await loadData();
         updateDisplay();
     }
 
-    // Перерисовка при изменении размера окна (для переключения десктоп/мобильный)
-    window.addEventListener('resize', function() {
-        updateDisplay();
-    });
-
     initApp();
 </script>
-
 </body>
 </html>
