@@ -1264,28 +1264,21 @@
         if (!auth) return;
         const loadingEl = document.getElementById('authLoading');
         loadingEl.style.display = 'block';
-        loadingEl.textContent = 'Открываем Google...';
-        const provider = new firebase.auth.GoogleAuthProvider();
-        provider.addScope('email');
-        provider.addScope('profile');
+        loadingEl.textContent = 'Переходим на Google...';
 
-        if (isMobile()) {
-            // iOS Safari: только redirect — popup всегда блокируется
-            loadingEl.textContent = 'Переходим на Google...';
-            auth.signInWithRedirect(provider).catch(err => {
-                console.log('Redirect failed:', err);
-                loadingEl.style.display = 'none';
-                alert('Ошибка: ' + err.message);
-            });
-        } else {
-            auth.signInWithPopup(provider)
-                .then(() => { loadingEl.style.display = 'none'; })
-                .catch(e => {
-                    console.log('Google popup error:', e);
-                    loadingEl.style.display = 'none';
-                    alert('Ошибка входа: ' + e.message);
-                });
-        }
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+
+        // Сохраняем флаг что начали вход — нужен при возврате на страницу
+        localStorage.setItem('pendingGoogleAuth', '1');
+
+        // Только redirect — работает везде включая iOS Safari и GitHub Pages
+        auth.signInWithRedirect(provider).catch(err => {
+            localStorage.removeItem('pendingGoogleAuth');
+            loadingEl.style.display = 'none';
+            console.log('Redirect error:', err.code, err.message);
+            alert('Ошибка входа: ' + err.message);
+        });
     }
 
     function signOutUser() {
@@ -2230,32 +2223,35 @@
     function initApp() {
         if (isFirebaseEnabled && auth) {
             const loadingEl = document.getElementById('authLoading');
+            const wasPendingAuth = localStorage.getItem('pendingGoogleAuth');
 
-            // Показываем "загрузка" пока проверяем сессию
-            loadingEl.style.display = 'block';
-            loadingEl.textContent = 'Проверяем сессию...';
+            // Если возвращаемся после редиректа — показываем статус
+            if (wasPendingAuth) {
+                loadingEl.style.display = 'block';
+                loadingEl.textContent = 'Завершаем вход...';
+            }
 
-            // Явно обрабатываем результат редиректа — критично для iOS Safari
+            // СНАЧАЛА getRedirectResult — он должен отработать ДО onAuthStateChanged
             auth.getRedirectResult()
                 .then(result => {
-                    loadingEl.style.display = 'none';
+                    localStorage.removeItem('pendingGoogleAuth');
                     if (result && result.user) {
-                        // Пришли с редиректа — сразу входим
-                        console.log('Redirect success:', result.user.email);
-                        onUserSignedIn(result.user);
+                        console.log('Redirect OK:', result.user.email);
+                        // onAuthStateChanged сработает сам
                     }
-                    // Если result.user == null — просто ждём onAuthStateChanged
+                    loadingEl.style.display = 'none';
                 })
                 .catch(e => {
-                    console.log('Redirect error:', e.code, e.message);
+                    localStorage.removeItem('pendingGoogleAuth');
                     loadingEl.style.display = 'none';
-                    // Показываем кнопку входа с ошибкой
+                    console.log('Redirect result error:', e.code, e.message);
+                    // Игнорируем ошибку "не было редиректа"
                     if (e.code !== 'auth/no-auth-event') {
                         alert('Ошибка входа: ' + e.message);
                     }
                 });
 
-            // onAuthStateChanged — основной поток (для popup и повторных визитов)
+            // onAuthStateChanged — срабатывает всегда: при загрузке страницы и после любого входа
             auth.onAuthStateChanged(user => {
                 loadingEl.style.display = 'none';
                 if (user) {
