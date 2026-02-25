@@ -1262,20 +1262,29 @@
 
     function signInWithGoogle() {
         if (!auth) return;
-        document.getElementById('authLoading').style.display = 'block';
+        const loadingEl = document.getElementById('authLoading');
+        loadingEl.style.display = 'block';
+        loadingEl.textContent = 'Открываем Google...';
         const provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('email');
+        provider.addScope('profile');
 
         if (isMobile()) {
-            // На мобильных Safari popup не работает — используем redirect
-            auth.signInWithRedirect(provider).catch(e => {
-                console.log('Google redirect error:', e);
-                document.getElementById('authLoading').style.display = 'none';
+            // iOS Safari: только redirect — popup всегда блокируется
+            loadingEl.textContent = 'Переходим на Google...';
+            auth.signInWithRedirect(provider).catch(err => {
+                console.log('Redirect failed:', err);
+                loadingEl.style.display = 'none';
+                alert('Ошибка: ' + err.message);
             });
         } else {
-            auth.signInWithPopup(provider).catch(e => {
-                console.log('Google popup error:', e);
-                document.getElementById('authLoading').style.display = 'none';
-            });
+            auth.signInWithPopup(provider)
+                .then(() => { loadingEl.style.display = 'none'; })
+                .catch(e => {
+                    console.log('Google popup error:', e);
+                    loadingEl.style.display = 'none';
+                    alert('Ошибка входа: ' + e.message);
+                });
         }
     }
 
@@ -2220,20 +2229,42 @@
     // ==================== ИНИЦИАЛИЗАЦИЯ ====================
     function initApp() {
         if (isFirebaseEnabled && auth) {
-            // Сначала проверяем результат редиректа (для мобильных)
-            auth.getRedirectResult().then(result => {
-                // result.user будет null если не было редиректа — onAuthStateChanged сам подхватит
-            }).catch(e => {
-                console.log('Redirect result error:', e);
-            });
+            const loadingEl = document.getElementById('authLoading');
 
+            // Показываем "загрузка" пока проверяем сессию
+            loadingEl.style.display = 'block';
+            loadingEl.textContent = 'Проверяем сессию...';
+
+            // Явно обрабатываем результат редиректа — критично для iOS Safari
+            auth.getRedirectResult()
+                .then(result => {
+                    loadingEl.style.display = 'none';
+                    if (result && result.user) {
+                        // Пришли с редиректа — сразу входим
+                        console.log('Redirect success:', result.user.email);
+                        onUserSignedIn(result.user);
+                    }
+                    // Если result.user == null — просто ждём onAuthStateChanged
+                })
+                .catch(e => {
+                    console.log('Redirect error:', e.code, e.message);
+                    loadingEl.style.display = 'none';
+                    // Показываем кнопку входа с ошибкой
+                    if (e.code !== 'auth/no-auth-event') {
+                        alert('Ошибка входа: ' + e.message);
+                    }
+                });
+
+            // onAuthStateChanged — основной поток (для popup и повторных визитов)
             auth.onAuthStateChanged(user => {
+                loadingEl.style.display = 'none';
                 if (user) {
                     onUserSignedIn(user);
                 } else {
                     onUserSignedOut();
                 }
             });
+
         } else {
             loadData().then(() => { updateDisplay(); });
         }
