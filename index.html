@@ -1174,6 +1174,7 @@
             Войти через Google
         </button>
         <div class="auth-loading" id="authLoading" style="display:none">Входим...</div>
+        <div id="authDebug" style="margin-top:16px;font-size:11px;color:#555;text-align:left;max-width:320px;width:100%;word-break:break-all;"></div>
     </div>
 
     <!-- Аватар / кнопка профиля -->
@@ -1250,6 +1251,16 @@
     }
 
     // ==================== АВТОРИЗАЦИЯ ====================
+    function dbg(msg) {
+        const el = document.getElementById('authDebug');
+        if (el) {
+            const line = document.createElement('div');
+            line.textContent = new Date().toTimeString().slice(0,8) + ' ' + msg;
+            el.appendChild(line);
+        }
+        console.log('[AUTH]', msg);
+    }
+
     function isMobile() {
         return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     }
@@ -1264,13 +1275,14 @@
         provider.setCustomParameters({ prompt: 'select_account' });
 
         // Сохраняем флаг что начали вход — нужен при возврате на страницу
+        dbg('Starting redirect...');
         localStorage.setItem('pendingGoogleAuth', '1');
 
         // Только redirect — работает везде включая iOS Safari и GitHub Pages
         auth.signInWithRedirect(provider).catch(err => {
             localStorage.removeItem('pendingGoogleAuth');
             loadingEl.style.display = 'none';
-            console.log('Redirect error:', err.code, err.message);
+            dbg('Redirect ERR: ' + err.code);
             alert('Ошибка входа: ' + err.message);
         });
     }
@@ -2229,17 +2241,13 @@
             auth.getRedirectResult()
                 .then(result => {
                     localStorage.removeItem('pendingGoogleAuth');
-                    if (result && result.user) {
-                        console.log('Redirect OK:', result.user.email);
-                        // onAuthStateChanged сработает сам
-                    }
+                    dbg('getRedirectResult: user=' + (result && result.user ? result.user.email : 'null'));
                     loadingEl.style.display = 'none';
                 })
                 .catch(e => {
                     localStorage.removeItem('pendingGoogleAuth');
                     loadingEl.style.display = 'none';
-                    console.log('Redirect result error:', e.code, e.message);
-                    // Игнорируем ошибку "не было редиректа"
+                    dbg('getRedirectResult ERR: ' + e.code);
                     if (e.code !== 'auth/no-auth-event') {
                         alert('Ошибка входа: ' + e.message);
                     }
@@ -2248,6 +2256,7 @@
             // onAuthStateChanged — срабатывает всегда: при загрузке страницы и после любого входа
             auth.onAuthStateChanged(user => {
                 loadingEl.style.display = 'none';
+                dbg('onAuthStateChanged: ' + (user ? user.email : 'null'));
                 if (user) {
                     onUserSignedIn(user);
                 } else {
