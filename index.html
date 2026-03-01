@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -15,1011 +14,1008 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-```
-    html {
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
-        min-height: 100vh;
-    }
-
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
-        min-height: 100vh;
-        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-        color: #e0e0e0;
-    }
-
-    .container {
-        max-width: 100%;
-        margin: 0 auto;
-        padding: 8px;
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
-        min-height: 100vh;
-    }
-
-    .header {
-        background: rgba(30, 30, 30, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 12px 16px;
-        margin-bottom: 8px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 107, 53, 0.2);
-    }
-
-    .header h1 {
-        font-size: 20px;
-        font-weight: 700;
-        color: #ff9a56;
-        margin-bottom: 8px;
-        text-align: center;
-    }
-
-    .month-selector {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-    }
-
-    .month-btn {
-        background: #ff6b35;
-        color: white;
-        border: none;
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        font-size: 18px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s;
-    }
-
-    .month-btn:active { transform: scale(0.95); background: #ff5722; }
-
-    .current-month {
-        font-size: 17px;
-        font-weight: 600;
-        color: #ff9a56;
-        min-width: 140px;
-        text-align: center;
-    }
-
-    .tabs {
-        display: flex;
-        gap: 5px;
-        margin-bottom: 8px;
-    }
-
-    .tab {
-        flex: 1;
-        background: rgba(30, 30, 30, 0.9);
-        border: none;
-        padding: 8px 4px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-        color: #999;
-    }
-
-    .tab.active {
-        background: rgba(40, 40, 40, 0.95);
-        color: #ff9a56;
-        box-shadow: 0 4px 12px rgba(255, 154, 86, 0.3);
-        border: 1px solid rgba(255, 154, 86, 0.3);
-    }
-
-    .content-section { display: none; }
-    .content-section.active { display: block; }
-
-    /* ===== ЗАДАЧИ ===== */
-    .tasks-grid {
-        background: rgba(30, 30, 30, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 10px;
-        margin-bottom: 8px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 107, 53, 0.1);
-    }
-
-    .task-category { margin-bottom: 8px; }
-
-    .category-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 12px;
-        background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
-        border-radius: 10px;
-        margin-bottom: 6px;
-        color: white;
-        font-weight: 600;
-        cursor: pointer;
-        user-select: none;
-        transition: all 0.3s;
-    }
-
-    .category-header:active { transform: scale(0.98); }
-    .category-name { font-size: 14px; }
-    .category-toggle { font-size: 16px; transition: transform 0.3s; margin-left: 8px; }
-    .category-toggle.collapsed { transform: rotate(-90deg); }
-
-    .category-content {
-        max-height: 2000px;
-        overflow: hidden;
-        transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
-        opacity: 1;
-    }
-
-    .category-content.collapsed { max-height: 0; opacity: 0; }
-
-    .category-count {
-        background: rgba(255, 255, 255, 0.3);
-        padding: 3px 10px;
-        border-radius: 20px;
-        font-size: 13px;
-    }
-
-    .week-container { margin-bottom: 10px; }
-
-    .week-header {
-        font-size: 11px;
-        color: #999;
-        margin-bottom: 5px;
-        padding-left: 4px;
-        font-weight: 600;
-    }
-
-    .days-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 4px;
-    }
-
-    .day-cell {
-        aspect-ratio: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: #2a2a2a;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.2s;
-        position: relative;
-    }
-
-    .day-label { font-size: 9px; color: #999; margin-bottom: 2px; }
-
-    .day-checkbox {
-        width: 18px;
-        height: 18px;
-        appearance: none;
-        border: 2px solid #444;
-        border-radius: 5px;
-        cursor: pointer;
-        position: relative;
-        transition: all 0.2s;
-        background: #1a1a1a;
-    }
-
-    .day-checkbox:checked {
-        background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
-        border-color: #ff6b35;
-    }
-
-    .day-checkbox:checked::after {
-        content: '✓';
-        position: absolute;
-        color: white;
-        font-size: 12px;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    /* ===== СТАТИСТИКА ===== */
-    .stats-container {
-        background: rgba(30, 30, 30, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 14px;
-        margin-bottom: 8px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 107, 53, 0.1);
-    }
-
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        margin-bottom: 14px;
-    }
-
-    .stat-card {
-        background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
-        padding: 12px;
-        border-radius: 12px;
-        color: white;
-    }
-
-    .stat-label { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
-    .stat-value { font-size: 26px; font-weight: 700; }
-
-    .chart-container {
-        margin-top: 14px;
-        background: #2a2a2a;
-        padding: 12px;
-        border-radius: 12px;
-    }
-
-    .chart-title {
-        font-size: 15px;
-        font-weight: 600;
-        color: #ff9a56;
-        margin-bottom: 12px;
-        text-align: center;
-    }
-
-    .bar-chart { display: flex; flex-direction: column; gap: 10px; }
-
-    .bar-item { display: flex; align-items: center; gap: 8px; }
-
-    .bar-label { min-width: 90px; font-size: 13px; color: #ccc; }
-
-    .bar-track {
-        flex: 1;
-        height: 26px;
-        background: #1a1a1a;
-        border-radius: 13px;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .bar-fill {
-        height: 100%;
-        background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
-        border-radius: 13px;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        padding-right: 8px;
-        color: white;
-        font-size: 11px;
-        font-weight: 600;
-        transition: width 0.5s ease;
-    }
-
-    .summary-list { display: flex; flex-direction: column; gap: 8px; }
-
-    .summary-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 12px;
-        background: #2a2a2a;
-        border-radius: 10px;
-    }
-
-    .summary-category { font-weight: 600; color: #e0e0e0; font-size: 14px; }
-    .summary-stats { display: flex; gap: 12px; font-size: 13px; }
-    .summary-stat { display: flex; flex-direction: column; align-items: center; }
-    .summary-stat-label { font-size: 10px; color: #999; }
-    .summary-stat-value { font-weight: 700; color: #ff9a56; }
-
-    /* ===== ТАЙМЕР ===== */
-    .timer-card {
-        background: rgba(30, 30, 30, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 20px 16px;
-        margin-bottom: 8px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 107, 53, 0.1);
-    }
-
-    .timer-settings-title {
-        font-size: 17px;
-        font-weight: 700;
-        color: #ff9a56;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    .timer-setting-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 0;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .timer-setting-row:last-of-type { border-bottom: none; }
-
-    .timer-setting-label {
-        font-size: 15px;
-        color: #ccc;
-        font-weight: 500;
-    }
-
-    .timer-spinner {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-    }
-
-    .spinner-btn {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        border: 2px solid #ff6b35;
-        background: transparent;
-        color: #ff9a56;
-        font-size: 22px;
-        font-weight: 700;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.15s;
-        line-height: 1;
-    }
-
-    .spinner-btn:active { background: #ff6b35; color: white; transform: scale(0.93); }
-
-    .spinner-val {
-        font-size: 17px;
-        font-weight: 700;
-        color: #fff;
-        min-width: 50px;
-        text-align: center;
-    }
-
-    .timer-start-btn {
-        background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
-        color: white;
-        border: none;
-        padding: 14px;
-        border-radius: 14px;
-        font-size: 17px;
-        font-weight: 700;
-        cursor: pointer;
-        width: 100%;
-        margin-top: 20px;
-        transition: all 0.2s;
-        letter-spacing: 1px;
-    }
-
-    .timer-start-btn:active { transform: scale(0.97); }
-
-    /* активный таймер */
-    .timer-active {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 10px 0;
-    }
-
-    .timer-phase-label {
-        font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 3px;
-        color: #ff9a56;
-        margin-bottom: 4px;
-    }
-
-    .timer-round-label {
-        font-size: 14px;
-        color: #888;
-        margin-bottom: 20px;
-    }
-
-    .timer-ring-wrap {
-        position: relative;
-        width: 220px;
-        height: 220px;
-        margin-bottom: 28px;
-    }
-
-    .timer-ring {
-        width: 100%;
-        height: 100%;
-        transform: rotate(-90deg);
-    }
-
-    .timer-ring-bg {
-        fill: none;
-        stroke: #2a2a2a;
-        stroke-width: 12;
-    }
-
-    .timer-ring-progress {
-        fill: none;
-        stroke: #ff6b35;
-        stroke-width: 12;
-        stroke-linecap: round;
-        transition: stroke-dashoffset 0.5s linear, stroke 0.4s;
-    }
-
-    .timer-digits {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 64px;
-        font-weight: 800;
-        color: #fff;
-        font-variant-numeric: tabular-nums;
-        letter-spacing: -2px;
-    }
-
-    .timer-controls {
-        display: flex;
-        gap: 20px;
-    }
-
-    .timer-ctrl-btn {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        border: none;
-        font-size: 26px;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .timer-ctrl-btn:active { transform: scale(0.9); }
-
-    .timer-ctrl-btn.pause { background: #ff6b35; color: white; }
-    .timer-ctrl-btn.stop { background: #333; color: #bbb; border: 2px solid #444; }
-
-    /* завершено */
-    .timer-done {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 30px 0 10px;
-        gap: 12px;
-    }
-
-    .timer-done-icon { font-size: 60px; }
-
-    .timer-done-text {
-        font-size: 22px;
-        font-weight: 700;
-        color: #ff9a56;
-        margin-bottom: 10px;
-    }
-
-    /* ===== МЫШЦЫ (убрано) ===== */
-    .muscle-tracker {
-        background: rgba(30, 30, 30, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 14px;
-        margin-bottom: 8px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 107, 53, 0.1);
-    }
-
-    .muscle-grid { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
-
-    .muscle-item {
-        background: #2a2a2a;
-        padding: 8px 12px;
-        border-radius: 9px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: all 0.2s;
-    }
-
-    .muscle-item.completed {
-        background: linear-gradient(135deg, rgba(255, 154, 86, 0.2) 0%, rgba(255, 107, 53, 0.2) 100%);
-        border: 1px solid rgba(255, 154, 86, 0.3);
-    }
-
-    .muscle-name { font-size: 14px; color: #e0e0e0; font-weight: 500; flex: 1; }
-    .muscle-counter { display: flex; align-items: center; gap: 8px; }
-
-    .muscle-btn {
-        width: 30px;
-        height: 30px;
-        background: #1a1a1a;
-        border: 2px solid #444;
-        border-radius: 7px;
-        color: #ff9a56;
-        font-size: 18px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.2s;
-        user-select: none;
-    }
-
-    .muscle-btn:active { transform: scale(0.9); background: #222; }
-
-    .muscle-btn.active {
-        background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
-        border-color: #ff6b35;
-        color: white;
-    }
-
-    .muscle-count { min-width: 28px; text-align: center; font-size: 16px; font-weight: 700; color: #ff9a56; }
-
-    .muscle-reset {
-        width: 26px;
-        height: 26px;
-        background: transparent;
-        border: none;
-        color: #666;
-        font-size: 15px;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .muscle-reset:active { transform: scale(0.9); color: #ff6b35; }
-
-
-    /* ===== DRAG & DROP ===== */
-    .drag-handle {
-        cursor: grab;
-        color: #666;
-        font-size: 18px;
-        padding: 0 6px;
-        user-select: none;
-        touch-action: none;
-        flex-shrink: 0;
-    }
-    .drag-handle:active { cursor: grabbing; }
-    .ex-handle { font-size: 15px; color: #555; padding: 0 4px; }
-
-    .dragging {
-        opacity: 0.45;
-        transform: scale(0.98);
-    }
-
-    .drag-over-top {
-        border-top: 2px solid #ff6b35 !important;
-    }
-    .drag-over-bottom {
-        border-bottom: 2px solid #ff6b35 !important;
-    }
-
-    /* handle для категорий задач — в шапке */
-    .category-handle {
-        cursor: grab;
-        color: rgba(255,255,255,0.5);
-        font-size: 16px;
-        padding: 0 4px;
-        user-select: none;
-        touch-action: none;
-    }
-
-    /* ===== КНОПКИ ДОБАВЛЕНИЯ ===== */
-    .add-category-btn {
-        background: transparent;
-        color: #ff9a56;
-        border: 2px dashed rgba(255, 154, 86, 0.5);
-        padding: 10px 16px;
-        border-radius: 10px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        margin-bottom: 8px;
-        width: 100%;
-        transition: all 0.25s;
-        letter-spacing: 0.3px;
-    }
-
-    .add-category-btn:hover {
-        background: rgba(255, 154, 86, 0.08);
-        border-color: #ff9a56;
-    }
-
-    .add-category-btn:active {
-        transform: scale(0.98);
-        background: rgba(255, 154, 86, 0.14);
-    }
-
-    /* ===== МОДАЛЬНЫЕ ОКНА ===== */
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        z-index: 1000;
-        align-items: center;
-        justify-content: center;
-        padding: 16px;
-    }
-
-    .modal.active { display: flex; }
-
-    .modal-content {
-        background: #2a2a2a;
-        border-radius: 18px;
-        padding: 20px;
-        max-width: 400px;
-        width: 100%;
-        border: 1px solid rgba(255, 154, 86, 0.3);
-    }
-
-    .modal-title {
-        font-size: 18px;
-        font-weight: 700;
-        color: #ff9a56;
-        margin-bottom: 16px;
-        text-align: center;
-    }
-
-    .modal-input {
-        width: 100%;
-        background: #1a1a1a;
-        border: 2px solid #444;
-        border-radius: 10px;
-        padding: 10px 13px;
-        color: #e0e0e0;
-        font-size: 16px;
-        margin-bottom: 12px;
-        outline: none;
-    }
-
-    .modal-input:focus { border-color: #ff9a56; }
-
-    .modal-buttons { display: flex; gap: 8px; }
-
-    .modal-btn {
-        flex: 1;
-        padding: 10px;
-        border: none;
-        border-radius: 10px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .modal-btn.primary {
-        background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
-        color: white;
-    }
-
-    .modal-btn.secondary { background: #1a1a1a; color: #999; border: 2px solid #444; }
-    .modal-btn:active { transform: scale(0.98); }
-
-    /* ===== ПРОГРАММА ТРЕНИРОВОК ===== */
-    .program-section {
-        background: rgba(30, 30, 30, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 10px;
-        margin-bottom: 8px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 107, 53, 0.1);
-    }
-
-    .program-add-btn {
-        background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
-        color: white;
-        border: none;
-        padding: 10px;
-        border-radius: 10px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        width: 100%;
-        margin-bottom: 10px;
-        transition: all 0.3s;
-    }
-
-    .program-add-btn:active { transform: scale(0.98); }
-
-    .program-group {
-        background: #222;
-        border-radius: 12px;
-        margin-bottom: 8px;
-        overflow: hidden;
-        border: 1px solid rgba(255, 107, 53, 0.15);
-    }
-
-    .program-group-header {
-        display: flex;
-        align-items: center;
-        padding: 10px 12px;
-        background: linear-gradient(135deg, rgba(255, 154, 86, 0.25) 0%, rgba(255, 107, 53, 0.25) 100%);
-        cursor: pointer;
-        user-select: none;
-        gap: 8px;
-    }
-
-    .program-group-header:active { opacity: 0.85; }
-
-    .program-group-name {
-        flex: 1;
-        font-size: 14px;
-        font-weight: 700;
-        color: #ff9a56;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .program-group-toggle {
-        font-size: 14px;
-        color: #ff9a56;
-        transition: transform 0.3s;
-    }
-
-    .program-group-toggle.collapsed { transform: rotate(-90deg); }
-
-    .program-group-actions {
-        display: flex;
-        gap: 6px;
-    }
-
-    .program-icon-btn {
-        width: 28px;
-        height: 28px;
-        border-radius: 7px;
-        border: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-size: 15px;
-        transition: all 0.2s;
-    }
-
-    .program-icon-btn:active { transform: scale(0.9); }
-
-    .program-icon-btn.add { background: #ff6b35; color: white; }
-    .program-icon-btn.delete { background: #333; color: #888; }
-    .program-icon-btn.delete:active { color: #ff4444; }
-
-    .program-group-body {
-        max-height: 2000px;
-        overflow: hidden;
-        transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
-        opacity: 1;
-    }
-
-    .program-group-body.collapsed { max-height: 0; opacity: 0; }
-
-    .program-exercise {
-        display: flex;
-        align-items: center;
-        padding: 8px 12px;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
-        gap: 8px;
-    }
-
-    .program-exercise-name {
-        flex: 1;
-        font-size: 14px;
-        color: #ddd;
-        line-height: 1.3;
-    }
-
-    .program-exercise-actions {
-        display: flex;
-        gap: 4px;
-        flex-shrink: 0;
-    }
-
-    .program-add-exercise-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        padding: 8px;
-        background: transparent;
-        border: 1px dashed rgba(255, 107, 53, 0.4);
-        border-radius: 8px;
-        color: #ff9a56;
-        font-size: 13px;
-        cursor: pointer;
-        margin: 6px 0 4px;
-        transition: all 0.2s;
-    }
-
-    .program-add-exercise-btn:active { background: rgba(255, 107, 53, 0.1); }
-
-    /* ===== ЭКРАН АВТОРИЗАЦИИ ===== */
-    .auth-screen {
-        position: fixed;
-        inset: 0;
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
-        z-index: 2000;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 32px 24px;
-        gap: 0;
-    }
-
-    .auth-screen.hidden { display: none; }
-
-    .auth-logo {
-        font-size: 48px;
-        margin-bottom: 16px;
-    }
-
-    .auth-title {
-        font-size: 24px;
-        font-weight: 800;
-        color: #ff9a56;
-        margin-bottom: 6px;
-        text-align: center;
-    }
-
-    .auth-subtitle {
-        font-size: 14px;
-        color: #777;
-        margin-bottom: 40px;
-        text-align: center;
-    }
-
-    .google-btn {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        background: #fff;
-        color: #1a1a1a;
-        border: none;
-        padding: 14px 24px;
-        border-radius: 14px;
-        font-size: 16px;
-        font-weight: 700;
-        cursor: pointer;
-        width: 100%;
-        max-width: 320px;
-        justify-content: center;
-        transition: all 0.2s;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-    }
-
-    .google-btn:active { transform: scale(0.97); box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
-
-    .google-icon {
-        width: 22px;
-        height: 22px;
-        flex-shrink: 0;
-    }
-
-    .auth-loading {
-        color: #666;
-        font-size: 14px;
-        margin-top: 20px;
-    }
-
-    /* Аватар пользователя в углу */
-    .user-avatar {
-        position: fixed;
-        bottom: 12px;
-        right: 12px;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        border: 2px solid #ff6b35;
-        cursor: pointer;
-        z-index: 999;
-        object-fit: cover;
-        background: #333;
-        display: none;
-    }
-
-    .user-avatar.visible { display: block; }
-
-    .user-avatar-placeholder {
-        position: fixed;
-        bottom: 12px;
-        right: 12px;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        border: 2px solid #ff6b35;
-        cursor: pointer;
-        z-index: 999;
-        background: linear-gradient(135deg, #ff9a56, #ff6b35);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        font-weight: 700;
-        color: white;
-    }
-
-    .user-avatar-placeholder.visible { display: flex; }
-
-    /* Popup выхода */
-    .signout-popup {
-        position: fixed;
-        bottom: 54px;
-        right: 12px;
-        background: #2a2a2a;
-        border: 1px solid rgba(255,107,53,0.3);
-        border-radius: 12px;
-        padding: 8px;
-        z-index: 1000;
-        display: none;
-        flex-direction: column;
-        gap: 4px;
-        min-width: 160px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-    }
-
-    .signout-popup.visible { display: flex; }
-
-    .signout-user {
-        font-size: 12px;
-        color: #888;
-        padding: 4px 8px;
-        border-bottom: 1px solid #333;
-        margin-bottom: 4px;
-    }
-
-    .signout-btn {
-        background: transparent;
-        border: none;
-        color: #ff6b35;
-        font-size: 14px;
-        font-weight: 600;
-        padding: 8px 10px;
-        border-radius: 8px;
-        cursor: pointer;
-        text-align: left;
-        transition: background 0.2s;
-    }
-
-    .signout-btn:hover { background: rgba(255,107,53,0.1); }
-
-    @media (max-width: 380px) {
-        .days-grid { gap: 3px; }
-        .day-checkbox { width: 16px; height: 16px; }
-    }
-
-    @media (min-width: 768px) {
-        .container { max-width: 1400px; padding: 20px; }
-        .header { margin-bottom: 16px; padding: 16px 20px; }
-        .tasks-grid { padding: 16px; }
-
-        #tasksGrid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        html {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
+            min-height: 100vh;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
+            min-height: 100vh;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 8px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ff9a56;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .month-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             gap: 12px;
         }
 
-        .task-category { margin-bottom: 0; }
-        .tabs { max-width: 600px; margin: 0 auto 16px; }
-        .stats-container { max-width: 1200px; margin: 0 auto 16px; }
-        .muscle-tracker { max-width: 600px; margin: 0 auto; }
-        .program-section { max-width: 700px; margin: 0 auto 16px; }
-        .add-category-btn { grid-column: 1 / -1; }
-    }
+        .month-btn {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
 
-    @media (min-width: 1200px) {
-        #tasksGrid { grid-template-columns: repeat(3, 1fr); }
-    }
-</style>
-```
+        .month-btn:active { transform: scale(0.95); background: #ff5722; }
 
+        .current-month {
+            font-size: 17px;
+            font-weight: 600;
+            color: #ff9a56;
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .tab {
+            flex: 1;
+            background: rgba(30, 30, 30, 0.9);
+            border: none;
+            padding: 8px 4px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #999;
+        }
+
+        .tab.active {
+            background: rgba(40, 40, 40, 0.95);
+            color: #ff9a56;
+            box-shadow: 0 4px 12px rgba(255, 154, 86, 0.3);
+            border: 1px solid rgba(255, 154, 86, 0.3);
+        }
+
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+
+        /* ===== ЗАДАЧИ ===== */
+        .tasks-grid {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 10px;
+            margin-bottom: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 107, 53, 0.1);
+        }
+
+        .task-category { margin-bottom: 8px; }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            border-radius: 10px;
+            margin-bottom: 6px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s;
+        }
+
+        .category-header:active { transform: scale(0.98); }
+        .category-name { font-size: 14px; }
+        .category-toggle { font-size: 16px; transition: transform 0.3s; margin-left: 8px; }
+        .category-toggle.collapsed { transform: rotate(-90deg); }
+
+        .category-content {
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 1;
+        }
+
+        .category-content.collapsed { max-height: 0; opacity: 0; }
+
+        .category-count {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .week-container { margin-bottom: 10px; }
+
+        .week-header {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 5px;
+            padding-left: 4px;
+            font-weight: 600;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #2a2a2a;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .day-label { font-size: 9px; color: #999; margin-bottom: 2px; }
+
+        .day-checkbox {
+            width: 18px;
+            height: 18px;
+            appearance: none;
+            border: 2px solid #444;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+            background: #1a1a1a;
+        }
+
+        .day-checkbox:checked {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            border-color: #ff6b35;
+        }
+
+        .day-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 12px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* ===== СТАТИСТИКА ===== */
+        .stats-container {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 107, 53, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            padding: 12px;
+            border-radius: 12px;
+            color: white;
+        }
+
+        .stat-label { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .stat-value { font-size: 26px; font-weight: 700; }
+
+        .chart-container {
+            margin-top: 14px;
+            background: #2a2a2a;
+            padding: 12px;
+            border-radius: 12px;
+        }
+
+        .chart-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ff9a56;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+
+        .bar-item { display: flex; align-items: center; gap: 8px; }
+
+        .bar-label { min-width: 90px; font-size: 13px; color: #ccc; }
+
+        .bar-track {
+            flex: 1;
+            height: 26px;
+            background: #1a1a1a;
+            border-radius: 13px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            transition: width 0.5s ease;
+        }
+
+        .summary-list { display: flex; flex-direction: column; gap: 8px; }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: #2a2a2a;
+            border-radius: 10px;
+        }
+
+        .summary-category { font-weight: 600; color: #e0e0e0; font-size: 14px; }
+        .summary-stats { display: flex; gap: 12px; font-size: 13px; }
+        .summary-stat { display: flex; flex-direction: column; align-items: center; }
+        .summary-stat-label { font-size: 10px; color: #999; }
+        .summary-stat-value { font-weight: 700; color: #ff9a56; }
+
+        /* ===== ТАЙМЕР ===== */
+        .timer-card {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px 16px;
+            margin-bottom: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 107, 53, 0.1);
+        }
+
+        .timer-settings-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #ff9a56;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .timer-setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .timer-setting-row:last-of-type { border-bottom: none; }
+
+        .timer-setting-label {
+            font-size: 15px;
+            color: #ccc;
+            font-weight: 500;
+        }
+
+        .timer-spinner {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .spinner-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #ff6b35;
+            background: transparent;
+            color: #ff9a56;
+            font-size: 22px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            line-height: 1;
+        }
+
+        .spinner-btn:active { background: #ff6b35; color: white; transform: scale(0.93); }
+
+        .spinner-val {
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .timer-start-btn {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+
+        .timer-start-btn:active { transform: scale(0.97); }
+
+        /* активный таймер */
+        .timer-active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .timer-phase-label {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: #ff9a56;
+            margin-bottom: 4px;
+        }
+
+        .timer-round-label {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 20px;
+        }
+
+        .timer-ring-wrap {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin-bottom: 28px;
+        }
+
+        .timer-ring {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .timer-ring-bg {
+            fill: none;
+            stroke: #2a2a2a;
+            stroke-width: 12;
+        }
+
+        .timer-ring-progress {
+            fill: none;
+            stroke: #ff6b35;
+            stroke-width: 12;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s linear, stroke 0.4s;
+        }
+
+        .timer-digits {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 64px;
+            font-weight: 800;
+            color: #fff;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -2px;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 20px;
+        }
+
+        .timer-ctrl-btn {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: none;
+            font-size: 26px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-ctrl-btn:active { transform: scale(0.9); }
+
+        .timer-ctrl-btn.pause { background: #ff6b35; color: white; }
+        .timer-ctrl-btn.stop { background: #333; color: #bbb; border: 2px solid #444; }
+
+        /* завершено */
+        .timer-done {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 0 10px;
+            gap: 12px;
+        }
+
+        .timer-done-icon { font-size: 60px; }
+
+        .timer-done-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ff9a56;
+            margin-bottom: 10px;
+        }
+
+        /* ===== МЫШЦЫ (убрано) ===== */
+        .muscle-tracker {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 107, 53, 0.1);
+        }
+
+        .muscle-grid { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+
+        .muscle-item {
+            background: #2a2a2a;
+            padding: 8px 12px;
+            border-radius: 9px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .muscle-item.completed {
+            background: linear-gradient(135deg, rgba(255, 154, 86, 0.2) 0%, rgba(255, 107, 53, 0.2) 100%);
+            border: 1px solid rgba(255, 154, 86, 0.3);
+        }
+
+        .muscle-name { font-size: 14px; color: #e0e0e0; font-weight: 500; flex: 1; }
+        .muscle-counter { display: flex; align-items: center; gap: 8px; }
+
+        .muscle-btn {
+            width: 30px;
+            height: 30px;
+            background: #1a1a1a;
+            border: 2px solid #444;
+            border-radius: 7px;
+            color: #ff9a56;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .muscle-btn:active { transform: scale(0.9); background: #222; }
+
+        .muscle-btn.active {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            border-color: #ff6b35;
+            color: white;
+        }
+
+        .muscle-count { min-width: 28px; text-align: center; font-size: 16px; font-weight: 700; color: #ff9a56; }
+
+        .muscle-reset {
+            width: 26px;
+            height: 26px;
+            background: transparent;
+            border: none;
+            color: #666;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .muscle-reset:active { transform: scale(0.9); color: #ff6b35; }
+
+
+        /* ===== DRAG & DROP ===== */
+        .drag-handle {
+            cursor: grab;
+            color: #666;
+            font-size: 18px;
+            padding: 0 6px;
+            user-select: none;
+            touch-action: none;
+            flex-shrink: 0;
+        }
+        .drag-handle:active { cursor: grabbing; }
+        .ex-handle { font-size: 15px; color: #555; padding: 0 4px; }
+
+        .dragging {
+            opacity: 0.45;
+            transform: scale(0.98);
+        }
+
+        .drag-over-top {
+            border-top: 2px solid #ff6b35 !important;
+        }
+        .drag-over-bottom {
+            border-bottom: 2px solid #ff6b35 !important;
+        }
+
+        /* handle для категорий задач — в шапке */
+        .category-handle {
+            cursor: grab;
+            color: rgba(255,255,255,0.5);
+            font-size: 16px;
+            padding: 0 4px;
+            user-select: none;
+            touch-action: none;
+        }
+
+        /* ===== КНОПКИ ДОБАВЛЕНИЯ ===== */
+        .add-category-btn {
+            background: transparent;
+            color: #ff9a56;
+            border: 2px dashed rgba(255, 154, 86, 0.5);
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 8px;
+            width: 100%;
+            transition: all 0.25s;
+            letter-spacing: 0.3px;
+        }
+
+        .add-category-btn:hover {
+            background: rgba(255, 154, 86, 0.08);
+            border-color: #ff9a56;
+        }
+
+        .add-category-btn:active {
+            transform: scale(0.98);
+            background: rgba(255, 154, 86, 0.14);
+        }
+
+        /* ===== МОДАЛЬНЫЕ ОКНА ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: #2a2a2a;
+            border-radius: 18px;
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid rgba(255, 154, 86, 0.3);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ff9a56;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .modal-input {
+            width: 100%;
+            background: #1a1a1a;
+            border: 2px solid #444;
+            border-radius: 10px;
+            padding: 10px 13px;
+            color: #e0e0e0;
+            font-size: 16px;
+            margin-bottom: 12px;
+            outline: none;
+        }
+
+        .modal-input:focus { border-color: #ff9a56; }
+
+        .modal-buttons { display: flex; gap: 8px; }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            color: white;
+        }
+
+        .modal-btn.secondary { background: #1a1a1a; color: #999; border: 2px solid #444; }
+        .modal-btn:active { transform: scale(0.98); }
+
+        /* ===== ПРОГРАММА ТРЕНИРОВОК ===== */
+        .program-section {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 10px;
+            margin-bottom: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 107, 53, 0.1);
+        }
+
+        .program-add-btn {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .program-add-btn:active { transform: scale(0.98); }
+
+        .program-group {
+            background: #222;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 107, 53, 0.15);
+        }
+
+        .program-group-header {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            background: linear-gradient(135deg, rgba(255, 154, 86, 0.25) 0%, rgba(255, 107, 53, 0.25) 100%);
+            cursor: pointer;
+            user-select: none;
+            gap: 8px;
+        }
+
+        .program-group-header:active { opacity: 0.85; }
+
+        .program-group-name {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 700;
+            color: #ff9a56;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .program-group-toggle {
+            font-size: 14px;
+            color: #ff9a56;
+            transition: transform 0.3s;
+        }
+
+        .program-group-toggle.collapsed { transform: rotate(-90deg); }
+
+        .program-group-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .program-icon-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 7px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .program-icon-btn:active { transform: scale(0.9); }
+
+        .program-icon-btn.add { background: #ff6b35; color: white; }
+        .program-icon-btn.delete { background: #333; color: #888; }
+        .program-icon-btn.delete:active { color: #ff4444; }
+
+        .program-group-body {
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 1;
+        }
+
+        .program-group-body.collapsed { max-height: 0; opacity: 0; }
+
+        .program-exercise {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            gap: 8px;
+        }
+
+        .program-exercise-name {
+            flex: 1;
+            font-size: 14px;
+            color: #ddd;
+            line-height: 1.3;
+        }
+
+        .program-exercise-actions {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .program-add-exercise-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 8px;
+            background: transparent;
+            border: 1px dashed rgba(255, 107, 53, 0.4);
+            border-radius: 8px;
+            color: #ff9a56;
+            font-size: 13px;
+            cursor: pointer;
+            margin: 6px 0 4px;
+            transition: all 0.2s;
+        }
+
+        .program-add-exercise-btn:active { background: rgba(255, 107, 53, 0.1); }
+
+        /* ===== ЭКРАН АВТОРИЗАЦИИ ===== */
+        .auth-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1810 100%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 24px;
+            gap: 0;
+        }
+
+        .auth-screen.hidden { display: none; }
+
+        .auth-logo {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .auth-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #ff9a56;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .auth-subtitle {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .google-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #fff;
+            color: #1a1a1a;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            max-width: 320px;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        .google-btn:active { transform: scale(0.97); box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+
+        .google-icon {
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        .auth-loading {
+            color: #666;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        /* Аватар пользователя в углу */
+        .user-avatar {
+            position: fixed;
+            bottom: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #ff6b35;
+            cursor: pointer;
+            z-index: 999;
+            object-fit: cover;
+            background: #333;
+            display: none;
+        }
+
+        .user-avatar.visible { display: block; }
+
+        .user-avatar-placeholder {
+            position: fixed;
+            bottom: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #ff6b35;
+            cursor: pointer;
+            z-index: 999;
+            background: linear-gradient(135deg, #ff9a56, #ff6b35);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .user-avatar-placeholder.visible { display: flex; }
+
+        /* Popup выхода */
+        .signout-popup {
+            position: fixed;
+            bottom: 54px;
+            right: 12px;
+            background: #2a2a2a;
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 8px;
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 160px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+
+        .signout-popup.visible { display: flex; }
+
+        .signout-user {
+            font-size: 12px;
+            color: #888;
+            padding: 4px 8px;
+            border-bottom: 1px solid #333;
+            margin-bottom: 4px;
+        }
+
+        .signout-btn {
+            background: transparent;
+            border: none;
+            color: #ff6b35;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.2s;
+        }
+
+        .signout-btn:hover { background: rgba(255,107,53,0.1); }
+
+        @media (max-width: 380px) {
+            .days-grid { gap: 3px; }
+            .day-checkbox { width: 16px; height: 16px; }
+        }
+
+        @media (min-width: 768px) {
+            .container { max-width: 1400px; padding: 20px; }
+            .header { margin-bottom: 16px; padding: 16px 20px; }
+            .tasks-grid { padding: 16px; }
+
+            #tasksGrid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 12px;
+            }
+
+            .task-category { margin-bottom: 0; }
+            .tabs { max-width: 600px; margin: 0 auto 16px; }
+            .stats-container { max-width: 1200px; margin: 0 auto 16px; }
+            .muscle-tracker { max-width: 600px; margin: 0 auto; }
+            .program-section { max-width: 700px; margin: 0 auto 16px; }
+            .add-category-btn { grid-column: 1 / -1; }
+        }
+
+        @media (min-width: 1200px) {
+            #tasksGrid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -1032,202 +1028,200 @@
             </div>
         </div>
 
-```
-    <div class="tabs">
-        <button class="tab active" onclick="switchTab('tasks', this)">Задачи</button>
-        <button class="tab" onclick="switchTab('program', this)">Программа</button>
-        <button class="tab" onclick="switchTab('timer', this)">Таймер</button>
-        <button class="tab" onclick="switchTab('month', this)">Месяц</button>
-        <button class="tab" onclick="switchTab('year', this)">Год</button>
-    </div>
-
-    <!-- ЗАДАЧИ -->
-    <div id="tasksSection" class="content-section active">
-        <div class="tasks-grid">
-            <button class="add-category-btn" onclick="openAddCategoryModal()">+ Добавить категорию</button>
-            <div id="tasksGrid"></div>
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('tasks', this)">Задачи</button>
+            <button class="tab" onclick="switchTab('program', this)">Программа</button>
+            <button class="tab" onclick="switchTab('timer', this)">Таймер</button>
+            <button class="tab" onclick="switchTab('month', this)">Месяц</button>
+            <button class="tab" onclick="switchTab('year', this)">Год</button>
         </div>
-    </div>
 
-    <!-- ПРОГРАММА ТРЕНИРОВОК -->
-    <div id="programSection" class="content-section">
-        <div class="program-section">
-            <button class="program-add-btn" onclick="openAddGroupModal()">+ Добавить группу (день)</button>
-            <div id="programGrid"></div>
+        <!-- ЗАДАЧИ -->
+        <div id="tasksSection" class="content-section active">
+            <div class="tasks-grid">
+                <button class="add-category-btn" onclick="openAddCategoryModal()">+ Добавить категорию</button>
+                <div id="tasksGrid"></div>
+            </div>
         </div>
-    </div>
 
-    <!-- ТАЙМЕР -->
-    <div id="timerSection" class="content-section">
-        <div class="timer-card">
-            <div class="timer-settings" id="timerSettings">
-                <div class="timer-settings-title">Интервальный таймер</div>
-                <div class="timer-setting-row">
-                    <span class="timer-setting-label">Раундов</span>
-                    <div class="timer-spinner">
-                        <button class="spinner-btn" onclick="adjustSetting('rounds',-1)">−</button>
-                        <span class="spinner-val" id="settingRounds">5</span>
-                        <button class="spinner-btn" onclick="adjustSetting('rounds',1)">+</button>
+        <!-- ПРОГРАММА ТРЕНИРОВОК -->
+        <div id="programSection" class="content-section">
+            <div class="program-section">
+                <button class="program-add-btn" onclick="openAddGroupModal()">+ Добавить группу (день)</button>
+                <div id="programGrid"></div>
+            </div>
+        </div>
+
+        <!-- ТАЙМЕР -->
+        <div id="timerSection" class="content-section">
+            <div class="timer-card">
+                <div class="timer-settings" id="timerSettings">
+                    <div class="timer-settings-title">Интервальный таймер</div>
+                    <div class="timer-setting-row">
+                        <span class="timer-setting-label">Раундов</span>
+                        <div class="timer-spinner">
+                            <button class="spinner-btn" onclick="adjustSetting('rounds',-1)">−</button>
+                            <span class="spinner-val" id="settingRounds">5</span>
+                            <button class="spinner-btn" onclick="adjustSetting('rounds',1)">+</button>
+                        </div>
+                    </div>
+                    <div class="timer-setting-row">
+                        <span class="timer-setting-label">Работа</span>
+                        <div class="timer-spinner">
+                            <button class="spinner-btn" onclick="adjustSetting('work',-5)">−</button>
+                            <span class="spinner-val" id="settingWork">40 с</span>
+                            <button class="spinner-btn" onclick="adjustSetting('work',5)">+</button>
+                        </div>
+                    </div>
+                    <div class="timer-setting-row">
+                        <span class="timer-setting-label">Отдых</span>
+                        <div class="timer-spinner">
+                            <button class="spinner-btn" onclick="adjustSetting('rest',-5)">−</button>
+                            <span class="spinner-val" id="settingRest">20 с</span>
+                            <button class="spinner-btn" onclick="adjustSetting('rest',5)">+</button>
+                        </div>
+                    </div>
+                    <div class="timer-setting-row">
+                        <span class="timer-setting-label">Подготовка</span>
+                        <div class="timer-spinner">
+                            <button class="spinner-btn" onclick="adjustSetting('prep',-5)">−</button>
+                            <span class="spinner-val" id="settingPrep">10 с</span>
+                            <button class="spinner-btn" onclick="adjustSetting('prep',5)">+</button>
+                        </div>
+                    </div>
+                    <button class="timer-start-btn" onclick="startTimer()">▶ Старт</button>
+                </div>
+                <div class="timer-active" id="timerActive" style="display:none">
+                    <div class="timer-phase-label" id="timerPhaseLabel">ПОДГОТОВКА</div>
+                    <div class="timer-round-label" id="timerRoundLabel">Раунд 1 / 5</div>
+                    <div class="timer-ring-wrap">
+                        <svg class="timer-ring" viewBox="0 0 200 200">
+                            <circle class="timer-ring-bg" cx="100" cy="100" r="88"/>
+                            <circle class="timer-ring-progress" id="timerRingProgress" cx="100" cy="100" r="88" stroke-dasharray="553" stroke-dashoffset="0"/>
+                        </svg>
+                        <div class="timer-digits" id="timerDigits">10</div>
+                    </div>
+                    <div class="timer-controls">
+                        <button class="timer-ctrl-btn pause" id="timerPauseBtn" onclick="togglePause()">⏸</button>
+                        <button class="timer-ctrl-btn stop" onclick="stopTimer()">⏹</button>
                     </div>
                 </div>
-                <div class="timer-setting-row">
-                    <span class="timer-setting-label">Работа</span>
-                    <div class="timer-spinner">
-                        <button class="spinner-btn" onclick="adjustSetting('work',-5)">−</button>
-                        <span class="spinner-val" id="settingWork">40 с</span>
-                        <button class="spinner-btn" onclick="adjustSetting('work',5)">+</button>
+                <div class="timer-done" id="timerDone" style="display:none">
+                    <div class="timer-done-icon">🎉</div>
+                    <div class="timer-done-text">Отличная работа!</div>
+                    <button class="timer-start-btn" onclick="resetTimer()">Повторить</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- МЕСЯЦ -->
+        <div id="monthSection" class="content-section">
+            <div class="stats-container">
+                <h2 class="chart-title">Итоги месяца</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Всего задач</div>
+                        <div class="stat-value" id="monthTotal">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Выполнено</div>
+                        <div class="stat-value" id="monthCompleted">0</div>
                     </div>
                 </div>
-                <div class="timer-setting-row">
-                    <span class="timer-setting-label">Отдых</span>
-                    <div class="timer-spinner">
-                        <button class="spinner-btn" onclick="adjustSetting('rest',-5)">−</button>
-                        <span class="spinner-val" id="settingRest">20 с</span>
-                        <button class="spinner-btn" onclick="adjustSetting('rest',5)">+</button>
+                <div class="chart-container">
+                    <div class="chart-title">По категориям</div>
+                    <div class="bar-chart" id="monthChart"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ГОД -->
+        <div id="yearSection" class="content-section">
+            <div class="stats-container">
+                <h2 class="chart-title">Итоги года</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Всего задач</div>
+                        <div class="stat-value" id="yearTotal">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Выполнено</div>
+                        <div class="stat-value" id="yearCompleted">0</div>
                     </div>
                 </div>
-                <div class="timer-setting-row">
-                    <span class="timer-setting-label">Подготовка</span>
-                    <div class="timer-spinner">
-                        <button class="spinner-btn" onclick="adjustSetting('prep',-5)">−</button>
-                        <span class="spinner-val" id="settingPrep">10 с</span>
-                        <button class="spinner-btn" onclick="adjustSetting('prep',5)">+</button>
-                    </div>
+                <div class="chart-container">
+                    <div class="chart-title">Статистика по месяцам</div>
+                    <div class="summary-list" id="yearSummary"></div>
                 </div>
-                <button class="timer-start-btn" onclick="startTimer()">▶ Старт</button>
-            </div>
-            <div class="timer-active" id="timerActive" style="display:none">
-                <div class="timer-phase-label" id="timerPhaseLabel">ПОДГОТОВКА</div>
-                <div class="timer-round-label" id="timerRoundLabel">Раунд 1 / 5</div>
-                <div class="timer-ring-wrap">
-                    <svg class="timer-ring" viewBox="0 0 200 200">
-                        <circle class="timer-ring-bg" cx="100" cy="100" r="88"/>
-                        <circle class="timer-ring-progress" id="timerRingProgress" cx="100" cy="100" r="88" stroke-dasharray="553" stroke-dashoffset="0"/>
-                    </svg>
-                    <div class="timer-digits" id="timerDigits">10</div>
-                </div>
-                <div class="timer-controls">
-                    <button class="timer-ctrl-btn pause" id="timerPauseBtn" onclick="togglePause()">⏸</button>
-                    <button class="timer-ctrl-btn stop" onclick="stopTimer()">⏹</button>
-                </div>
-            </div>
-            <div class="timer-done" id="timerDone" style="display:none">
-                <div class="timer-done-icon">🎉</div>
-                <div class="timer-done-text">Отличная работа!</div>
-                <button class="timer-start-btn" onclick="resetTimer()">Повторить</button>
             </div>
         </div>
     </div>
 
-    <!-- МЕСЯЦ -->
-    <div id="monthSection" class="content-section">
-        <div class="stats-container">
-            <h2 class="chart-title">Итоги месяца</h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Всего задач</div>
-                    <div class="stat-value" id="monthTotal">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Выполнено</div>
-                    <div class="stat-value" id="monthCompleted">0</div>
-                </div>
+    <!-- Индикатор соединения -->
+    <!-- Экран авторизации -->
+    <div class="auth-screen" id="authScreen">
+        <div class="auth-logo">🏋️</div>
+        <div class="auth-title">Трекер Результативности</div>
+        <div class="auth-subtitle">Войдите, чтобы синхронизировать данные</div>
+        <button class="google-btn" onclick="signInWithGoogle()">
+            <svg class="google-icon" viewBox="0 0 48 48">
+                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                <path fill="none" d="M0 0h48v48H0z"/>
+            </svg>
+            Войти через Google
+        </button>
+        <div class="auth-loading" id="authLoading" style="display:none">Входим...</div>
+    </div>
+
+    <!-- Аватар / кнопка профиля -->
+    <img class="user-avatar" id="userAvatar" onclick="toggleSignoutPopup()" alt="Профиль">
+    <div class="user-avatar-placeholder" id="userAvatarPlaceholder" onclick="toggleSignoutPopup()"></div>
+
+    <!-- Попап выхода -->
+    <div class="signout-popup" id="signoutPopup">
+        <div class="signout-user" id="signoutUserName"></div>
+        <button class="signout-btn" onclick="signOutUser()">Выйти</button>
+    </div>
+
+    <!-- Модалка: добавить категорию задач -->
+    <div id="addCategoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Новая категория</div>
+            <input type="text" id="newCategoryInput" class="modal-input" placeholder="Название категории" maxlength="20">
+            <div class="modal-buttons">
+                <button class="modal-btn secondary" onclick="closeModal('addCategoryModal')">Отмена</button>
+                <button class="modal-btn primary" onclick="addNewCategory()">Добавить</button>
             </div>
-            <div class="chart-container">
-                <div class="chart-title">По категориям</div>
-                <div class="bar-chart" id="monthChart"></div>
+        </div>
+    </div>
+
+    <!-- Модалка: добавить группу программы -->
+    <div id="addGroupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Новая группа</div>
+            <input type="text" id="newGroupInput" class="modal-input" placeholder="Например: День 1 — Грудь" maxlength="40">
+            <div class="modal-buttons">
+                <button class="modal-btn secondary" onclick="closeModal('addGroupModal')">Отмена</button>
+                <button class="modal-btn primary" onclick="addNewGroup()">Добавить</button>
             </div>
         </div>
     </div>
 
-    <!-- ГОД -->
-    <div id="yearSection" class="content-section">
-        <div class="stats-container">
-            <h2 class="chart-title">Итоги года</h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Всего задач</div>
-                    <div class="stat-value" id="yearTotal">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Выполнено</div>
-                    <div class="stat-value" id="yearCompleted">0</div>
-                </div>
-            </div>
-            <div class="chart-container">
-                <div class="chart-title">Статистика по месяцам</div>
-                <div class="summary-list" id="yearSummary"></div>
+    <!-- Модалка: добавить упражнение -->
+    <div id="addExerciseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Новое упражнение</div>
+            <input type="text" id="newExerciseInput" class="modal-input" placeholder="Например: Жим лёжа 4×10" maxlength="60">
+            <input type="hidden" id="newExerciseGroupId">
+            <div class="modal-buttons">
+                <button class="modal-btn secondary" onclick="closeModal('addExerciseModal')">Отмена</button>
+                <button class="modal-btn primary" onclick="addNewExercise()">Добавить</button>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Индикатор соединения -->
-<!-- Экран авторизации -->
-<div class="auth-screen" id="authScreen">
-    <div class="auth-logo">🏋️</div>
-    <div class="auth-title">Трекер Результативности</div>
-    <div class="auth-subtitle">Войдите, чтобы синхронизировать данные</div>
-    <button class="google-btn" onclick="signInWithGoogle()">
-        <svg class="google-icon" viewBox="0 0 48 48">
-            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-            <path fill="none" d="M0 0h48v48H0z"/>
-        </svg>
-        Войти через Google
-    </button>
-    <div class="auth-loading" id="authLoading" style="display:none">Входим...</div>
-</div>
-
-<!-- Аватар / кнопка профиля -->
-<img class="user-avatar" id="userAvatar" onclick="toggleSignoutPopup()" alt="Профиль">
-<div class="user-avatar-placeholder" id="userAvatarPlaceholder" onclick="toggleSignoutPopup()"></div>
-
-<!-- Попап выхода -->
-<div class="signout-popup" id="signoutPopup">
-    <div class="signout-user" id="signoutUserName"></div>
-    <button class="signout-btn" onclick="signOutUser()">Выйти</button>
-</div>
-
-<!-- Модалка: добавить категорию задач -->
-<div id="addCategoryModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-title">Новая категория</div>
-        <input type="text" id="newCategoryInput" class="modal-input" placeholder="Название категории" maxlength="20">
-        <div class="modal-buttons">
-            <button class="modal-btn secondary" onclick="closeModal('addCategoryModal')">Отмена</button>
-            <button class="modal-btn primary" onclick="addNewCategory()">Добавить</button>
-        </div>
-    </div>
-</div>
-
-<!-- Модалка: добавить группу программы -->
-<div id="addGroupModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-title">Новая группа</div>
-        <input type="text" id="newGroupInput" class="modal-input" placeholder="Например: День 1 — Грудь" maxlength="40">
-        <div class="modal-buttons">
-            <button class="modal-btn secondary" onclick="closeModal('addGroupModal')">Отмена</button>
-            <button class="modal-btn primary" onclick="addNewGroup()">Добавить</button>
-        </div>
-    </div>
-</div>
-
-<!-- Модалка: добавить упражнение -->
-<div id="addExerciseModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-title">Новое упражнение</div>
-        <input type="text" id="newExerciseInput" class="modal-input" placeholder="Например: Жим лёжа 4×10" maxlength="60">
-        <input type="hidden" id="newExerciseGroupId">
-        <div class="modal-buttons">
-            <button class="modal-btn secondary" onclick="closeModal('addExerciseModal')">Отмена</button>
-            <button class="modal-btn primary" onclick="addNewExercise()">Добавить</button>
-        </div>
-    </div>
-</div>
-```
 
 <script>
     // ==================== FIREBASE ====================
@@ -2268,6 +2262,5 @@
 
     initApp();
 </script>
-
 </body>
 </html>
