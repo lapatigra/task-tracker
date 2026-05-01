@@ -2335,6 +2335,8 @@
         groups.forEach(el => {
             const handle = el.querySelector('.drag-handle');
             if (!handle) return;
+            if (el._dragInited) { setupTouchDrag(handle, el, 'program'); return; }
+            el._dragInited = true;
 
             // Desktop
             handle.addEventListener('mousedown', () => { el.setAttribute('draggable', 'true'); });
@@ -2391,6 +2393,8 @@
         items.forEach(el => {
             const handle = el.querySelector('.category-handle');
             if (!handle) return;
+            if (el._dragInited) { setupTouchDrag(handle, el, 'category'); return; }
+            el._dragInited = true;
 
             handle.addEventListener('mousedown', () => { el.setAttribute('draggable', 'true'); });
             el.addEventListener('dragstart', e => {
@@ -2438,26 +2442,45 @@
 
     // Touch drag — работает на айфоне
     function setupTouchDrag(handle, el, type) {
+        if (handle._touchDragInited) return; // не вешаем дважды
+        handle._touchDragInited = true;
+
         let ghost = null;
-        let startY = 0;
+        let startX = 0, startY = 0;
         let lastOver = null;
+        let isDragging = false; // true только когда подтвердили вертикальное движение
 
         handle.addEventListener('touchstart', e => {
+            startX = e.touches[0].clientX;
             startY = e.touches[0].clientY;
-            dragSrc = el; dragType = type;
-            el.classList.add('dragging');
-
-            ghost = el.cloneNode(true);
-            ghost.style.cssText = `position:fixed;left:${el.getBoundingClientRect().left}px;top:${el.getBoundingClientRect().top}px;width:${el.offsetWidth}px;opacity:0.8;z-index:9999;pointer-events:none;transform:scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,0.5);border-radius:12px;`;
-            document.body.appendChild(ghost);
+            isDragging = false;
+            ghost = null;
         }, { passive: true });
 
         handle.addEventListener('touchmove', e => {
-            e.preventDefault();
             const t = e.touches[0];
-            if (ghost) {
-                ghost.style.top = (t.clientY - el.offsetHeight / 2) + 'px';
+            const dx = Math.abs(t.clientX - startX);
+            const dy = Math.abs(t.clientY - startY);
+
+            // Определяем что это вертикальное перетаскивание (не горизонтальный свайп)
+            if (!isDragging) {
+                if (dx > 8 && dx > dy) return; // горизонтальное — игнорируем
+                if (dy < 8) return; // ещё не ясно — ждём
+                // Вертикальное движение — начинаем drag
+                isDragging = true;
+                dragSrc = el; dragType = type;
+                el.classList.add('dragging');
+                ghost = el.cloneNode(true);
+                const r = el.getBoundingClientRect();
+                ghost.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${el.offsetWidth}px;opacity:0.8;z-index:9999;pointer-events:none;transform:scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,0.5);border-radius:12px;`;
+                document.body.appendChild(ghost);
             }
+
+            if (!isDragging) return;
+            e.preventDefault();
+
+            if (ghost) ghost.style.top = (t.clientY - el.offsetHeight / 2) + 'px';
+
             const below = document.elementFromPoint(t.clientX, t.clientY);
             const targetEl = below ? below.closest(type === 'program' ? '.program-group' : '.task-category') : null;
             if (lastOver && lastOver !== targetEl) {
@@ -2472,6 +2495,8 @@
         }, { passive: false });
 
         handle.addEventListener('touchend', e => {
+            if (!isDragging) { isDragging = false; return; }
+            isDragging = false;
             if (ghost) { ghost.remove(); ghost = null; }
             el.classList.remove('dragging');
             if (lastOver) {
@@ -2573,18 +2598,35 @@
         let ghost = null;
         let lastOver = null;
 
+        if (handle._touchExInited) return;
+        handle._touchExInited = true;
+        let exIsDragging = false;
+        let exStartX = 0, exStartY = 0;
+
         handle.addEventListener('touchstart', e => {
-            dragSrc = el; dragType = 'exercise';
-            el.classList.add('dragging');
-            ghost = el.cloneNode(true);
-            const r = el.getBoundingClientRect();
-            ghost.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${el.offsetWidth}px;opacity:0.8;z-index:9999;pointer-events:none;transform:scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,0.5);border-radius:8px;background:#2a2a2a;`;
-            document.body.appendChild(ghost);
+            exStartX = e.touches[0].clientX;
+            exStartY = e.touches[0].clientY;
+            exIsDragging = false;
         }, { passive: true });
 
         handle.addEventListener('touchmove', e => {
-            e.preventDefault();
             const t = e.touches[0];
+            const dx = Math.abs(t.clientX - exStartX);
+            const dy = Math.abs(t.clientY - exStartY);
+
+            if (!exIsDragging) {
+                if (dx > 8 && dx > dy) return;
+                if (dy < 8) return;
+                exIsDragging = true;
+                dragSrc = el; dragType = 'exercise';
+                el.classList.add('dragging');
+                ghost = el.cloneNode(true);
+                const r = el.getBoundingClientRect();
+                ghost.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${el.offsetWidth}px;opacity:0.8;z-index:9999;pointer-events:none;transform:scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,0.5);border-radius:8px;background:#2a2a2a;`;
+                document.body.appendChild(ghost);
+            }
+            if (!exIsDragging) return;
+            e.preventDefault();
             if (ghost) ghost.style.top = (t.clientY - el.offsetHeight / 2) + 'px';
             const below = document.elementFromPoint(t.clientX, t.clientY);
             const targetEl = below ? below.closest('.exercise-wrap') : null;
@@ -2599,6 +2641,8 @@
         }, { passive: false });
 
         handle.addEventListener('touchend', () => {
+            if (!exIsDragging) { exIsDragging = false; return; }
+            exIsDragging = false;
             if (ghost) { ghost.remove(); ghost = null; }
             el.classList.remove('dragging');
             if (lastOver) {
