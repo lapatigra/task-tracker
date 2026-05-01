@@ -1822,14 +1822,14 @@
         program.push({ id: uid(), name, exercises: [], collapsed: false });
         saveProgram();
         closeModal('addGroupModal');
-        renderProgram(); setTimeout(() => { initDragProgram(); initDragExercises(); initSwipeDelete(); }, 50);
+        renderProgram(); setTimeout(() => { if (!document.body.classList.contains('is-touch')) { initDragProgram(); initDragExercises(); } initSwipeDelete(); }, 50);
     }
 
     function deleteGroup(groupId) {
         if (!confirm('Удалить группу со всеми упражнениями?')) return;
         program = program.filter(g => g.id !== groupId);
         saveProgram();
-        renderProgram(); setTimeout(() => { initDragProgram(); initDragExercises(); initSwipeDelete(); }, 50);
+        renderProgram(); setTimeout(() => { if (!document.body.classList.contains('is-touch')) { initDragProgram(); initDragExercises(); } initSwipeDelete(); }, 50);
     }
 
     function toggleGroup(groupId) {
@@ -1837,7 +1837,7 @@
         if (!g) return;
         g.collapsed = !g.collapsed;
         // не сохраняем в Firebase чтобы не лишний раз писать — только локально
-        renderProgram(); setTimeout(() => { initDragProgram(); initDragExercises(); initSwipeDelete(); }, 50);
+        renderProgram(); setTimeout(() => { if (!document.body.classList.contains('is-touch')) { initDragProgram(); initDragExercises(); } initSwipeDelete(); }, 50);
     }
 
     function openAddExerciseModal(groupId) {
@@ -1856,7 +1856,7 @@
         g.exercises.push({ id: uid(), name });
         saveProgram();
         closeModal('addExerciseModal');
-        renderProgram(); setTimeout(() => { initDragProgram(); initDragExercises(); initSwipeDelete(); }, 50);
+        renderProgram(); setTimeout(() => { if (!document.body.classList.contains('is-touch')) { initDragProgram(); initDragExercises(); } initSwipeDelete(); }, 50);
     }
 
     function toggleEditExercise(groupId, exerciseId) {
@@ -1895,7 +1895,7 @@
         if (!g) return;
         g.exercises = g.exercises.filter(e => e.id !== exerciseId);
         saveProgram();
-        renderProgram(); setTimeout(() => { initDragProgram(); initDragExercises(); initSwipeDelete(); }, 50);
+        renderProgram(); setTimeout(() => { if (!document.body.classList.contains('is-touch')) { initDragProgram(); initDragExercises(); } initSwipeDelete(); }, 50);
     }
 
     function renderProgram() {
@@ -2308,7 +2308,7 @@
 
         if (tab === 'month') updateMonthStats();
         if (tab === 'year') updateYearStats();
-        if (tab === 'program') { renderProgram(); setTimeout(() => { initDragProgram(); initDragExercises(); initSwipeDelete(); }, 50); }
+        if (tab === 'program') { renderProgram(); setTimeout(() => { if (!document.body.classList.contains('is-touch')) { initDragProgram(); initDragExercises(); } initSwipeDelete(); }, 50); }
     }
 
     function updateDisplay() {
@@ -2317,7 +2317,7 @@
         const monthNames = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
         document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
         renderTasks(year, month);
-        setTimeout(initDragCategories, 50);
+        if (!document.body.classList.contains('is-touch')) setTimeout(initDragCategories, 50);
     }
 
     window.addEventListener('resize', updateDisplay);
