@@ -2659,25 +2659,34 @@
         document.body.classList.add('is-touch');
     }, { once: true, passive: true });
 
+    function closeAllSwipes(except) {
+        document.querySelectorAll('.swipe-row.swipe-enabled').forEach(r => {
+            if (r === except) return;
+            const c = r.querySelector('.swipe-content');
+            if (c) { c.style.transition = ''; c.style.transform = ''; }
+            r.classList.remove('swipe-enabled');
+            r._swipeOpen = false;
+        });
+    }
+
     function initSwipeDelete() {
         document.querySelectorAll('.swipe-row').forEach(row => {
+            if (row._swipeInited) return; // не вешаем обработчики дважды
+            row._swipeInited = true;
 
-            let startX = 0;
-            let startY = 0;
-            let currentX = 0;
-            let isSwiping = false;
-            let isOpen = false;
-            const THRESHOLD = 60;
+            let startX = 0, startY = 0, currentX = 0;
+            let direction = null; // 'h' | 'v' | null
+            const THRESHOLD = 50;
+            const OPEN_X = -76;
 
             const content = row.querySelector('.swipe-content');
             if (!content) return;
 
             row.addEventListener('touchstart', e => {
-                document.body.classList.add('is-touch');
                 startX = e.touches[0].clientX;
                 startY = e.touches[0].clientY;
-                currentX = 0;
-                isSwiping = false;
+                currentX = row._swipeOpen ? OPEN_X : 0;
+                direction = null;
                 content.style.transition = 'none';
             }, { passive: true });
 
@@ -2685,48 +2694,56 @@
                 const dx = e.touches[0].clientX - startX;
                 const dy = e.touches[0].clientY - startY;
 
-                if (!isSwiping && Math.abs(dy) > Math.abs(dx)) return; // вертикальный скролл
-                isSwiping = true;
+                // Определяем направление один раз по первым 8px движения
+                if (!direction) {
+                    if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+                    direction = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+                }
+
+                // Вертикальный скролл — не мешаем
+                if (direction === 'v') return;
+
+                // Горизонтальный свайп — перехватываем
                 e.preventDefault();
+                e.stopPropagation();
 
-                // Показываем красный фон как только начался свайп влево
-                if (dx < 0) row.classList.add('swipe-enabled');
+                const base = row._swipeOpen ? OPEN_X : 0;
+                const newX = Math.max(OPEN_X, Math.min(0, base + dx));
+                currentX = newX;
 
-                currentX = Math.max(-76, Math.min(0, dx + (isOpen ? -76 : 0)));
-                content.style.transform = `translateX(${currentX}px)`;
+                if (newX < 0) row.classList.add('swipe-enabled');
+                content.style.transform = `translateX(${newX}px)`;
             }, { passive: false });
 
             row.addEventListener('touchend', () => {
+                if (direction !== 'h') return;
                 content.style.transition = '';
+
                 if (currentX < -THRESHOLD) {
-                    // открыть
-                    content.style.transform = 'translateX(-80px)';
-                    isOpen = true;
-                    // Закрыть другие открытые
-                    document.querySelectorAll('.swipe-row').forEach(r => {
-                        if (r !== row) {
-                            const c = r.querySelector('.swipe-content');
-                            if (c) { c.style.transform = ''; }
-                            r._swipeOpen = false;
-                            r.classList.remove('swipe-enabled');
-                        }
-                    });
+                    content.style.transform = `translateX(${OPEN_X}px)`;
+                    row._swipeOpen = true;
+                    row.classList.add('swipe-enabled');
+                    closeAllSwipes(row);
                 } else {
                     content.style.transform = '';
-                    isOpen = false;
+                    row._swipeOpen = false;
                     row.classList.remove('swipe-enabled');
+                }
+                direction = null;
+            });
+        });
+
+        // Закрыть открытый свайп по тапу вне
+        document.addEventListener('touchstart', e => {
+            document.querySelectorAll('.swipe-row._swipeOpen, .swipe-row[class*="swipe-enabled"]').forEach(r => {
+                if (!r.contains(e.target)) {
+                    const c = r.querySelector('.swipe-content');
+                    if (c) { c.style.transition = ''; c.style.transform = ''; }
+                    r._swipeOpen = false;
+                    r.classList.remove('swipe-enabled');
                 }
             });
-
-            // Закрыть по клику вне
-            document.addEventListener('touchstart', e => {
-                if (isOpen && !row.contains(e.target)) {
-                    content.style.transform = '';
-                    isOpen = false;
-                    row.classList.remove('swipe-enabled');
-                }
-            }, { passive: true });
-        });
+        }, { passive: true });
     }
 
     // ==================== ИНИЦИАЛИЗАЦИЯ ====================
