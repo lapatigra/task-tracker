@@ -1041,7 +1041,7 @@
             will-change: transform;
         }
 
-        /* Красный фон — всегда абсолютный, не виден пока нет сдвига */
+        /* Красный фон — ВСЕГДА скрыт, JS покажет его через .swipe-active */
         .swipe-row .swipe-delete-bg {
             position: absolute;
             right: 0;
@@ -1049,7 +1049,7 @@
             bottom: 0;
             width: 76px;
             background: #e53935;
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             color: white;
@@ -1059,18 +1059,14 @@
             border-radius: 0 12px 12px 0;
         }
 
-        /* Скрываем bg на ПК */
-        body:not(.is-touch) .swipe-delete-bg {
-            display: none;
+        /* JS добавляет .swipe-enabled на строку когда свайп начался */
+        .swipe-row.swipe-enabled .swipe-delete-bg {
+            display: flex;
         }
 
-        /* ПК: тонкая кнопка удаления справа от edit-кнопки */
+        /* ПК: кнопка удаления рядом с edit — скрыта по умолчанию */
         .swipe-delete-hover {
             display: none;
-        }
-
-        body:not(.is-touch) .swipe-delete-hover {
-            display: flex;
             align-items: center;
             justify-content: center;
             width: 28px;
@@ -1086,15 +1082,22 @@
             flex-shrink: 0;
         }
 
-        body:not(.is-touch) .swipe-row:hover .swipe-delete-hover {
+        /* Показываем крестик на ПК при ховере на строку */
+        .swipe-row:hover .swipe-delete-hover {
+            display: flex;
             background: rgba(229,57,53,0.12);
             color: #e53935;
         }
 
-        body:not(.is-touch) .swipe-row:hover .swipe-delete-hover:hover {
+        .swipe-row:hover .swipe-delete-hover:hover {
             background: #e53935;
             color: white;
-            transform: scale(1.15);
+            transform: scale(1.12);
+        }
+
+        /* На touch — крестик не нужен */
+        body.is-touch .swipe-delete-hover {
+            display: none !important;
         }
 
         .program-group { overflow: visible; }
@@ -2652,15 +2655,12 @@
 
 
     // ==================== SWIPE TO DELETE ====================
-    // Определяем touch один раз при первом касании
     window.addEventListener('touchstart', () => {
         document.body.classList.add('is-touch');
     }, { once: true, passive: true });
 
     function initSwipeDelete() {
         document.querySelectorAll('.swipe-row').forEach(row => {
-            // Только touch-устройства (is-touch класс добавится при первом touch)
-            // Слушаем touch события всегда — они просто не сработают на ПК
 
             let startX = 0;
             let startY = 0;
@@ -2689,7 +2689,10 @@
                 isSwiping = true;
                 e.preventDefault();
 
-                currentX = Math.max(-80, Math.min(0, dx + (isOpen ? -80 : 0)));
+                // Показываем красный фон как только начался свайп влево
+                if (dx < 0) row.classList.add('swipe-enabled');
+
+                currentX = Math.max(-76, Math.min(0, dx + (isOpen ? -76 : 0)));
                 content.style.transform = `translateX(${currentX}px)`;
             }, { passive: false });
 
@@ -2705,11 +2708,13 @@
                             const c = r.querySelector('.swipe-content');
                             if (c) { c.style.transform = ''; }
                             r._swipeOpen = false;
+                            r.classList.remove('swipe-enabled');
                         }
                     });
                 } else {
                     content.style.transform = '';
                     isOpen = false;
+                    row.classList.remove('swipe-enabled');
                 }
             });
 
@@ -2718,6 +2723,7 @@
                 if (isOpen && !row.contains(e.target)) {
                     content.style.transform = '';
                     isOpen = false;
+                    row.classList.remove('swipe-enabled');
                 }
             }, { passive: true });
         });
