@@ -221,6 +221,23 @@
             transform: translate(-50%, -50%);
         }
 
+
+        /* Сегодняшний день */
+        .day-cell.today {
+            background: rgba(255, 107, 53, 0.15);
+            border: 2px solid rgba(255, 107, 53, 0.6);
+            border-radius: 8px;
+        }
+
+        .day-cell.today .day-label {
+            color: #ff9a56;
+            font-weight: 700;
+        }
+
+        .day-cell.today .day-checkbox {
+            border-color: #ff6b35;
+        }
+
         /* ===== СТАТИСТИКА ===== */
         .stats-container {
             background: rgba(30, 30, 30, 0.95);
@@ -1724,18 +1741,15 @@
         e.stopPropagation();
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        // Проверяем текущее состояние
-        let allChecked = true;
-        for (let d = 1; d <= daysInMonth; d++) {
-            if (!tasks[getTaskKey(year, month, d, category)]) { allChecked = false; break; }
-        }
-        // Если все отмечены — снимаем все, иначе — ставим все
-        for (let d = 1; d <= daysInMonth; d++) {
-            const key = getTaskKey(year, month, d, category);
-            tasks[key] = !allChecked;
-            if (!allChecked === false) delete tasks[key];
-        }
+        const today = new Date();
+        const isCurrentMonth = year === today.getFullYear() && month === today.getMonth();
+        const targetDay = isCurrentMonth ? today.getDate() : new Date(year, month + 1, 0).getDate();
+
+        const key = getTaskKey(year, month, targetDay, category);
+        // Переключаем только сегодня (или последний день если другой месяц)
+        tasks[key] = !tasks[key];
+        if (!tasks[key]) delete tasks[key];
+
         saveTasks();
         updateDisplay();
     }
@@ -2112,15 +2126,20 @@
             }
 
             categoryDiv.setAttribute('data-category', category);
-            const allDone = completed === daysInMonth;
+            // Состояние кнопки — сегодня выполнено?
+            const today = new Date();
+            const isCurrentMonth = year === today.getFullYear() && month === today.getMonth();
+            const todayDay = isCurrentMonth ? today.getDate() : null;
+            const todayDone = todayDay ? !!tasks[getTaskKey(year, month, todayDay, category)] : false;
+
             categoryDiv.innerHTML = `
                 <div class="category-header">
                     <span class="category-handle" title="Перетащить">⠿</span>
                     <span class="category-name" onclick="toggleCategory('${category}')" style="flex:1;cursor:pointer">${category}</span>
                     <div style="display:flex;align-items:center;gap:6px;">
-                        <button class="category-done-btn ${allDone ? 'all-done' : ''}" onclick="markAllDone(event,'${category}')"
-                            title="${allDone ? 'Снять все' : 'Отметить все'}">
-                            ${allDone ? '✓ Готово' : '✓ Выполнил'}
+                        <button class="category-done-btn ${todayDone ? 'all-done' : ''}" onclick="markAllDone(event,'${category}')"
+                            title="${todayDone ? 'Снять отметку' : 'Отметить сегодня'}">
+                            ${todayDone ? '✓ Сделано' : '✓ Выполнил'}
                         </button>
                         <span class="category-toggle ${isCollapsed ? 'collapsed' : ''}" onclick="toggleCategory('${category}')">▼</span>
                     </div>
@@ -2139,8 +2158,9 @@
                 const key = getTaskKey(year, month, day, category);
                 const isChecked = tasks[key] || false;
                 const dayName = dayNames[(adjustedFirstDay + day - 1) % 7];
+                const isToday = isCurrentMonth && day === today.getDate();
                 currentWeekDays.push(`
-                    <div class="day-cell">
+                    <div class="day-cell${isToday ? ' today' : ''}">
                         <div class="day-label">${dayName}</div>
                         <input type="checkbox" class="day-checkbox" ${isChecked ? 'checked' : ''}
                                onchange="toggleTask(${year},${month},${day},'${category}')">
