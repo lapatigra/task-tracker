@@ -1027,6 +1027,7 @@
         /* ===== SWIPE TO DELETE ===== */
 
         /* Группа — обёртка со свайпом */
+        /* ===== SWIPE ROW BASE ===== */
         .swipe-row {
             position: relative;
             overflow: hidden;
@@ -1037,9 +1038,9 @@
             position: relative;
             transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1;
-            background: inherit;
         }
 
+        /* Красный фон — скрыт по умолчанию, JS добавляет класс is-touch */
         .swipe-row .swipe-delete-bg {
             position: absolute;
             right: 0;
@@ -1047,54 +1048,57 @@
             bottom: 0;
             width: 80px;
             background: #e53935;
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 20px;
+            font-size: 22px;
             border-radius: 0 12px 12px 0;
             cursor: pointer;
-            transition: width 0.2s;
         }
 
-        /* ПК — крестик при ховере */
-        @media (hover: hover) {
-            .swipe-row .swipe-delete-hover {
-                position: absolute;
-                right: 10px;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 26px;
-                height: 26px;
-                border-radius: 50%;
-                background: rgba(229,57,53,0);
-                color: transparent;
-                border: none;
-                cursor: pointer;
-                font-size: 16px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.2s;
-                z-index: 10;
-            }
-
-            .swipe-row:hover .swipe-delete-hover {
-                background: rgba(229,57,53,0.15);
-                color: #e53935;
-            }
-
-            .swipe-row:hover .swipe-delete-hover:hover {
-                background: #e53935;
-                color: white;
-                transform: translateY(-50%) scale(1.1);
-            }
-
-            /* На ПК скрываем мобильный фон */
-            .swipe-row .swipe-delete-bg { display: none; }
+        /* Показываем красный фон только на touch-устройствах (класс добавляет JS) */
+        body.is-touch .swipe-row .swipe-delete-bg {
+            display: flex;
         }
 
-        /* Группа — убираем старый overflow hidden с .program-group */
+        /* ПК: крестик при ховере — только НЕ touch */
+        body:not(.is-touch) .swipe-delete-hover {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: transparent;
+            color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        body:not(.is-touch) .swipe-row:hover .swipe-delete-hover {
+            background: rgba(229,57,53,0.15);
+            color: #e53935;
+        }
+
+        body:not(.is-touch) .swipe-row:hover .swipe-delete-hover:hover {
+            background: #e53935;
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* На touch скрываем ховер-кнопку */
+        body.is-touch .swipe-delete-hover {
+            display: none !important;
+        }
+
         .program-group { overflow: visible; }
         .program-group > .swipe-row { margin-bottom: 0; }
 
@@ -2648,10 +2652,15 @@
 
 
     // ==================== SWIPE TO DELETE ====================
+    // Определяем touch один раз при первом касании
+    window.addEventListener('touchstart', () => {
+        document.body.classList.add('is-touch');
+    }, { once: true, passive: true });
+
     function initSwipeDelete() {
         document.querySelectorAll('.swipe-row').forEach(row => {
-            // Только touch-устройства
-            if (window.matchMedia('(hover: hover)').matches) return;
+            // Только touch-устройства (is-touch класс добавится при первом touch)
+            // Слушаем touch события всегда — они просто не сработают на ПК
 
             let startX = 0;
             let startY = 0;
@@ -2664,6 +2673,7 @@
             if (!content) return;
 
             row.addEventListener('touchstart', e => {
+                document.body.classList.add('is-touch');
                 startX = e.touches[0].clientX;
                 startY = e.touches[0].clientY;
                 currentX = 0;
