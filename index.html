@@ -1027,44 +1027,11 @@
         /* ===== SWIPE TO DELETE ===== */
 
         /* Группа — обёртка со свайпом */
-        /* ===== SWIPE ROW ===== */
-        .swipe-row {
-            position: relative;
-            overflow: hidden;
-            border-radius: 12px;
-        }
+        /* ===== DELETE BUTTON ===== */
+        .swipe-row { position: relative; border-radius: 12px; }
+        .swipe-content { position: relative; }
 
-        .swipe-row .swipe-content {
-            position: relative;
-            transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 2;
-            will-change: transform;
-        }
-
-        /* Красный фон — ВСЕГДА скрыт, JS покажет его через .swipe-active */
-        .swipe-row .swipe-delete-bg {
-            position: absolute;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            width: 76px;
-            background: #e53935;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 22px;
-            cursor: pointer;
-            z-index: 1;
-            border-radius: 0 12px 12px 0;
-        }
-
-        /* JS добавляет .swipe-enabled на строку когда свайп начался */
-        .swipe-row.swipe-enabled .swipe-delete-bg {
-            display: flex;
-        }
-
-        /* ПК: кнопка удаления рядом с edit — скрыта по умолчанию */
+        /* Кнопка удаления — скрыта, появляется при ховере на ПК */
         .swipe-delete-hover {
             display: none;
             align-items: center;
@@ -1073,7 +1040,7 @@
             height: 28px;
             border-radius: 50%;
             background: transparent;
-            color: transparent;
+            color: rgba(229,57,53,0.5);
             border: none;
             cursor: pointer;
             font-size: 15px;
@@ -1082,23 +1049,24 @@
             flex-shrink: 0;
         }
 
-        /* Показываем крестик на ПК при ховере на строку */
         .swipe-row:hover .swipe-delete-hover {
             display: flex;
-            background: rgba(229,57,53,0.12);
-            color: #e53935;
         }
 
-        .swipe-row:hover .swipe-delete-hover:hover {
+        .swipe-delete-hover:hover {
             background: #e53935;
             color: white;
             transform: scale(1.12);
         }
 
-        /* На touch — крестик не нужен */
+        /* На мобиле — кнопка всегда видна, но маленькая */
         body.is-touch .swipe-delete-hover {
-            display: none !important;
+            display: flex !important;
+            color: rgba(229,57,53,0.35);
         }
+
+        /* Красный фон свайпа — убран полностью */
+        .swipe-delete-bg { display: none !important; }
 
         .program-group { overflow: visible; }
         .program-group > .swipe-row { margin-bottom: 0; }
@@ -2654,97 +2622,12 @@
     }
 
 
-    // ==================== SWIPE TO DELETE ====================
+    // ==================== TOUCH DETECTION ====================
     window.addEventListener('touchstart', () => {
         document.body.classList.add('is-touch');
     }, { once: true, passive: true });
 
-    function closeAllSwipes(except) {
-        document.querySelectorAll('.swipe-row.swipe-enabled').forEach(r => {
-            if (r === except) return;
-            const c = r.querySelector('.swipe-content');
-            if (c) { c.style.transition = ''; c.style.transform = ''; }
-            r.classList.remove('swipe-enabled');
-            r._swipeOpen = false;
-        });
-    }
-
-    function initSwipeDelete() {
-        document.querySelectorAll('.swipe-row').forEach(row => {
-            if (row._swipeInited) return; // не вешаем обработчики дважды
-            row._swipeInited = true;
-
-            let startX = 0, startY = 0, currentX = 0;
-            let direction = null; // 'h' | 'v' | null
-            const THRESHOLD = 50;
-            const OPEN_X = -76;
-
-            const content = row.querySelector('.swipe-content');
-            if (!content) return;
-
-            row.addEventListener('touchstart', e => {
-                startX = e.touches[0].clientX;
-                startY = e.touches[0].clientY;
-                currentX = row._swipeOpen ? OPEN_X : 0;
-                direction = null;
-                content.style.transition = 'none';
-            }, { passive: true });
-
-            row.addEventListener('touchmove', e => {
-                const dx = e.touches[0].clientX - startX;
-                const dy = e.touches[0].clientY - startY;
-
-                // Определяем направление один раз по первым 8px движения
-                if (!direction) {
-                    if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
-                    direction = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
-                }
-
-                // Вертикальный скролл — не мешаем
-                if (direction === 'v') return;
-
-                // Горизонтальный свайп — перехватываем
-                e.preventDefault();
-                e.stopPropagation();
-
-                const base = row._swipeOpen ? OPEN_X : 0;
-                const newX = Math.max(OPEN_X, Math.min(0, base + dx));
-                currentX = newX;
-
-                if (newX < 0) row.classList.add('swipe-enabled');
-                content.style.transform = `translateX(${newX}px)`;
-            }, { passive: false });
-
-            row.addEventListener('touchend', () => {
-                if (direction !== 'h') return;
-                content.style.transition = '';
-
-                if (currentX < -THRESHOLD) {
-                    content.style.transform = `translateX(${OPEN_X}px)`;
-                    row._swipeOpen = true;
-                    row.classList.add('swipe-enabled');
-                    closeAllSwipes(row);
-                } else {
-                    content.style.transform = '';
-                    row._swipeOpen = false;
-                    row.classList.remove('swipe-enabled');
-                }
-                direction = null;
-            });
-        });
-
-        // Закрыть открытый свайп по тапу вне
-        document.addEventListener('touchstart', e => {
-            document.querySelectorAll('.swipe-row._swipeOpen, .swipe-row[class*="swipe-enabled"]').forEach(r => {
-                if (!r.contains(e.target)) {
-                    const c = r.querySelector('.swipe-content');
-                    if (c) { c.style.transition = ''; c.style.transform = ''; }
-                    r._swipeOpen = false;
-                    r.classList.remove('swipe-enabled');
-                }
-            });
-        }, { passive: true });
-    }
+    function initSwipeDelete() { /* no-op — swipe replaced with button */ }
 
     // ==================== ИНИЦИАЛИЗАЦИЯ ====================
     function initApp() {
