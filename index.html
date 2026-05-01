@@ -1027,7 +1027,7 @@
         /* ===== SWIPE TO DELETE ===== */
 
         /* Группа — обёртка со свайпом */
-        /* ===== SWIPE ROW BASE ===== */
+        /* ===== SWIPE ROW ===== */
         .swipe-row {
             position: relative;
             overflow: hidden;
@@ -1036,38 +1036,43 @@
 
         .swipe-row .swipe-content {
             position: relative;
-            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1;
+            transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+            will-change: transform;
         }
 
-        /* Красный фон — скрыт по умолчанию, JS добавляет класс is-touch */
+        /* Красный фон — всегда абсолютный, не виден пока нет сдвига */
         .swipe-row .swipe-delete-bg {
             position: absolute;
             right: 0;
             top: 0;
             bottom: 0;
-            width: 80px;
+            width: 76px;
             background: #e53935;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-size: 22px;
-            border-radius: 0 12px 12px 0;
             cursor: pointer;
+            z-index: 1;
+            border-radius: 0 12px 12px 0;
         }
 
-        /* Показываем красный фон только на touch-устройствах (класс добавляет JS) */
-        body.is-touch .swipe-row .swipe-delete-bg {
-            display: flex;
+        /* Скрываем bg на ПК */
+        body:not(.is-touch) .swipe-delete-bg {
+            display: none;
         }
 
-        /* ПК: крестик при ховере — только НЕ touch */
+        /* ПК: тонкая кнопка удаления справа от edit-кнопки */
+        .swipe-delete-hover {
+            display: none;
+        }
+
         body:not(.is-touch) .swipe-delete-hover {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 28px;
             height: 28px;
             border-radius: 50%;
@@ -1075,28 +1080,21 @@
             color: transparent;
             border: none;
             cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            z-index: 10;
+            font-size: 15px;
+            font-weight: 700;
+            transition: all 0.18s;
+            flex-shrink: 0;
         }
 
         body:not(.is-touch) .swipe-row:hover .swipe-delete-hover {
-            background: rgba(229,57,53,0.15);
+            background: rgba(229,57,53,0.12);
             color: #e53935;
         }
 
         body:not(.is-touch) .swipe-row:hover .swipe-delete-hover:hover {
             background: #e53935;
             color: white;
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        /* На touch скрываем ховер-кнопку */
-        body.is-touch .swipe-delete-hover {
-            display: none !important;
+            transform: scale(1.15);
         }
 
         .program-group { overflow: visible; }
@@ -1940,12 +1938,14 @@
             <div class="program-group">
                 <div class="swipe-row" id="swipe-group-${g.id}">
                     <div class="swipe-delete-bg" onclick="deleteGroup('${g.id}')">🗑</div>
-                    <button class="swipe-delete-hover" onclick="deleteGroup('${g.id}')" title="Удалить группу">✕</button>
                     <div class="swipe-content program-group-header" onclick="toggleGroup('${g.id}')"
                          data-group-id="${g.id}">
                         <span class="drag-handle" title="Перетащить">⠿</span>
                         <span class="program-group-name">${escHtml(g.name)}</span>
-                        <span class="program-group-toggle ${g.collapsed ? 'collapsed' : ''}">▼</span>
+                        <div style="display:flex;align-items:center;gap:4px;margin-left:auto;" onclick="event.stopPropagation()">
+                            <button class="swipe-delete-hover" onclick="deleteGroup('${g.id}')" title="Удалить группу">✕</button>
+                        </div>
+                        <span class="program-group-toggle ${g.collapsed ? 'collapsed' : ''}" onclick="event.stopPropagation();toggleGroup('${g.id}')">▼</span>
                     </div>
                 </div>
                 <div class="program-group-body ${g.collapsed ? 'collapsed' : ''}">
@@ -1954,12 +1954,12 @@
                         <div class="exercise-wrap" data-exercise-id="${ex.id}" data-group-id="${g.id}">
                             <div class="swipe-row" id="swipe-ex-${ex.id}">
                                 <div class="swipe-delete-bg" onclick="deleteExercise('${g.id}','${ex.id}')">🗑</div>
-                                <button class="swipe-delete-hover" onclick="deleteExercise('${g.id}','${ex.id}')" title="Удалить">✕</button>
                                 <div class="swipe-content program-exercise">
                                     <span class="drag-handle ex-handle" title="Перетащить">⠿</span>
                                     <span class="program-exercise-name" id="exname-${ex.id}">${escHtml(ex.name)}</span>
                                     <div class="program-exercise-actions">
                                         <button class="program-icon-btn edit" onclick="toggleEditExercise('${g.id}','${ex.id}')" title="Редактировать">✎</button>
+                                        <button class="swipe-delete-hover" onclick="deleteExercise('${g.id}','${ex.id}')" title="Удалить">✕</button>
                                     </div>
                                 </div>
                             </div>
