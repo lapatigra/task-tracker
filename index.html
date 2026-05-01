@@ -946,6 +946,22 @@
         }
 
         /* вращающееся кольцо вокруг логотипа */
+        @keyframes spinRing {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes splashPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,107,53,0.4); }
+            50% { transform: scale(1.04); box-shadow: 0 0 0 12px rgba(255,107,53,0); }
+        }
+        @keyframes dotBounce {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
         .splash-ring {
             position: absolute;
             inset: -8px;
@@ -965,21 +981,12 @@
             animation: spinRing 2.1s linear infinite reverse;
         }
 
-        @keyframes spinRing {
-            to { transform: rotate(360deg); }
-        }
-
         .splash-logo-img {
             width: 140px;
             height: 140px;
             object-fit: cover;
             border-radius: 50%;
             animation: splashPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes splashPulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,107,53,0.4); }
-            50% { transform: scale(1.04); box-shadow: 0 0 0 12px rgba(255,107,53,0); }
         }
 
         .splash-title {
@@ -1006,11 +1013,6 @@
 
         .splash-dot:nth-child(2) { animation-delay: 0.2s; }
         .splash-dot:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes dotBounce {
-            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-            40% { transform: scale(1); opacity: 1; }
-        }
 
         /* auth-screen: кнопка появляется плавно */
         .auth-btn-wrap {
@@ -1231,61 +1233,7 @@
         .signout-btn:hover { background: rgba(255,107,53,0.1); }
 
 
-        /* ===== АНИМАЦИИ ===== */
-        @keyframes fadeSlideIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.94); }
-            to   { opacity: 1; transform: scale(1); }
-        }
-        @keyframes checkPop {
-            0%   { transform: scale(1); }
-            40%  { transform: scale(1.35); }
-            70%  { transform: scale(0.88); }
-            100% { transform: scale(1); }
-        }
-        @keyframes slideDown {
-            from { opacity: 0; max-height: 0; }
-            to   { opacity: 1; max-height: 2000px; }
-        }
-
-        .container { animation: fadeSlideIn 0.4s ease both; }
-
-        .task-category { animation: fadeSlideIn 0.35s ease both; }
-        .task-category:nth-child(1) { animation-delay: 0.03s; }
-        .task-category:nth-child(2) { animation-delay: 0.06s; }
-        .task-category:nth-child(3) { animation-delay: 0.09s; }
-        .task-category:nth-child(4) { animation-delay: 0.12s; }
-        .task-category:nth-child(5) { animation-delay: 0.15s; }
-        .task-category:nth-child(6) { animation-delay: 0.18s; }
-        .task-category:nth-child(7) { animation-delay: 0.21s; }
-
-        .program-group { animation: scaleIn 0.3s ease both; }
-
-        .day-checkbox:checked { animation: checkPop 0.3s ease; }
-
-        .tabs .tab { transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .tabs .tab.active { transform: translateY(-1px); }
-
-        .category-content {
-            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                        opacity 0.3s ease;
-        }
-
-        .month-btn { transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .month-btn:active { transform: scale(0.88); }
-
-        .stat-card { animation: scaleIn 0.4s ease both; }
-        .stat-card:nth-child(2) { animation-delay: 0.1s; }
-
-        .auth-screen .auth-title { animation: fadeSlideIn 0.5s 0.1s ease both; }
-        .auth-screen .auth-subtitle { animation: fadeSlideIn 0.5s 0.2s ease both; }
-        .auth-screen .google-btn { animation: fadeSlideIn 0.5s 0.3s ease both; }
-        .auth-screen .auth-logo-img { animation: scaleIn 0.5s ease both; }
-
-        @media (max-width: 380px) {
+                @media (max-width: 380px) {
             .days-grid { gap: 3px; }
             .day-checkbox { width: 16px; height: 16px; }
         }
