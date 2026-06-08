@@ -1598,9 +1598,8 @@
     }
 
     function showAuthScreen() {
-        const auth = document.getElementById('authScreen');
-        auth.classList.remove('hidden');
-        // Кнопку показываем с задержкой для красивого эффекта
+        const authScreen = document.getElementById('authScreen');
+        authScreen.classList.remove('hidden');
         setTimeout(() => {
             const btn = document.getElementById('authBtnWrap');
             if (btn) btn.classList.add('visible');
@@ -2451,18 +2450,12 @@
         if (isFirebaseEnabled && auth) {
             const loadingEl = document.getElementById('authLoading');
 
-            // Обрабатываем результат Google redirect
+            // Очищаем возможное устаревшее состояние redirect (без алертов)
             auth.getRedirectResult()
-                .then(result => {
-                    localStorage.removeItem('pendingGoogleAuth');
-                    loadingEl.style.display = 'none';
-                })
+                .then(() => { localStorage.removeItem('pendingGoogleAuth'); })
                 .catch(e => {
                     localStorage.removeItem('pendingGoogleAuth');
-                    loadingEl.style.display = 'none';
-                    if (e.code !== 'auth/no-auth-event') {
-                        alert('Ошибка входа: ' + e.message);
-                    }
+                    console.log('getRedirectResult (ignored):', e.code);
                 });
 
             // Главный обработчик — срабатывает при загрузке и после входа
