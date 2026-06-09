@@ -870,13 +870,19 @@ function signInWithGoogle() {
     if (!auth) return;
     const loadingEl = document.getElementById('authLoading');
     loadingEl.style.display = 'block';
-    loadingEl.textContent = 'Переходим к Google...';
+    loadingEl.textContent = 'Открываем Google...';
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
-    auth.signInWithRedirect(provider).catch(err => {
-        loadingEl.style.display = 'none';
-        alert('Ошибка входа: ' + err.message);
-    });
+    auth.signInWithPopup(provider)
+        .then(() => { loadingEl.style.display = 'none'; })
+        .catch(err => {
+            loadingEl.style.display = 'none';
+            if (err.code === 'auth/popup-blocked') {
+                alert('Браузер заблокировал окно Google.\n\nВ Safari: Настройки → Safari → выключить "Блокировка всплывающих окон"');
+            } else if (err.code !== 'auth/popup-closed-by-user') {
+                alert('Ошибка входа: ' + err.message);
+            }
+        });
 }
 
 function signOutUser() {
@@ -951,16 +957,10 @@ function onUserSignedOut() {
 }
 
 if (auth) {
-    // getRedirectResult() должен завершиться ДО того как onAuthStateChanged
-    // среагирует на null — иначе возникает цикл перенаправлений
-    auth.getRedirectResult()
-        .catch(err => { console.warn('Redirect result:', err.code); })
-        .finally(() => {
-            auth.onAuthStateChanged(user => {
-                if (user) onUserSignedIn(user);
-                else hideSplash(showAuthScreen);
-            });
-        });
+    auth.onAuthStateChanged(user => {
+        if (user) onUserSignedIn(user);
+        else hideSplash(showAuthScreen);
+    });
 }
 
 // ==================== ДАННЫЕ ====================
