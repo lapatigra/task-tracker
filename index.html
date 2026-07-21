@@ -1322,7 +1322,10 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>TIGRA TRACKER</h1>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <h1>TIGRA TRACKER</h1>
+                <span id="offlineBadge" style="display:none;font-size:10px;font-weight:700;color:#999;background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:20px;letter-spacing:0.5px">ОФЛАЙН</span>
+            </div>
             <div class="month-selector">
                 <button class="month-btn" onclick="changeMonth(-1)">←</button>
                 <div class="current-month" id="currentMonth"></div>
@@ -1687,16 +1690,52 @@
         return DEFAULT_CATEGORIES.slice();
     }
 
+    // ==================== ЛОКАЛЬНЫЙ КЕШ ====================
+    function cacheKey(suffix) { return `tigra_${currentUserId}_${suffix}`; }
+
+    function saveToLocalCache() {
+        if (!currentUserId) return;
+        localStorage.setItem(cacheKey('tasks'),      JSON.stringify(tasks));
+        localStorage.setItem(cacheKey('muscles'),    JSON.stringify(muscles));
+        localStorage.setItem(cacheKey('categories'), JSON.stringify(categories));
+        localStorage.setItem(cacheKey('program'),    JSON.stringify(program));
+    }
+
+    function loadFromLocalCache() {
+        const raw = localStorage.getItem(cacheKey('tasks'));
+        if (!raw) return false;
+        tasks      = JSON.parse(raw);
+        muscles    = JSON.parse(localStorage.getItem(cacheKey('muscles'))    || '{}');
+        categories = JSON.parse(localStorage.getItem(cacheKey('categories')) || 'null') || loadCategories();
+        program    = JSON.parse(localStorage.getItem(cacheKey('program'))    || '[]');
+        return true;
+    }
+
+    function syncToFirebase() {
+        if (!isFirebaseEnabled || !currentUserId) return;
+        const ref = database.ref('users/' + currentUserId);
+        ref.child('tasks').set(tasks);
+        ref.child('muscles').set(muscles);
+        ref.child('categories').set(categories);
+        ref.child('program').set(program);
+    }
+
+    function setOfflineBadge(offline) {
+        const el = document.getElementById('offlineBadge');
+        if (el) el.style.display = offline ? 'inline' : 'none';
+    }
+
+    window.addEventListener('online',  () => { setOfflineBadge(false); syncToFirebase(); });
+    window.addEventListener('offline', () => { setOfflineBadge(true); });
+
     function saveCategories() {
-        if (isFirebaseEnabled && currentUserId) {
-            database.ref('users/' + currentUserId + '/categories').set(categories);
-        }
+        if (currentUserId) localStorage.setItem(cacheKey('categories'), JSON.stringify(categories));
+        if (isFirebaseEnabled && currentUserId) database.ref('users/' + currentUserId + '/categories').set(categories);
     }
 
     function saveProgram() {
-        if (isFirebaseEnabled && currentUserId) {
-            database.ref('users/' + currentUserId + '/program').set(program);
-        }
+        if (currentUserId) localStorage.setItem(cacheKey('program'), JSON.stringify(program));
+        if (isFirebaseEnabled && currentUserId) database.ref('users/' + currentUserId + '/program').set(program);
     }
 
     async function loadData() {
@@ -1712,26 +1751,24 @@
                 muscles = musclesSnap.val() || {};
                 categories = catsSnap.val() || loadCategories();
                 program = progSnap.val() || [];
-                // Firebase возвращает объект, если массив — конвертируем
-                if (program && !Array.isArray(program)) {
-                    program = Object.values(program);
-                }
+                if (program && !Array.isArray(program)) program = Object.values(program);
                 program.forEach(g => {
-                    if (g.exercises && !Array.isArray(g.exercises)) {
-                        g.exercises = Object.values(g.exercises);
-                    }
+                    if (g.exercises && !Array.isArray(g.exercises)) g.exercises = Object.values(g.exercises);
                     if (!g.exercises) g.exercises = [];
                 });
+                saveToLocalCache(); // обновляем кеш после успешной загрузки
             } catch (e) {
-                console.log('Firebase load error:', e);
+                console.log('Firebase load error, loading from cache:', e);
                 loadFromLocalStorage();
             }
         } else {
             loadFromLocalStorage();
         }
+        setOfflineBadge(!navigator.onLine);
     }
 
     function loadFromLocalStorage() {
+        if (currentUserId && loadFromLocalCache()) return; // есть кеш — используем
         tasks = {};
         muscles = {};
         collapsedCategories = {};
@@ -1740,10 +1777,12 @@
     }
 
     function saveTasks() {
+        if (currentUserId) localStorage.setItem(cacheKey('tasks'), JSON.stringify(tasks));
         if (isFirebaseEnabled && currentUserId) database.ref('users/' + currentUserId + '/tasks').set(tasks);
     }
 
     function saveMuscles() {
+        if (currentUserId) localStorage.setItem(cacheKey('muscles'), JSON.stringify(muscles));
         if (isFirebaseEnabled && currentUserId) database.ref('users/' + currentUserId + '/muscles').set(muscles);
     }
 
