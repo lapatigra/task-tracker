@@ -1971,9 +1971,29 @@
         document.getElementById(ids[key]).textContent = timerSettings[key] + labels[key];
     }
 
+    let wakeLock = null;
+    async function requestWakeLock() {
+        try {
+            if ('wakeLock' in navigator) {
+                wakeLock = await navigator.wakeLock.request('screen');
+                wakeLock.addEventListener('release', () => { wakeLock = null; });
+            }
+        } catch(e) {}
+    }
+    function releaseWakeLock() {
+        if (wakeLock) { wakeLock.release(); wakeLock = null; }
+    }
+    // Перезапрашиваем после возврата на вкладку
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && timerState.phase !== 'idle' && !timerState.paused) {
+            requestWakeLock();
+        }
+    });
+
     function startTimer() {
         // Разблокируем AudioContext прямо в обработчике клика
         try { const ctx = getAudioCtx(); if (ctx.state === 'suspended') ctx.resume(); } catch(e) {}
+        requestWakeLock();
         document.getElementById('timerSettings').style.display = 'none';
         document.getElementById('timerActive').style.display = 'flex';
         document.getElementById('timerDone').style.display = 'none';
@@ -2007,6 +2027,7 @@
             if (timerState.round >= timerSettings.rounds) {
                 // Готово!
                 clearInterval(timerInterval);
+                releaseWakeLock();
                 document.getElementById('timerActive').style.display = 'none';
                 document.getElementById('timerDone').style.display = 'flex';
                 beepDone();
@@ -2054,11 +2075,13 @@
 
     function stopTimer() {
         clearInterval(timerInterval);
+        releaseWakeLock();
         resetTimer();
     }
 
     function resetTimer() {
         clearInterval(timerInterval);
+        releaseWakeLock();
         timerState = { phase: 'idle', round: 1, timeLeft: 0, paused: false };
         document.getElementById('timerSettings').style.display = 'block';
         document.getElementById('timerActive').style.display = 'none';
