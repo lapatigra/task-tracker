@@ -47,12 +47,39 @@
             border: 1px solid rgba(255, 107, 53, 0.2);
         }
 
+        .header-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .header-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 10px rgba(255, 107, 53, 0.5);
+        }
+
         .header h1 {
             font-size: 20px;
             font-weight: 700;
             color: #ff9a56;
-            margin-bottom: 8px;
-            text-align: center;
+        }
+
+        .status-dot {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4caf50;
+            border: 2px solid #1a1a1a;
+            pointer-events: none;
+            display: none;
         }
 
         .month-selector {
@@ -1322,9 +1349,9 @@
 <body>
     <div class="container">
         <div class="header">
-            <div style="display:flex;align-items:center;gap:8px;">
+            <div class="header-title">
+                <img src="/lila_manila/Tigr_Lila_Head.jpeg" class="header-logo" alt="">
                 <h1>TIGRA TRACKER</h1>
-                <span id="offlineBadge" style="display:none;font-size:10px;font-weight:700;color:#999;background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:20px;letter-spacing:0.5px">ОФЛАЙН</span>
             </div>
             <div class="month-selector">
                 <button class="month-btn" onclick="changeMonth(-1)">←</button>
@@ -1505,6 +1532,7 @@
     <!-- Аватар / кнопка профиля -->
     <img class="user-avatar" id="userAvatar" onclick="toggleSignoutPopup()" alt="Профиль">
     <div class="user-avatar-placeholder" id="userAvatarPlaceholder" onclick="toggleSignoutPopup()"></div>
+    <div class="status-dot" id="statusDot"></div>
 
     <!-- Попап выхода -->
     <div class="signout-popup" id="signoutPopup">
@@ -1644,6 +1672,7 @@
             hideSplash();
         }
         document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('statusDot').style.display = 'block';
         // Показать аватар
         if (user.photoURL) {
             const img = document.getElementById('userAvatar');
@@ -1671,6 +1700,7 @@
         }
         document.getElementById('userAvatar').classList.remove('visible');
         document.getElementById('userAvatarPlaceholder').classList.remove('visible');
+        document.getElementById('statusDot').style.display = 'none';
     }
 
     // ==================== ДАННЫЕ ====================
@@ -1721,8 +1751,8 @@
     }
 
     function setOfflineBadge(offline) {
-        const el = document.getElementById('offlineBadge');
-        if (el) el.style.display = offline ? 'inline' : 'none';
+        const dot = document.getElementById('statusDot');
+        if (dot) dot.style.background = offline ? '#666' : '#4caf50';
     }
 
     window.addEventListener('online',  () => { setOfflineBadge(false); syncToFirebase(); });
