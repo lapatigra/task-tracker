@@ -1972,6 +1972,8 @@
     }
 
     function startTimer() {
+        // Разблокируем AudioContext прямо в обработчике клика
+        try { const ctx = getAudioCtx(); if (ctx.state === 'suspended') ctx.resume(); } catch(e) {}
         document.getElementById('timerSettings').style.display = 'none';
         document.getElementById('timerActive').style.display = 'flex';
         document.getElementById('timerDone').style.display = 'none';
