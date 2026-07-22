@@ -394,22 +394,31 @@
             transition: width 0.5s ease;
         }
 
-        .summary-list { display: flex; flex-direction: column; gap: 8px; }
+        /* ===== HEATMAP ГОД ===== */
+        .year-heatmap-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        #yearHeatmap { display: flex; flex-direction: column; gap: 3px; min-width: 440px; }
+        .yhm-row { display: flex; gap: 3px; align-items: center; }
+        .yhm-cat-label { width: 78px; min-width: 78px; font-size: 11px; color: #aaa; text-align: right; padding-right: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .yhm-month-label { flex: 1; text-align: center; font-size: 10px; color: #666; font-weight: 600; }
+        .yhm-cell { flex: 1; height: 30px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.85); }
+        .yhm-total-row .yhm-cell { height: 34px; border-radius: 6px; font-size: 10px; margin-top: 2px; }
+        .yhm-total-row .yhm-cat-label { font-weight: 700; color: #ff9a56; font-size: 11px; }
 
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 12px;
-            background: #2a2a2a;
-            border-radius: 10px;
+        /* ===== ПЕРЕИМЕНОВАНИЕ КАТЕГОРИИ ===== */
+        .category-name-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #ff6b35;
+            color: #e0e0e0;
+            font-size: 15px;
+            font-weight: 600;
+            outline: none;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            padding: 0 2px;
+            font-family: inherit;
         }
-
-        .summary-category { font-weight: 600; color: #e0e0e0; font-size: 14px; }
-        .summary-stats { display: flex; gap: 12px; font-size: 13px; }
-        .summary-stat { display: flex; flex-direction: column; align-items: center; }
-        .summary-stat-label { font-size: 10px; color: #999; }
-        .summary-stat-value { font-weight: 700; color: #ff9a56; }
 
         /* ===== ТАЙМЕР ===== */
         .timer-card {
@@ -1368,7 +1377,6 @@
             </button>
             <button class="tab" onclick="switchTab('program', this)">Программа</button>
             <button class="tab" onclick="switchTab('timer', this)">Таймер</button>
-            <button class="tab" onclick="switchTab('month', this)">Месяц</button>
             <button class="tab" onclick="switchTab('year', this)">Год</button>
         </div>
 
@@ -1450,44 +1458,29 @@
             </div>
         </div>
 
-        <!-- МЕСЯЦ -->
-        <div id="monthSection" class="content-section">
-            <div class="stats-container">
-                <h2 class="chart-title">Итоги месяца</h2>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-label">Всего задач</div>
-                        <div class="stat-value" id="monthTotal">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Выполнено</div>
-                        <div class="stat-value" id="monthCompleted">0</div>
-                    </div>
-                </div>
-                <div class="chart-container">
-                    <div class="chart-title">По категориям</div>
-                    <div class="bar-chart" id="monthChart"></div>
-                </div>
-            </div>
-        </div>
-
         <!-- ГОД -->
         <div id="yearSection" class="content-section">
             <div class="stats-container">
                 <h2 class="chart-title">Итоги года</h2>
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-label">Всего задач</div>
-                        <div class="stat-value" id="yearTotal">0</div>
-                    </div>
-                    <div class="stat-card">
                         <div class="stat-label">Выполнено</div>
                         <div class="stat-value" id="yearCompleted">0</div>
                     </div>
+                    <div class="stat-card">
+                        <div class="stat-label">% за год</div>
+                        <div class="stat-value" id="yearPercent">0%</div>
+                    </div>
                 </div>
                 <div class="chart-container">
-                    <div class="chart-title">Статистика по месяцам</div>
-                    <div class="summary-list" id="yearSummary"></div>
+                    <div class="chart-title">По категориям</div>
+                    <div class="year-heatmap-wrap">
+                        <div id="yearHeatmap"></div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">По месяцам</div>
+                    <div class="bar-chart" id="yearMonthBars"></div>
                 </div>
             </div>
         </div>
@@ -2303,7 +2296,7 @@
                 <div class="category-header">
                     <div class="category-fill" style="width:${pct}%"></div>
                     <span class="category-handle" title="Перетащить" style="position:relative;z-index:1">⠿</span>
-                    <span class="category-name" onclick="toggleCategory('${category}')" style="position:relative;z-index:1;flex:1;cursor:pointer">${category}</span>
+                    <span class="category-name" onclick="toggleCategory('${category}')" ondblclick="startRenameCategory(event,'${category}')" ontouchstart="catLongPressStart(event,'${category}')" ontouchend="catLongPressCancel()" ontouchmove="catLongPressCancel()" style="position:relative;z-index:1;flex:1;cursor:pointer">${category}</span>
                     <div style="position:relative;z-index:1;display:flex;align-items:center;gap:6px;">
                         <span class="category-count">${completed}/${daysInMonth}</span>
                         <button class="category-done-btn ${todayDone ? 'all-done' : ''}" onclick="markAllDone(event,'${category}')"
@@ -2355,53 +2348,158 @@
     }
 
     // ==================== СТАТИСТИКА ====================
-    function updateMonthStats() {
+    function updateYearStats() {
         const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        let total = 0, completed = 0;
-        const categoryStats = {};
-        categories.forEach(cat => categoryStats[cat] = { total: 0, completed: 0 });
-        for (let day = 1; day <= daysInMonth; day++) {
-            categories.forEach(cat => {
-                categoryStats[cat].total++; total++;
-                if (tasks[getTaskKey(year, month, day, cat)]) { categoryStats[cat].completed++; completed++; }
-            });
+        const today = new Date();
+        const todayYear = today.getFullYear();
+        const todayMonth = today.getMonth();
+        const monthNames = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+
+        let completedYear = 0, totalYear = 0;
+
+        const catData = {};
+        categories.forEach(cat => {
+            catData[cat] = [];
+            for (let m = 0; m < 12; m++) {
+                const dim = new Date(year, m + 1, 0).getDate();
+                const isFuture = year > todayYear || (year === todayYear && m > todayMonth);
+                let mc = 0;
+                if (!isFuture) {
+                    for (let d = 1; d <= dim; d++) {
+                        if (tasks[getTaskKey(year, m, d, cat)]) mc++;
+                    }
+                    totalYear += dim;
+                    completedYear += mc;
+                }
+                catData[cat].push({ completed: mc, total: dim, pct: isFuture ? null : (mc / dim * 100) });
+            }
+        });
+
+        const monthTotals = [];
+        for (let m = 0; m < 12; m++) {
+            const isFuture = year > todayYear || (year === todayYear && m > todayMonth);
+            let mc = 0, mt = 0;
+            if (!isFuture) categories.forEach(cat => { mc += catData[cat][m].completed; mt += catData[cat][m].total; });
+            monthTotals.push({ completed: mc, total: mt, pct: isFuture ? null : (mt > 0 ? mc / mt * 100 : 0) });
         }
-        document.getElementById('monthTotal').textContent = total;
-        document.getElementById('monthCompleted').textContent = completed;
-        document.getElementById('monthChart').innerHTML = categories.map(cat => {
-            const p = categoryStats[cat].total > 0 ? (categoryStats[cat].completed / categoryStats[cat].total * 100).toFixed(0) : 0;
-            return `<div class="bar-item"><div class="bar-label">${cat}</div><div class="bar-track"><div class="bar-fill" style="width:${p}%">${categoryStats[cat].completed}/${categoryStats[cat].total}</div></div></div>`;
+
+        const overallPct = totalYear > 0 ? Math.round(completedYear / totalYear * 100) : 0;
+        document.getElementById('yearCompleted').textContent = completedYear;
+        document.getElementById('yearPercent').textContent = overallPct + '%';
+
+        function cellColor(pct) {
+            if (pct === null) return '#1a1a1a';
+            if (pct < 1) return '#252525';
+            const a = (0.15 + (pct / 100) * 0.85).toFixed(2);
+            return `rgba(255,107,53,${a})`;
+        }
+
+        if (categories.length === 0) {
+            document.getElementById('yearHeatmap').innerHTML = '<div style="text-align:center;color:#666;padding:20px">Нет категорий</div>';
+            document.getElementById('yearMonthBars').innerHTML = '';
+            return;
+        }
+
+        let html = '';
+        html += '<div class="yhm-row"><div class="yhm-cat-label"></div>';
+        monthNames.forEach(mn => html += `<div class="yhm-month-label">${mn}</div>`);
+        html += '</div>';
+
+        categories.forEach(cat => {
+            html += `<div class="yhm-row"><div class="yhm-cat-label">${cat}</div>`;
+            catData[cat].forEach(({ completed, total, pct }) => {
+                const bg = cellColor(pct);
+                const label = pct !== null ? Math.round(pct) + '%' : '';
+                const tip = pct !== null ? `${completed}/${total}` : '';
+                html += `<div class="yhm-cell" style="background:${bg}" title="${tip}">${label}</div>`;
+            });
+            html += '</div>';
+        });
+
+        html += '<div class="yhm-row yhm-total-row"><div class="yhm-cat-label">Итого</div>';
+        monthTotals.forEach(({ completed, total, pct }) => {
+            const bg = cellColor(pct);
+            const label = pct !== null ? Math.round(pct) + '%' : '';
+            html += `<div class="yhm-cell" style="background:${bg}">${label}</div>`;
+        });
+        html += '</div>';
+
+        document.getElementById('yearHeatmap').innerHTML = html;
+
+        document.getElementById('yearMonthBars').innerHTML = monthTotals.map((m, i) => {
+            if (m.pct === null) return '';
+            const p = Math.round(m.pct);
+            return `<div class="bar-item">
+                <div class="bar-label">${monthNames[i]}</div>
+                <div class="bar-track"><div class="bar-fill" style="width:${p}%">${p}%</div></div>
+            </div>`;
         }).join('');
     }
 
-    function updateYearStats() {
-        const year = currentDate.getFullYear();
-        const monthNames = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
-        let totalYear = 0, completedYear = 0;
-        const monthlyStats = [];
-        for (let month = 0; month < 12; month++) {
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            let mt = 0, mc = 0;
-            for (let day = 1; day <= daysInMonth; day++) {
-                categories.forEach(cat => {
-                    mt++; totalYear++;
-                    if (tasks[getTaskKey(year, month, day, cat)]) { mc++; completedYear++; }
-                });
+    // ==================== ПЕРЕИМЕНОВАНИЕ КАТЕГОРИИ ====================
+    let _catLongPressTimer = null;
+
+    function catLongPressStart(event, category) {
+        _catLongPressTimer = setTimeout(() => {
+            _catLongPressTimer = null;
+            startRenameCategory(event, category);
+        }, 600);
+    }
+
+    function catLongPressCancel() {
+        clearTimeout(_catLongPressTimer);
+        _catLongPressTimer = null;
+    }
+
+    function startRenameCategory(event, category) {
+        event.stopPropagation();
+        if (event.preventDefault) event.preventDefault();
+        const header = event.target.closest('.category-header');
+        if (!header) return;
+        const nameSpan = header.querySelector('.category-name');
+        if (!nameSpan) return;
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = category;
+        input.className = 'category-name-input';
+        nameSpan.replaceWith(input);
+        input.focus();
+        input.select();
+
+        let saved = false;
+        function save() {
+            if (saved) return;
+            saved = true;
+            const newName = input.value.trim();
+            if (newName && newName !== category && !categories.includes(newName)) {
+                renameCategoryData(category, newName);
+            } else {
+                renderTasks();
             }
-            monthlyStats.push({ name: monthNames[month], completed: mc, total: mt, percent: mt > 0 ? (mc/mt*100).toFixed(0) : 0 });
         }
-        document.getElementById('yearTotal').textContent = totalYear;
-        document.getElementById('yearCompleted').textContent = completedYear;
-        document.getElementById('yearSummary').innerHTML = monthlyStats.map(m => `
-            <div class="summary-item">
-                <div class="summary-category">${m.name}</div>
-                <div class="summary-stats">
-                    <div class="summary-stat"><div class="summary-stat-label">Выполнено</div><div class="summary-stat-value">${m.completed}/${m.total}</div></div>
-                    <div class="summary-stat"><div class="summary-stat-label">Процент</div><div class="summary-stat-value">${m.percent}%</div></div>
-                </div>
-            </div>`).join('');
+        input.addEventListener('blur', save);
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Enter') input.blur();
+            if (e.key === 'Escape') { saved = true; renderTasks(); }
+        });
+    }
+
+    function renameCategoryData(oldName, newName) {
+        const idx = categories.indexOf(oldName);
+        if (idx === -1) return;
+        categories[idx] = newName;
+        const suffix = '-' + oldName;
+        const newSuffix = '-' + newName;
+        Object.keys(tasks).forEach(key => {
+            if (key.endsWith(suffix)) {
+                tasks[key.slice(0, key.length - suffix.length) + newSuffix] = tasks[key];
+                delete tasks[key];
+            }
+        });
+        saveData();
+        renderTasks();
+        updateTasksTabStats();
     }
 
     // ==================== НАВИГАЦИЯ ====================
@@ -2416,7 +2514,6 @@
         if (el) el.classList.add('active');
         document.getElementById(tab + 'Section').classList.add('active');
 
-        if (tab === 'month') updateMonthStats();
         if (tab === 'year') updateYearStats();
         if (tab === 'program') { renderProgram(); setTimeout(() => { if (!document.body.classList.contains('is-touch')) { initDragProgram(); initDragExercises(); } initSwipeDelete(); }, 50); }
     }
