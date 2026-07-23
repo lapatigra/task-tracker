@@ -213,7 +213,7 @@
             top: 0;
             left: 0;
             height: 100%;
-            background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 100%);
+            background: linear-gradient(90deg, rgba(255,107,53,0.38) 0%, rgba(255,107,53,0.18) 100%);
             transition: width 0.5s ease;
             z-index: 0;
         }
@@ -2497,7 +2497,8 @@
                 delete tasks[key];
             }
         });
-        saveData();
+        saveCategories();
+        saveTasks();
         renderTasks();
         updateTasksTabStats();
     }
