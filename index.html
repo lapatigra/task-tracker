@@ -1762,26 +1762,34 @@
 
     async function loadData() {
         if (isFirebaseEnabled && currentUserId) {
-            try {
-                const [tasksSnap, musclesSnap, catsSnap, progSnap] = await Promise.all([
-                    database.ref('users/' + currentUserId + '/tasks').once('value'),
-                    database.ref('users/' + currentUserId + '/muscles').once('value'),
-                    database.ref('users/' + currentUserId + '/categories').once('value'),
-                    database.ref('users/' + currentUserId + '/program').once('value'),
-                ]);
-                tasks = tasksSnap.val() || {};
-                muscles = musclesSnap.val() || {};
-                categories = catsSnap.val() || loadCategories();
-                program = progSnap.val() || [];
-                if (program && !Array.isArray(program)) program = Object.values(program);
-                program.forEach(g => {
-                    if (g.exercises && !Array.isArray(g.exercises)) g.exercises = Object.values(g.exercises);
-                    if (!g.exercises) g.exercises = [];
-                });
-                saveToLocalCache(); // обновляем кеш после успешной загрузки
-            } catch (e) {
-                console.log('Firebase load error, loading from cache:', e);
+            if (!navigator.onLine) {
                 loadFromLocalStorage();
+            } else {
+                try {
+                    const fetchData = Promise.all([
+                        database.ref('users/' + currentUserId + '/tasks').once('value'),
+                        database.ref('users/' + currentUserId + '/muscles').once('value'),
+                        database.ref('users/' + currentUserId + '/categories').once('value'),
+                        database.ref('users/' + currentUserId + '/program').once('value'),
+                    ]);
+                    const fetchTimeout = new Promise((_, reject) =>
+                        setTimeout(() => reject(new Error('timeout')), 5000)
+                    );
+                    const [tasksSnap, musclesSnap, catsSnap, progSnap] = await Promise.race([fetchData, fetchTimeout]);
+                    tasks = tasksSnap.val() || {};
+                    muscles = musclesSnap.val() || {};
+                    categories = catsSnap.val() || loadCategories();
+                    program = progSnap.val() || [];
+                    if (program && !Array.isArray(program)) program = Object.values(program);
+                    program.forEach(g => {
+                        if (g.exercises && !Array.isArray(g.exercises)) g.exercises = Object.values(g.exercises);
+                        if (!g.exercises) g.exercises = [];
+                    });
+                    saveToLocalCache();
+                } catch (e) {
+                    console.log('Firebase load error, using cache:', e.message);
+                    loadFromLocalStorage();
+                }
             }
         } else {
             loadFromLocalStorage();
@@ -2685,8 +2693,18 @@
                     console.log('getRedirectResult (ignored):', e.code);
                 });
 
+            // Страховочный таймаут: если Firebase Auth не ответил за 6с — грузим кэш
+            const authTimeout = setTimeout(() => {
+                if (document.getElementById('splashScreen').classList.contains('hidden')) return;
+                console.log('Auth timeout — loading from cache');
+                loadFromLocalStorage();
+                updateDisplay();
+                hideSplash(showAuthScreen);
+            }, 6000);
+
             // Главный обработчик — срабатывает при загрузке и после входа
             auth.onAuthStateChanged(user => {
+                clearTimeout(authTimeout);
                 loadingEl.style.display = 'none';
                 if (user) {
                     onUserSignedIn(user);
