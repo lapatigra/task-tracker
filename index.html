@@ -1391,6 +1391,7 @@
         <div id="programSection" class="content-section">
             <div class="program-section">
                 <button class="program-add-btn" onclick="openAddGroupModal()">+ Добавить группу (день)</button>
+                <button class="program-add-btn" style="background:#333;" onclick="loadNewWorkoutProgram()">⟳ Загрузить новую программу</button>
                 <div id="programGrid"></div>
             </div>
         </div>
@@ -1884,6 +1885,66 @@
     }
 
     // ==================== ПРОГРАММА ====================
+    const NEW_WORKOUT_PROGRAM = [
+        {
+            name: 'ДЕНЬ 1 — Грудь (верх + середина) + Трицепс',
+            exercises: [
+                'Жим гантелей на наклонной скамье (угол 30°) 4×8–12',
+                'Жим гантелей лёжа (горизонтально) 3×8–12',
+                'Разведения гантелей на наклонной 3×12–15',
+                'Отжимания на брусьях или от пола 3×MAX',
+                'Французский жим гантели 3×10–12',
+                'Разгибания рук с гантелью в наклоне 3×12–15'
+            ]
+        },
+        {
+            name: 'ДЕНЬ 2 — Спина + Бицепс + Задняя дельта',
+            exercises: [
+                'Подтягивания (широким хватом) 4×MAX',
+                'Тяга гантели в наклоне 4×8–12',
+                'Тяга гантелей к поясу двумя руками (в наклоне) 3×10–12',
+                'Лицевая тяга (гантели или резинка) 3×12–15',
+                'Подтягивания обратным хватом или австралийские 3×MAX',
+                'Сгибания гантелей на бицепс 4×10–12',
+                'Молотковые сгибания 3×12'
+            ]
+        },
+        {
+            name: 'ДЕНЬ 3 — Ноги + Плечи',
+            exercises: [
+                'Приседания с гантелями (гоблет или на плечах) 4×10–12',
+                'Румынская тяга с гантелями 4×10–12',
+                'Выпады с гантелями 3×10',
+                'Подъёмы на носки 4×15–20',
+                'Жим гантелей сидя (лёгкий вес, идеальная техника) 3×10–12',
+                'Махи гантелей в стороны 3×12–15 (небольшой вес)'
+            ]
+        },
+        {
+            name: 'ЕЖЕДНЕВНЫЙ БЛОК (Кор + Поясница)',
+            exercises: [
+                'Вакуум живота — 4×20–30 секунд',
+                'Bird Dog — 3×10 на сторону',
+                'Dead Bug — 3×10–12 на сторону',
+                'Гиперэкстензии (на полу) 3×12–15',
+                'Планка — 3×40–60 секунд'
+            ]
+        }
+    ];
+
+    function loadNewWorkoutProgram() {
+        if (!confirm('Заменить текущую программу тренировок на новую? Текущие дни и упражнения будут удалены.')) return;
+        program = NEW_WORKOUT_PROGRAM.map(g => ({
+            id: uid(),
+            name: g.name,
+            collapsed: false,
+            exercises: g.exercises.map(name => ({ id: uid(), name }))
+        }));
+        saveProgram();
+        renderProgram();
+        setTimeout(() => { if (!document.body.classList.contains('is-touch')) { initDragProgram(); initDragExercises(); } initSwipeDelete(); }, 50);
+    }
+
     function openAddGroupModal() {
         document.getElementById('newGroupInput').value = '';
         openModal('addGroupModal');
