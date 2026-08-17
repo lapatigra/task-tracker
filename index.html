@@ -1613,9 +1613,16 @@
         auth.signInWithPopup(provider)
             .then(() => { loadingEl.style.display = 'none'; })
             .catch(err => {
-                loadingEl.style.display = 'none';
                 console.log('Popup error:', err.code);
-                alert('Ошибка входа: ' + err.message);
+                if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
+                    loadingEl.style.display = 'none';
+                    return;
+                }
+                // Popup заблокирован расширением/браузером — пробуем через редирект
+                auth.signInWithRedirect(provider).catch(err2 => {
+                    loadingEl.style.display = 'none';
+                    alert('Ошибка входа: ' + err2.message);
+                });
             });
     }
 
@@ -2775,7 +2782,7 @@
             });
 
         } else {
-            loadData().then(() => { updateDisplay(); });
+            loadData().then(() => { updateDisplay(); hideSplash(showAuthScreen); });
         }
     }
 

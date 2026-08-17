@@ -1,4 +1,4 @@
-const CACHE = 'tigra-v3';
+const CACHE = 'tigra-v4';
 
 const PRECACHE = [
     '/',
